@@ -1,61 +1,99 @@
-from django.contrib.auth import get_user_model
-
-from wander_wave.models import Subscription
+from django.utils.text import Truncator
 
 from rest_framework import serializers
 
+from wander_wave.models import Post, Hashtag, Comment, Like, Subscription
 
-class UserSerializer(serializers.ModelSerializer):
-    subscribers = serializers.SerializerMethodField()
-    subscriptions = serializers.SerializerMethodField()
 
+class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = get_user_model()
+        model = Hashtag
+        fields = ("id", "name",)
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
         fields = (
             "id",
-            "avatar",
+            "photos",
+            "title",
+            "content",
+            "user",
+            "comments",
+            "hashtags",
+            "created_at",
+            "updated_at",
+        )
+
+
+class PostListSerializer(PostSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+
+    def get_comments_count(self, obj):
+        return Comment.objects.filter(post=obj).count()
+
+    def get_content(self, obj):
+        return Truncator(obj.content).chars(30)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
             "username",
-            "email",
-            "first_name",
-            "last_name",
+            "photos",
+            "title",
+            "get_content",
+            "get_comments_count",
+            "hashtags",
+            "created_at",
+            "updated_at",
+        )
+
+
+class PostDetailSerializer(PostSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    full_name = serializers.CharField(source="user.full_name", read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "username",
             "full_name",
-            "is_staff",
-            "about_me",
-            "password",
-            "date_joined",
-            "subscribers",
-            "subscriptions"
+            "photos",
+            "title",
+            "content",
+            "comments",
+            "hashtags",
+            "created_at",
+            "updated_at",
         )
-        read_only_fields = (
-            "is_staff", "date_joined", "subscribers", "subscriptions",
-        )
-        extra_kwargs = {
-            "password": {
-                "write_only": True,
-                "style": {"input_type": "password"},
-                "min_length": 8,
-            }
-        }
 
-    def get_subscribers(self, obj):
-        return Subscription.objects.filter(subscribed=obj).count()
 
-    def get_subscriptions(self, obj):
-        return Subscription.objects.filter(subscriber=obj).count()
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source="user.username", read_only=True)
 
-    def create(self, validated_data):
-        password = validated_data.pop("password", None)
-        user = get_user_model().objects.create_user(
-            password=password, **validated_data
-        )
-        return user
+    class Meta:
+        model = Comment
+        fields = ("id", "text", "user", "created_at", "updated_at",)
 
-    def update(self, instance, validated_data):
-        password = validated_data.pop("password", None)
-        user = super().update(instance, validated_data)
 
-        if password:
-            user.set_password(password)
-            user.save()
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ("id", "user",)
 
-        return user
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    subscriber = serializers.CharField(
+        source="subscriber.username", read_only=True
+    )
+    subscribed = serializers.CharField(
+        source="subscribed.username", read_only=True
+    )
+
+    class Meta:
+        model = Subscription
+        fields = ("id", "subscriber", "subscribed", "created_at")
+        read_only_fields = ("created_at",)
