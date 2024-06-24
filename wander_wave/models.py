@@ -51,6 +51,11 @@ class Comment(models.Model):
         Post, on_delete=models.CASCADE, related_name="comments"
     )
     text = models.TextField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
