@@ -14,6 +14,15 @@ def post_photo_path(instance, filename):
     return os.path.join("uploads/posts_photos/", filename)
 
 
+class Location(models.Model):
+    country = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    
+    class Meta:
+        ordering = ["country", "city"]
+        unique_together = ("country", "city")
+
+
 class Hashtag(models.Model):
     name = models.CharField(max_length=55)
 
@@ -23,7 +32,7 @@ class Hashtag(models.Model):
 
 class Post(models.Model):
     photos = models.ImageField(upload_to=post_photo_path)
-    location = models.CharField(max_length=155)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     content = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
