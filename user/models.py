@@ -44,12 +44,33 @@ def avatar_path(instance, filename):
     return os.path.join("uploads/avatars/", filename)
 
 
+class UserStatusTextChoices(models.TextChoices):
+    """
+    Choices for set user status
+    """
+    ROAD_TRIPPER = "Road Tripper"
+    CRUISER = "Cruiser"
+    BACKPACKER = "Backpacker"
+    FLYER = "Flyer"
+    CYCLIST = "Cyclist"
+    HIKER = "Hiker"
+    RAIL_EXP = "Railway Explorer"
+    SAILOR = "Sailor"
+    RVER = "Recreational Vehicle Traveler"
+    NOMAD = "Nomad"
+
+
 class User(AbstractUser):
     avatar = models.ImageField(
         _("avatar"), upload_to=avatar_path, blank=True, null=True
     )
     username = models.CharField(
         _("username"), max_length=50, unique=True
+    )
+    status = models.CharField(
+        _("status"),
+        max_length=50,
+        choices=OrderStatusTextChoices.choices
     )
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(_("first name"), max_length=100)
@@ -71,7 +92,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = [
-        "username", "first_name", "last_name", "email"
+        "status", "username", "first_name", "last_name", "email"
     ]
 
     object = UserManager()

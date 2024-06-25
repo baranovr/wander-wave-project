@@ -23,6 +23,7 @@ class Hashtag(models.Model):
 
 class Post(models.Model):
     photos = models.ImageField(upload_to=post_photo_path)
+    location = models.CharField(max_length=155)
     title = models.CharField(max_length=255)
     content = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
