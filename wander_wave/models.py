@@ -30,9 +30,29 @@ class Hashtag(models.Model):
         return f"#{self.name}"
 
 
+class Comment(models.Model):
+    text = models.TextField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        ordering = ["created_date"]
+        unique_together = (("user", "text"),)
+
+
 class Post(models.Model):
     photos = models.ImageField(upload_to=post_photo_path)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name="posts"
+    )
     title = models.CharField(max_length=255)
     content = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
@@ -54,27 +74,6 @@ class Post(models.Model):
     class Meta:
         ordering = ["created_at"]
         unique_together = (("user", "title"),)
-
-
-class Comment(models.Model):
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name="comments"
-    )
-    text = models.TextField()
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="comments"
-    )
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.text
-
-    class Meta:
-        ordering = ["created_date"]
-        unique_together = (("post", "text"),)
 
 
 class Like(models.Model):

@@ -17,6 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "photos",
+            "location",
             "title",
             "content",
             "user",
@@ -42,6 +43,7 @@ class PostListSerializer(PostSerializer):
             "id",
             "username",
             "photos",
+            "location",
             "title",
             "get_content",
             "get_comments_count",
@@ -62,6 +64,7 @@ class PostDetailSerializer(PostSerializer):
             "username",
             "full_name",
             "photos",
+            "location",
             "title",
             "content",
             "comments",
