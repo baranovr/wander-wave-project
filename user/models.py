@@ -70,7 +70,7 @@ class User(AbstractUser):
     status = models.CharField(
         _("status"),
         max_length=50,
-        choices=OrderStatusTextChoices.choices
+        choices=UserStatusTextChoices.choices
     )
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(_("first name"), max_length=100)
