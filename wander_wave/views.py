@@ -18,8 +18,25 @@ from wander_wave.serializers import (
     PostListSerializer,
     LocationSerializer,
     LocationListSerializer,
-    LocationDetailSerializer
+    LocationDetailSerializer,
+    HashtagSerializer,
+    HashtagListSerializer,
+    HashtagDetailSerializer
 )
+
+
+class HashtagViewSet(viewsets.ModelViewSet):
+    queryset = Hashtag.objects.all()
+    serializer_class = HashtagSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return HashtagListSerializer
+
+        if self.action == 'retrieve':
+            return HashtagDetailSerializer
+
+        return HashtagSerializer
 
 
 class LocationViewSet(viewsets.ModelViewSet):

@@ -11,6 +11,18 @@ class HashtagSerializer(serializers.ModelSerializer):
         fields = ("id", "name",)
 
 
+class HashtagListSerializer(HashtagSerializer):
+    class Meta:
+        model = Hashtag
+        fields = "__all__"
+
+
+class HashtagDetailSerializer(HashtagSerializer):
+    class Meta:
+        model = Hashtag
+        fields = "__all__"
+
+
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
