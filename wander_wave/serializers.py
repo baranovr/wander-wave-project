@@ -2,13 +2,31 @@ from django.utils.text import Truncator
 
 from rest_framework import serializers
 
-from wander_wave.models import Post, Hashtag, Comment, Like, Subscription
+from wander_wave.models import Post, Hashtag, Comment, Like, Subscription, Location
 
 
 class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hashtag
         fields = ("id", "name",)
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = ("id", "country", "city")
+
+
+class LocationListSerializer(LocationSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
+
+
+class LocationDetailSerializer(LocationSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -21,7 +39,6 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "user",
-            "comments",
             "hashtags",
             "created_at",
             "updated_at",

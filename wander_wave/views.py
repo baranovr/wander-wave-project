@@ -1,13 +1,54 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from wander_wave.models import Post
+from wander_wave.models import (
+    Post,
+    Location,
+    Like,
+    Comment,
+    Subscription,
+    Hashtag
+)
+
 from wander_wave.serializers import (
     PostSerializer,
     PostDetailSerializer,
-    PostListSerializer
+    PostListSerializer,
+    LocationSerializer,
+    LocationListSerializer,
+    LocationDetailSerializer
 )
 
+
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+    
+    def get_queryset(self):
+        city = self.request.query_params.get("city", None)
+        country = self.request.query_params.get("country", None)
+        
+        queryset = self.queryset
+        
+        if city:
+            queryset = self.queryset.filter(city__icontains=city)
+        
+        if country:
+            queryset = self.queryset.filter(country__icontains=country)
+        
+        return queryset.distinct()
+    
+    def get_serializer_class(self):
+        if self.action == "list":
+            return LocationListSerializer
+        
+        if self.action == "retrieve":
+            return LocationDetailSerializer
+        
+        return LocationSerializer
+        
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()

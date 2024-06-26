@@ -8,15 +8,13 @@ from django.utils.text import slugify
 from wander_wave_project import settings
 
 
-def post_photo_path(instance, filename):
-    _, extension = os.path.splitext(filename)
-    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
-    return os.path.join("uploads/posts_photos/", filename)
-
-
 class Location(models.Model):
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
+    
+    @property
+    def location(self):
+        return f"{self.country}, {self.city}"
     
     class Meta:
         ordering = ["country", "city"]
@@ -48,8 +46,16 @@ class Comment(models.Model):
         unique_together = (("user", "text"),)
 
 
+def post_photo_path(instance, filename):
+    _, extension = os.path.splitext(filename)
+    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
+    return os.path.join("uploads/posts_photos/", filename)
+
+
 class Post(models.Model):
-    photos = models.ImageField(upload_to=post_photo_path)
+    photos = models.ImageField(
+        upload_to=post_photo_path, blank=True, null=True
+    )
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, related_name="posts"
     )
