@@ -21,7 +21,10 @@ from wander_wave.serializers import (
     LocationDetailSerializer,
     HashtagSerializer,
     HashtagListSerializer,
-    HashtagDetailSerializer
+    HashtagDetailSerializer,
+    CommentSerializer,
+    CommentListSerializer,
+    CommentDetailSerializer
 )
 
 
@@ -98,3 +101,33 @@ class PostViewSet(viewsets.ModelViewSet):
             return PostDetailSerializer
 
         return PostSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        username = self.request.query_params.get("user__username", None)
+        created_date = self.request.query_params.get("created_date", None)
+
+        queryset = self.queryset
+
+        if username:
+            queryset = self.queryset.filter(username=username)
+
+        if created_date:
+            date_c = datetime.strptime(
+                created_date, "%Y-%m-%d"
+            ).date()
+
+        return queryset.distinct()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CommentListSerializer
+
+        if self.action == "retrieve":
+            return CommentDetailSerializer
+
+        return CommentSerializer

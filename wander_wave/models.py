@@ -18,7 +18,7 @@ class Location(models.Model):
     
     class Meta:
         ordering = ["country", "city"]
-        unique_together = ("country", "city")
+        unique_together = (("country", "city"),)
 
 
 class Hashtag(models.Model):
@@ -26,24 +26,6 @@ class Hashtag(models.Model):
 
     def __str__(self):
         return f"#{self.name}"
-
-
-class Comment(models.Model):
-    text = models.TextField()
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="comments"
-    )
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.text
-
-    class Meta:
-        ordering = ["created_date"]
-        unique_together = (("user", "text"),)
 
 
 def post_photo_path(instance, filename):
@@ -64,12 +46,6 @@ class Post(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
-    comments = models.ForeignKey(
-        Comment, on_delete=models.CASCADE,
-        related_name="posts",
-        null=True,
-        blank=True
-    )
     hashtags = models.ManyToManyField(Hashtag)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -82,6 +58,27 @@ class Post(models.Model):
         unique_together = (("user", "title"),)
 
 
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="comments"
+    )
+    text = models.TextField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["created_date"]
+        unique_together = (("user", "text"),)
+
+    def __str__(self):
+        return self.text
+
+
 class Like(models.Model):
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name="likes"
@@ -90,11 +87,11 @@ class Like(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
 
-    def __str__(self):
-        return f"{self.user} - {self.post}"
-
     class Meta:
         unique_together = (("user", "post"),)
+
+    def __str__(self):
+        return f"{self.user} - {self.post}"
 
 
 class Subscription(models.Model):
