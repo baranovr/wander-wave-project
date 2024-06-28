@@ -60,3 +60,20 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
+
+class MyProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "id",
+            "username",
+            "status",
+            "email",
+            "first_name",
+            "last_name",
+            "full_name",
+            "about_me",
+            "is_staff",
+            "date_joined",
+            "posts",
+        )
