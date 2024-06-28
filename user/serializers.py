@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "avatar",
+            "status",
             "username",
             "email",
             "first_name",
@@ -61,19 +62,29 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class MyProfileSerializer(serializers.ModelSerializer):
+class MyProfileSerializer(UserSerializer):
     class Meta:
         model = get_user_model()
         fields = (
             "id",
-            "username",
+            "avatar",
             "status",
+            "username",
             "email",
             "first_name",
             "last_name",
             "full_name",
+            "is_staff",
             "about_me",
+            "date_joined",
+            "subscribers",
+            "subscriptions",
+            "posts",
+        )
+        read_only_fields = (
             "is_staff",
             "date_joined",
+            "subscribers",
+            "subscriptions",
             "posts",
         )
