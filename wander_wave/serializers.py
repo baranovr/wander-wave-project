@@ -43,68 +43,6 @@ class LocationDetailSerializer(LocationSerializer):
         fields = "__all__"
 
 
-class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = (
-            "id",
-            "photos",
-            "location",
-            "title",
-            "content",
-            "user",
-            "hashtags",
-            "created_at",
-            "updated_at",
-        )
-
-
-class PostListSerializer(PostSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-
-    def get_comments_count(self, obj):
-        return Comment.objects.filter(post=obj).count()
-
-    def get_content(self, obj):
-        return Truncator(obj.content).chars(30)
-
-    class Meta:
-        model = Post
-        fields = (
-            "id",
-            "username",
-            "photos",
-            "location",
-            "title",
-            "get_content",
-            "get_comments_count",
-            "hashtags",
-            "created_at",
-            "updated_at",
-        )
-
-
-class PostDetailSerializer(PostSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-    full_name = serializers.CharField(source="user.full_name", read_only=True)
-
-    class Meta:
-        model = Post
-        fields = (
-            "id",
-            "username",
-            "full_name",
-            "photos",
-            "location",
-            "title",
-            "content",
-            "comments",
-            "hashtags",
-            "created_at",
-            "updated_at",
-        )
-
-
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -126,6 +64,88 @@ class CommentDetailSerializer(CommentSerializer):
     class Meta:
         model = Comment
         fields = "__all__"
+
+
+class CommentInPostSerializer(CommentSerializer):
+    class Meta:
+        model = Comment
+        fields = ("id", "text", "user", "created_date", "updated_date")
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "photos",
+            "location",
+            "title",
+            "content",
+            "user",
+            "hashtags",
+            "created_at",
+            "updated_at",
+        )
+
+
+class PostListSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    hashtags = HashtagSerializer(many=True, read_only=True)
+    comments_count = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
+    location = LocationDetailSerializer(read_only=True)
+
+    def get_comments_count(self, obj):
+        return Comment.objects.filter(post=obj).count()
+
+    def get_content(self, obj):
+        content = obj.content
+        return Truncator(content).chars(30)
+
+    def get_title(self, obj):
+        return Truncator(obj.title).chars(50)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "username",
+            "photos",
+            "location",
+            "title",
+            "content",
+            "comments_count",
+            "hashtags",
+            "created_at",
+            "updated_at",
+        )
+
+
+class PostDetailSerializer(PostSerializer, PostListSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    user_email = serializers.CharField(source="user.email", read_only=True)
+    full_name = serializers.CharField(source="user.full_name", read_only=True)
+    user_status = serializers.CharField(source="user.status", read_only=True)
+    comments = CommentInPostSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "username",
+            "user_status",
+            "full_name",
+            "user_email",
+            "photos",
+            "location",
+            "title",
+            "content",
+            "comments",
+            "hashtags",
+            "created_at",
+            "updated_at",
+        )
 
 
 class LikeSerializer(serializers.ModelSerializer):
