@@ -88,6 +88,34 @@ class PostSerializer(serializers.ModelSerializer):
         )
 
 
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ("id", "user", "post")
+
+
+class LikeListSerializer(LikeSerializer):
+    user_like = serializers.CharField(source="user.username", read_only=True)
+    post_title = serializers.CharField(source="post.title", read_only=True)
+    post_id = serializers.IntegerField(source="post.id", read_only=True)
+    user_post = serializers.CharField(
+        source="post.user.username", read_only=True
+    )
+
+    class Meta:
+        model = Like
+        fields = ("id", "user_like", "post_id", "post_title", "user_post")
+
+
+class LikeDetailSerializer(LikeSerializer):
+    user = serializers.CharField(source="user.username", read_only=True)
+    post = PostSerializer(read_only=True)
+
+    class Meta:
+        model = Like
+        fields = ("id", "user", "post")
+
+
 class PostListSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     hashtags = HashtagSerializer(many=True, read_only=True)
@@ -95,6 +123,10 @@ class PostListSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
     location = LocationDetailSerializer(read_only=True)
+    likes_count = serializers.SerializerMethodField()
+
+    def get_likes_count(self, obj):
+        return Like.objects.filter(post=obj).count()
 
     def get_comments_count(self, obj):
         return Comment.objects.filter(post=obj).count()
@@ -115,6 +147,7 @@ class PostListSerializer(serializers.ModelSerializer):
             "location",
             "title",
             "content",
+            "likes_count",
             "comments_count",
             "hashtags",
             "created_at",
@@ -140,18 +173,13 @@ class PostDetailSerializer(PostSerializer, PostListSerializer):
             "photos",
             "location",
             "title",
+            "likes_count",
             "content",
             "comments",
             "hashtags",
             "created_at",
             "updated_at",
         )
-
-
-class LikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Like
-        fields = ("id", "user",)
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

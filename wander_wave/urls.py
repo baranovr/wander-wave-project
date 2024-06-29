@@ -5,7 +5,8 @@ from wander_wave.views import (
     PostViewSet,
     LocationViewSet,
     HashtagViewSet,
-    CommentViewSet
+    CommentViewSet,
+    LikeViewSet
 )
 
 router = routers.DefaultRouter()
@@ -14,6 +15,7 @@ router.register("posts", PostViewSet, basename="posts")
 router.register("locations", LocationViewSet, basename="locations")
 router.register("hashtags", HashtagViewSet, basename="hashtags")
 router.register("comments", CommentViewSet, basename="comments")
+router.register("likes", LikeViewSet, basename="likes")
 
 urlpatterns = router.urls
 

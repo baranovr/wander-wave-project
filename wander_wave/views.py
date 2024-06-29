@@ -24,7 +24,10 @@ from wander_wave.serializers import (
     HashtagDetailSerializer,
     CommentSerializer,
     CommentListSerializer,
-    CommentDetailSerializer
+    CommentDetailSerializer,
+    LikeSerializer,
+    LikeListSerializer,
+    LikeDetailSerializer
 )
 
 
@@ -131,3 +134,31 @@ class CommentViewSet(viewsets.ModelViewSet):
             return CommentDetailSerializer
 
         return CommentSerializer
+
+
+class LikeViewSet(viewsets.ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+
+    def get_queryset(self):
+        username = self.request.query_params.get("user__username", None)
+        post_title = self.request.query_params.get("post__title", None)
+
+        queryset = self.queryset
+
+        if username:
+            queryset = self.queryset.filter(username=username)
+
+        if post_title:
+            queryset = self.queryset.filter(title=post_title)
+
+        return queryset.distinct()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return LikeListSerializer
+
+        if self.action == "retrieve":
+            return LikeDetailSerializer
+
+        return LikeSerializer
