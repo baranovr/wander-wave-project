@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.shortcuts import render
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 
 from wander_wave.models import (
@@ -36,10 +38,10 @@ class HashtagViewSet(viewsets.ModelViewSet):
     serializer_class = HashtagSerializer
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return HashtagListSerializer
 
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return HashtagDetailSerializer
 
         return HashtagSerializer
@@ -48,51 +50,92 @@ class HashtagViewSet(viewsets.ModelViewSet):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-    
+
     def get_queryset(self):
         city = self.request.query_params.get("city", None)
         country = self.request.query_params.get("country", None)
-        
+
         queryset = self.queryset
-        
+
         if city:
             queryset = self.queryset.filter(city__icontains=city)
-        
+
         if country:
             queryset = self.queryset.filter(country__icontains=country)
-        
+
         return queryset.distinct()
-    
+
     def get_serializer_class(self):
         if self.action == "list":
             return LocationListSerializer
-        
+
         if self.action == "retrieve":
             return LocationDetailSerializer
-        
+
         return LocationSerializer
-        
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "city",
+                type=OpenApiTypes.STR,
+                style="form",
+                description="Filter by city"
+            ),
+            OpenApiParameter(
+                "country",
+                type=OpenApiTypes.STR,
+                style="form",
+                description="Filter by country"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List all locations, find specific location.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        return super().list(request, *args, **kwargs)
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
     def get_queryset(self):
+        queryset = self.queryset
         location = self.request.query_params.get("location", None)
+        country = self.request.query_params.get("country", None)
+        city = self.request.query_params.get("city", None)
         username = self.request.query_params.get("user__username", None)
         created_at = self.request.query_params.get("created_at", None)
-
-        queryset = self.queryset
+        tags = self.request.query_params.getlist("tags", None)
 
         if location:
-            queryset = self.queryset.filter(location=location)
+            try:
+                location_id = int(location)
+                queryset = queryset.filter(location_id=location_id)
+            except ValueError:
+                pass
+
+        if country:
+            queryset = queryset.filter(location__country__icontains=country)
+
+        if city:
+            queryset = queryset.filter(location__city__icontains=city)
 
         if username:
-            queryset = self.queryset.filter(username=username)
+            queryset = queryset.filter(user__username=username)
 
         if created_at:
             date_c = datetime.strptime(created_at, "%Y-%m-%d").date()
-            queryset = queryset.filter(date_posted__date=date_c)
+            queryset = queryset.filter(created_at__date=date_c)
+
+        if tags:
+            queryset = queryset.filter(hashtags__name__in=tags)
 
         return queryset.distinct()
 
@@ -104,6 +147,51 @@ class PostViewSet(viewsets.ModelViewSet):
             return PostDetailSerializer
 
         return PostSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "location",
+                type=OpenApiTypes.INT,
+                description="Filter by location ID"
+            ),
+            OpenApiParameter(
+                "country",
+                type=OpenApiTypes.STR,
+                description=(
+                    "Filter by country (case-insensitive)"
+                )
+            ),
+            OpenApiParameter(
+                "city",
+                type=OpenApiTypes.STR,
+                description="Filter by city (case-insensitive)"
+            ),
+            OpenApiParameter(
+                "user__username",
+                type=OpenApiTypes.STR,
+                description="Filter by author username"
+            ),
+            OpenApiParameter(
+                "created_at",
+                type=OpenApiTypes.DATE,
+                description=(
+                    "Filter by creation date (ex. ?created_at=2024-04-05)"
+                )
+            ),
+            OpenApiParameter(
+                "tags",
+                type={"type": "array", "items": {"type": "string"}},
+                style="form",
+                description="Filter by post tags"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List all posts, filter posts by various parameters.
+        """
+        return super().list(request, *args, **kwargs)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -123,6 +211,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             date_c = datetime.strptime(
                 created_date, "%Y-%m-%d"
             ).date()
+            queryset = queryset.filter(created_date__date=date_c)
 
         return queryset.distinct()
 
@@ -134,6 +223,34 @@ class CommentViewSet(viewsets.ModelViewSet):
             return CommentDetailSerializer
 
         return CommentSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "username",
+                type=OpenApiTypes.STR,
+                style="form",
+                description="Filter by commentator username"
+            ),
+            OpenApiParameter(
+                "created_at",
+                type=OpenApiTypes.DATE,
+                description=(
+                    "Filter by created creation date "
+                    "(ex. ?date=20024-04-05)"
+                )
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List all comments, find specific comment
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        return super().list(request, *args, **kwargs)
 
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -162,3 +279,29 @@ class LikeViewSet(viewsets.ModelViewSet):
             return LikeDetailSerializer
 
         return LikeSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "username",
+                type=OpenApiTypes.STR,
+                style="form",
+                description="Filter by liker username"
+            ),
+            OpenApiParameter(
+                "post_title",
+                type=OpenApiTypes.STR,
+                style="form",
+                description="Filer by liked post title"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List all likes, find specific like
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        return super().list(request, *args, **kwargs)
