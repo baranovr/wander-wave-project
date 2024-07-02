@@ -28,6 +28,11 @@ urlpatterns = [
         PostViewSet.as_view({"get": "author"}),
         name="author-profile"
     ),
+    path(
+        "posts/<int:user_id>/author-profile/subscribe/",
+        SubscribeView.as_view(),
+        name="subscribe"
+    ),
 ]
 
 app_name = "wander_wave"

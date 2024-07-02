@@ -262,6 +262,29 @@ class SubscribersListSerializer(serializers.ModelSerializer):
         read_only_fields = ("created_at",)
 
 
+class SubscribersDetailSerializer(SubscriptionSerializer):
+    avatar = serializers.CharField(source="subscriber.avatar", read_only=True)
+    username = serializers.CharField(
+        source="subscriber.username", read_only=True
+    )
+    email = serializers.CharField(
+        source="subscriber.email", read_only=True
+    )
+    full_name = serializers.CharField(
+        source="subscriber.full_name", read_only=True
+    )
+    about_user = serializers.CharField(
+        source="subscriber.about_me", read_only=True
+    )
+
+    class Meta:
+        model = Subscription
+        fields = (
+            "id", "avatar", "username", "full_name", "email", "about_user"
+        )
+        read_only_fields = ("created_at",)
+
+
 class AuthorProfileSerializer(MyProfileSerializer):
     posts = serializers.SerializerMethodField()
 
