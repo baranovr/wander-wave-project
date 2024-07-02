@@ -194,3 +194,55 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = ("id", "subscriber", "subscribed", "created_at")
         read_only_fields = ("created_at",)
+
+
+class SubscriptionsListSerializer(SubscriptionSerializer):
+    class Meta:
+        model = Subscription
+        fields = ("id", "subscribed",)
+
+
+class SubscriptionsDetailSerializer(SubscriptionSerializer):
+    avatar = serializers.CharField(source="subscribed.avatar", read_only=True)
+    username = serializers.CharField(
+        source="subscribed.username", read_only=True
+    )
+    email = serializers.CharField(
+        source="subscribed.email", read_only=True
+    )
+    full_name = serializers.CharField(
+        source="subscribed.full_name", read_only=True
+    )
+    about_user = serializers.CharField(
+        source="subscribed.about_me", read_only=True
+    )
+
+    class Meta:
+        model = Subscription
+        fields = (
+            "id", "avatar", "username", "full_name", "email", "about_user"
+        )
+        read_only_fields = ("created_at",)
+
+
+class SubscribersListSerializer(serializers.ModelSerializer):
+    avatar = serializers.CharField(source="subscriber.avatar", read_only=True)
+    username = serializers.CharField(
+        source="subscriber.username", read_only=True
+    )
+    email = serializers.CharField(
+        source="subscriber.email", read_only=True
+    )
+    full_name = serializers.CharField(
+        source="subscriber.full_name", read_only=True
+    )
+    about_user = serializers.CharField(
+        source="subscriber.about_me", read_only=True
+    )
+
+    class Meta:
+        model = Subscription
+        fields = (
+            "id", "avatar", "username", "full_name", "email", "about_user"
+        )
+        read_only_fields = ("created_at",)
