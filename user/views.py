@@ -27,7 +27,7 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
-class SubscribersView(APIView):
+class SubscribeView(APIView):
     def post(self, request, user_id):
         try:
             subscribed_user = get_user_model().objects.get(id=user_id)

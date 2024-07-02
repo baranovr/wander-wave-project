@@ -6,8 +6,12 @@ from wander_wave.views import (
     LocationViewSet,
     HashtagViewSet,
     CommentViewSet,
-    LikeViewSet
+    LikeViewSet,
+
 )
+
+from user.views import SubscribeView
+
 
 router = routers.DefaultRouter()
 
@@ -17,6 +21,13 @@ router.register("hashtags", HashtagViewSet, basename="hashtags")
 router.register("comments", CommentViewSet, basename="comments")
 router.register("likes", LikeViewSet, basename="likes")
 
-urlpatterns = router.urls
+urlpatterns = [
+    path("", include(router.urls)),
+    path(
+        "posts/<int:pk>/author-profile/",
+        PostViewSet.as_view({"get": "author"}),
+        name="author-profile"
+    ),
+]
 
 app_name = "wander_wave"

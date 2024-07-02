@@ -1,9 +1,13 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.response import Response
 
 from wander_wave.models import (
     Post,
@@ -29,7 +33,8 @@ from wander_wave.serializers import (
     CommentDetailSerializer,
     LikeSerializer,
     LikeListSerializer,
-    LikeDetailSerializer
+    LikeDetailSerializer,
+    AuthorProfileSerializer,
 )
 
 
@@ -106,13 +111,14 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        queryset = self.queryset
         location = self.request.query_params.get("location", None)
         country = self.request.query_params.get("country", None)
         city = self.request.query_params.get("city", None)
         username = self.request.query_params.get("user__username", None)
         created_at = self.request.query_params.get("created_at", None)
         tags = self.request.query_params.getlist("tags", None)
+
+        queryset = self.queryset
 
         if location:
             try:
@@ -148,6 +154,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
         return PostSerializer
 
+    @action(detail=True, methods=["GET"])
+    def author(self, request, pk=None):
+        post = self.get_object()
+        serializer = AuthorProfileSerializer(post.user)
+        
+        return Response(serializer.data)
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -159,7 +172,7 @@ class PostViewSet(viewsets.ModelViewSet):
                 "country",
                 type=OpenApiTypes.STR,
                 description=(
-                    "Filter by country (case-insensitive)"
+                        "Filter by country (case-insensitive)"
                 )
             ),
             OpenApiParameter(
@@ -176,7 +189,7 @@ class PostViewSet(viewsets.ModelViewSet):
                 "created_at",
                 type=OpenApiTypes.DATE,
                 description=(
-                    "Filter by creation date (ex. ?created_at=2024-04-05)"
+                        "Filter by creation date (ex. ?created_at=2024-04-05)"
                 )
             ),
             OpenApiParameter(
@@ -236,8 +249,8 @@ class CommentViewSet(viewsets.ModelViewSet):
                 "created_at",
                 type=OpenApiTypes.DATE,
                 description=(
-                    "Filter by created creation date "
-                    "(ex. ?date=20024-04-05)"
+                        "Filter by created creation date "
+                        "(ex. ?date=20024-04-05)"
                 )
             )
         ]

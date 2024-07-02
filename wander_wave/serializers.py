@@ -1,7 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.utils.text import Truncator
+from django.urls import reverse
 
 from rest_framework import serializers
 
+from user.serializers import MyProfileSerializer
 from wander_wave.models import (
     Post, Hashtag, Comment, Like, Subscription, Location
 )
@@ -156,6 +159,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(PostSerializer, PostListSerializer):
+    author_profile = serializers.SerializerMethodField()
     username = serializers.CharField(source="user.username", read_only=True)
     user_email = serializers.CharField(source="user.email", read_only=True)
     full_name = serializers.CharField(source="user.full_name", read_only=True)
@@ -166,6 +170,7 @@ class PostDetailSerializer(PostSerializer, PostListSerializer):
         model = Post
         fields = (
             "id",
+            "author_profile",
             "username",
             "user_status",
             "full_name",
@@ -179,6 +184,15 @@ class PostDetailSerializer(PostSerializer, PostListSerializer):
             "hashtags",
             "created_at",
             "updated_at",
+        )
+
+    def get_author_profile(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return None
+
+        return request.build_absolute_uri(
+            f"/api/platform/posts/{obj.pk}/author-profile/"
         )
 
 
@@ -246,3 +260,15 @@ class SubscribersListSerializer(serializers.ModelSerializer):
             "id", "avatar", "username", "full_name", "email", "about_user"
         )
         read_only_fields = ("created_at",)
+
+
+class AuthorProfileSerializer(MyProfileSerializer):
+    posts = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = MyProfileSerializer.Meta.fields
+
+    def get_posts(self, obj):
+        posts = Post.objects.filter(user=obj)
+        return PostListSerializer(posts, many=True).data
