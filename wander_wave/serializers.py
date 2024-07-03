@@ -166,6 +166,12 @@ class PostDetailSerializer(PostSerializer, PostListSerializer):
     user_status = serializers.CharField(source="user.status", read_only=True)
     comments = CommentInPostSerializer(many=True, read_only=True)
 
+    def get_content(self, obj):
+        return obj.content
+
+    def get_title(self, obj):
+        return obj.title
+
     class Meta:
         model = Post
         fields = (
