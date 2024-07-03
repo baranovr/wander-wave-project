@@ -160,6 +160,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(PostSerializer, PostListSerializer):
     author_profile = serializers.SerializerMethodField()
+    set_like = serializers.SerializerMethodField()
     username = serializers.CharField(source="user.username", read_only=True)
     user_email = serializers.CharField(source="user.email", read_only=True)
     full_name = serializers.CharField(source="user.full_name", read_only=True)
@@ -171,6 +172,24 @@ class PostDetailSerializer(PostSerializer, PostListSerializer):
 
     def get_title(self, obj):
         return obj.title
+
+    def get_author_profile(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return None
+
+        return request.build_absolute_uri(
+            f"/api/platform/posts/{obj.pk}/author-profile/"
+        )
+
+    def get_set_like(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return None
+
+        return request.build_absolute_uri(
+            f"/api/platform/posts/{obj.pk}/set-like/"
+        )
 
     class Meta:
         model = Post
@@ -190,15 +209,7 @@ class PostDetailSerializer(PostSerializer, PostListSerializer):
             "hashtags",
             "created_at",
             "updated_at",
-        )
-
-    def get_author_profile(self, obj):
-        request = self.context.get("request")
-        if request is None:
-            return None
-
-        return request.build_absolute_uri(
-            f"/api/platform/posts/{obj.pk}/author-profile/"
+            "set_like",
         )
 
 

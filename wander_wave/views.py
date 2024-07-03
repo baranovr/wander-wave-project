@@ -4,10 +4,11 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from wander_wave.models import (
     Post,
@@ -161,6 +162,24 @@ class PostViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.data)
 
+    @action(detail=True, methods=["POST"])
+    def set_like(self, request, pk=None):
+        post = self.get_object()
+        like, created = Like.objects.get_or_create(
+            user=request.user, post=post
+        )
+
+        if not created:
+            return Response(
+                {"message": "You have already liked this post!"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        like_serializer = LikeSerializer(like)
+        return Response(
+            like_serializer.data, status=status.HTTP_201_CREATED
+        )
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -266,7 +285,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
-class LikeViewSet(viewsets.ModelViewSet):
+class LikeViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet
+):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
 
