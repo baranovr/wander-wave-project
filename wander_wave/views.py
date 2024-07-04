@@ -155,6 +155,12 @@ class PostViewSet(viewsets.ModelViewSet):
 
         return PostSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     @action(detail=True, methods=["GET"])
     def author(self, request, pk=None):
         post = self.get_object()
@@ -256,6 +262,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         return CommentSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -316,6 +328,12 @@ class LikeViewSet(
             return LikeDetailSerializer
 
         return LikeSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @extend_schema(
         parameters=[
