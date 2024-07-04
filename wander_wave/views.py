@@ -10,6 +10,7 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from user.serializers import AuthorProfileSerializer
 from wander_wave.models import (
     Post,
     Location,
@@ -35,7 +36,6 @@ from wander_wave.serializers import (
     LikeSerializer,
     LikeListSerializer,
     LikeDetailSerializer,
-    AuthorProfileSerializer,
 )
 
 

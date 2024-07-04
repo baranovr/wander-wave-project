@@ -4,7 +4,6 @@ from django.urls import reverse
 
 from rest_framework import serializers
 
-from user.serializers import MyProfileSerializer
 from wander_wave.models import (
     Post, Hashtag, Comment, Like, Subscription, Location
 )
@@ -19,13 +18,13 @@ class HashtagSerializer(serializers.ModelSerializer):
 class HashtagListSerializer(HashtagSerializer):
     class Meta:
         model = Hashtag
-        fields = "__all__"
+        fields = HashtagSerializer.Meta.fields
 
 
 class HashtagDetailSerializer(HashtagSerializer):
     class Meta:
         model = Hashtag
-        fields = "__all__"
+        fields = HashtagSerializer.Meta.fields
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -37,13 +36,13 @@ class LocationSerializer(serializers.ModelSerializer):
 class LocationListSerializer(LocationSerializer):
     class Meta:
         model = Location
-        fields = "__all__"
+        fields = LocationSerializer.Meta.fields
 
 
 class LocationDetailSerializer(LocationSerializer):
     class Meta:
         model = Location
-        fields = "__all__"
+        fields = LocationSerializer.Meta.fields
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -66,7 +65,7 @@ class CommentListSerializer(CommentSerializer):
 class CommentDetailSerializer(CommentSerializer):
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = CommentSerializer.Meta.fields
 
 
 class CommentInPostSerializer(CommentSerializer):
@@ -300,15 +299,3 @@ class SubscribersDetailSerializer(SubscriptionSerializer):
             "id", "avatar", "username", "full_name", "email", "about_user"
         )
         read_only_fields = ("created_at",)
-
-
-class AuthorProfileSerializer(MyProfileSerializer):
-    posts = serializers.SerializerMethodField()
-
-    class Meta:
-        model = get_user_model()
-        fields = MyProfileSerializer.Meta.fields
-
-    def get_posts(self, obj):
-        posts = Post.objects.filter(user=obj)
-        return PostListSerializer(posts, many=True).data
