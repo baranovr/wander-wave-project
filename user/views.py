@@ -12,8 +12,7 @@ from wander_wave.models import Subscription
 from wander_wave.serializers import (
     SubscriptionsListSerializer,
     SubscriptionsDetailSerializer,
-    SubscribersListSerializer,
-    SubscribersDetailSerializer
+    SubscribersListSerializer, SubscribersDetailSerializer,
 )
 
 
@@ -68,7 +67,7 @@ class SubscribersListView(generics.ListAPIView):
         return Subscription.objects.filter(subscribed=self.request.user)
 
 
-class SubscribersDetailView(generics.RetrieveUpdateDestroyAPIView):
+class SubscribersDetailView(generics.RetrieveDestroyAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscribersDetailSerializer
 
@@ -87,7 +86,7 @@ class SubscriptionsListView(generics.ListAPIView):
         return Subscription.objects.filter(subscriber=self.request.user)
 
 
-class SubscriptionsDetailView(generics.RetrieveUpdateDestroyAPIView):
+class SubscriptionsDetailView(generics.RetrieveDestroyAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionsDetailSerializer
 

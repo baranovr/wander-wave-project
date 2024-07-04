@@ -65,7 +65,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MyProfileSerializer(UserSerializer):
-    posts =serializers.SerializerMethodField()
+    posts = serializers.SerializerMethodField()
 
     def get_posts(self, obj):
         posts = Post.objects.filter(user=obj)
@@ -99,12 +99,6 @@ class MyProfileSerializer(UserSerializer):
 
 
 class AuthorProfileSerializer(MyProfileSerializer):
-    posts = serializers.SerializerMethodField()
-
     class Meta:
         model = get_user_model()
         fields = MyProfileSerializer.Meta.fields
-
-    def get_posts(self, obj):
-        posts = Post.objects.filter(user=obj)
-        return PostListSerializer(posts, many=True).data
