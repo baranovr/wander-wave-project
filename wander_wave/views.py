@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status, mixins
@@ -161,6 +161,22 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=kwargs["pk"], user=self.request.user)
+        serializer = self.get_serializer(post, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=kwargs["pk"])
+        author = post.user
+
+        if author != self.request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=True, methods=["GET"])
     def author(self, request, pk=None):
         post = self.get_object()
@@ -268,6 +284,25 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, *args, **kwargs):
+        comment = get_object_or_404(
+            Comment, pk=kwargs["pk"], user=self.request.user
+        )
+        serializer = self.get_serializer(comment, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=kwargs["pk"])
+        author = post.user
+        commentator = comment.user
+
+        if author != self.request.user or commentator != self.request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        return super().destroy(request, *args, **kwargs)
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -299,7 +334,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class LikeViewSet(
     mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     GenericViewSet
 ):
@@ -329,12 +363,6 @@ class LikeViewSet(
 
         return LikeSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -360,3 +388,18 @@ class LikeViewSet(
         :return:
         """
         return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        like = get_object_or_404(Like, pk=kwargs["pk"])
+        liker = like.user
+
+        if liker != request.user:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return super().destroy(request, *args, **kwargs)
