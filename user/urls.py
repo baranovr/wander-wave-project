@@ -12,7 +12,12 @@ from user.views import (
     SubscriptionsListView,
     SubscribersListView,
     SubscriptionsDetailView,
-    SubscribersDetailView
+    SubscribersDetailView,
+)
+
+from wander_wave.views import (
+    FavoriteListView,
+    FavoriteDetailView,
 )
 
 
@@ -42,6 +47,18 @@ urlpatterns = [
         "my_profile/subscribers/<int:pk>/",
         SubscribersDetailView.as_view(),
         name="subscribers-detail"
+    ),
+
+    path(
+        "my_profile/my_favorites/",
+        FavoriteListView.as_view(),
+        name="my_favorites"
+
+    ),
+    path(
+        "my_profile/my_favorites/<int:pk>/",
+        FavoriteDetailView.as_view(),
+        name="my_favorites-detail"
     )
 ]
 

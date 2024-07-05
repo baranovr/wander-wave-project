@@ -40,6 +40,11 @@ urlpatterns = [
         name="set-like",
     ),
     path(
+        "posts/<int:pk>/add-to-favorites/",
+        PostViewSet.as_view({"post": "add_to_favorites"}),
+        name="add-to-favorites",
+    ),
+    path(
         "posts/<int:user_id>/author-profile/subscribe/",
         SubscriptionView.as_view(),
         name="subscribe"

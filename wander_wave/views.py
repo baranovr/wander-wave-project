@@ -6,7 +6,8 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView, \
+    RetrieveDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -17,7 +18,7 @@ from wander_wave.models import (
     Like,
     Comment,
     Subscription,
-    Hashtag
+    Hashtag, Favorite
 )
 
 from wander_wave.serializers import (
@@ -35,7 +36,8 @@ from wander_wave.serializers import (
     CommentDetailSerializer,
     LikeSerializer,
     LikeListSerializer,
-    LikeDetailSerializer,
+    LikeDetailSerializer, FavoriteSerializer, FavoriteListSerializer,
+    FavoriteDetailSerializer,
 )
 
 
@@ -204,6 +206,26 @@ class PostViewSet(viewsets.ModelViewSet):
             like_serializer.data, status=status.HTTP_201_CREATED
         )
 
+    @action(detail=True, methods=["POST"])
+    def add_to_favorites(self, request, pk=None):
+        post = self.get_object()
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user, post=post
+        )
+
+        if not created:
+            return Response(
+                {"message": "You have already favorited this post!"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        favorite_serializer = FavoriteSerializer(favorite)
+        return Response(
+            favorite_serializer.data, status=status.HTTP_201_CREATED
+        )
+
+
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -276,7 +298,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         if username:
-            queryset = self.queryset.filter(username=username)
+            queryset = self.queryset.filter(username__icontains=username)
 
         if created_date:
             date_c = datetime.strptime(
@@ -364,10 +386,10 @@ class LikeViewSet(
         queryset = self.queryset
 
         if username:
-            queryset = self.queryset.filter(username=username)
+            queryset = self.queryset.filter(username__icontains=username)
 
         if post_title:
-            queryset = self.queryset.filter(title=post_title)
+            queryset = self.queryset.filter(title__icontains=post_title)
 
         return queryset.distinct()
 
@@ -420,3 +442,21 @@ class LikeViewSet(
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return super().destroy(request, *args, **kwargs)
+
+
+class FavoriteListView(ListAPIView):
+    serializer_class = FavoriteListSerializer
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+
+
+class FavoriteDetailView(RetrieveDestroyAPIView):
+    serializer_class = FavoriteDetailSerializer
+
+    def get_object(self):
+        favorite_id = self.kwargs["pk"]
+        favorite = Favorite.objects.get(
+            pk=favorite_id, user=self.request.user
+        )
+        return favorite

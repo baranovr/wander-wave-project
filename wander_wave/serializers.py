@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from wander_wave.models import (
-    Post, Hashtag, Comment, Like, Subscription, Location
+    Post, Hashtag, Comment, Like, Subscription, Location, Favorite
 )
 
 
@@ -163,6 +163,7 @@ class PostDetailSerializer(
 ):
     author_profile = serializers.SerializerMethodField()
     set_like = serializers.SerializerMethodField()
+    add_to_favorites = serializers.SerializerMethodField()
     username = serializers.CharField(source="user.username", read_only=True)
     user_email = serializers.CharField(source="user.email", read_only=True)
     full_name = serializers.CharField(source="user.full_name", read_only=True)
@@ -193,6 +194,15 @@ class PostDetailSerializer(
             f"/api/platform/posts/{obj.pk}/set-like/"
         )
 
+    def get_add_to_favorites(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return None
+
+        return request.build_absolute_uri(
+            f"/api/platform/posts/{obj.pk}/add-to-favorites/"
+        )
+
     class Meta:
         model = Post
         fields = (
@@ -212,7 +222,30 @@ class PostDetailSerializer(
             "created_at",
             "updated_at",
             "set_like",
+            "add_to_favorites",
         )
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = ("id", "post")
+
+
+class FavoriteListSerializer(FavoriteSerializer):
+    post = PostListSerializer(read_only=True)
+
+    class Meta:
+        model = Favorite
+        fields = FavoriteSerializer.Meta.fields
+
+
+class FavoriteDetailSerializer(FavoriteSerializer):
+    post = PostDetailSerializer(read_only=True)
+
+    class Meta:
+        model = Favorite
+        fields = FavoriteSerializer.Meta.fields
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
