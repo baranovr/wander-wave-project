@@ -94,6 +94,18 @@ class Like(models.Model):
         return f"{self.user} - {self.post}"
 
 
+class Favorite(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="favorites"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return f"{self.user} - {self.post}"
+
+
 class Subscription(models.Model):
     subscriber = models.ForeignKey(
         get_user_model(),
