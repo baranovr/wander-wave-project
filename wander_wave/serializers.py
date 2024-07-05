@@ -134,7 +134,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
     def get_content(self, obj):
         content = obj.content
-        return Truncator(content).chars(30)
+        return Truncator(content).chars(130)
 
     def get_title(self, obj):
         return Truncator(obj.title).chars(50)
