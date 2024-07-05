@@ -7,15 +7,21 @@ from wander_wave.views import (
     HashtagViewSet,
     CommentViewSet,
     LikeViewSet,
+    SubscriptionsPostViewSet,
 
 )
 
-from user.views import SubscribeView
+from user.views import SubscriptionView
 
 
 router = routers.DefaultRouter()
 
 router.register("posts", PostViewSet, basename="posts")
+router.register(
+    "subscriptions-posts",
+    SubscriptionsPostViewSet,
+    basename="subscribed-posts"
+)
 router.register("locations", LocationViewSet, basename="locations")
 router.register("hashtags", HashtagViewSet, basename="hashtags")
 router.register("comments", CommentViewSet, basename="comments")
@@ -35,7 +41,7 @@ urlpatterns = [
     ),
     path(
         "posts/<int:user_id>/author-profile/subscribe/",
-        SubscribeView.as_view(),
+        SubscriptionView.as_view(),
         name="subscribe"
     ),
 ]

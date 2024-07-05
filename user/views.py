@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -9,10 +8,13 @@ from rest_framework import status
 from user.serializers import UserSerializer, MyProfileSerializer
 
 from wander_wave.models import Subscription
+
 from wander_wave.serializers import (
     SubscriptionsListSerializer,
     SubscriptionsDetailSerializer,
-    SubscribersListSerializer, SubscribersDetailSerializer,
+    SubscribersListSerializer,
+    SubscribersDetailSerializer,
+    SubscriptionSerializer,
 )
 
 
@@ -28,36 +30,44 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
-class SubscribeView(APIView):
+class SubscriptionView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request, user_id):
         try:
             subscribed_user = get_user_model().objects.get(id=user_id)
         except get_user_model().DoesNotExist:
             return Response(
-                {"message": "User not found"},
+                {"error": "User not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if subscribed_user == request.user:
             return Response(
-                {"message": "You cannot subscribe to yourself!"},
+                {"error": "You cannot subscribe to yourself"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        subscription, created = Subscription.objects.get_or_create(
-            subscriber=request.user, subscribed=subscribed_user
-        )
-
-        if not created:
+        try:
+            subscription, created = Subscription.objects.get_or_create(
+                subscriber=request.user,
+                subscribed=subscribed_user
+            )
+            if created:
+                return Response(
+                    {"message": "Successfully subscribed"},
+                    status=status.HTTP_201_CREATED
+                )
+            else:
+                return Response(
+                    {"message": "You are already subscribed to this user"},
+                    status=status.HTTP_200_OK
+                )
+        except IntegrityError:
             return Response(
-                {"message": "You are already subscribed"},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "Subscription could not be created"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        return Response(
-            {"message": "Subscription created successfully"},
-            status=status.HTTP_201_CREATED
-        )
 
 
 class SubscribersListView(generics.ListAPIView):

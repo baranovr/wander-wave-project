@@ -162,7 +162,9 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        post = get_object_or_404(Post, pk=kwargs["pk"], user=self.request.user)
+        post = get_object_or_404(
+            Post, pk=kwargs["pk"], user=self.request.user
+        )
         serializer = self.get_serializer(post, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -246,6 +248,21 @@ class PostViewSet(viewsets.ModelViewSet):
         List all posts, filter posts by various parameters.
         """
         return super().list(request, *args, **kwargs)
+
+
+class SubscriptionsPostViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = PostListSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        subscribed_users = (
+            Subscription.objects.filter(
+                subscriber=user
+            ).values_list("subscribed", flat=True)
+        )
+        return Post.objects.filter(
+            user__in=subscribed_users
+        ).order_by("-created_at")
 
 
 class CommentViewSet(viewsets.ModelViewSet):
