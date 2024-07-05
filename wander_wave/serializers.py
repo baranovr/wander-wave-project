@@ -1,11 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.utils.text import Truncator
-from django.urls import reverse
 
 from rest_framework import serializers
 
 from wander_wave.models import (
-    Post, Hashtag, Comment, Like, Subscription, Location, Favorite
+    Post,
+    Hashtag,
+    Comment,
+    Like,
+    Subscription,
+    Location,
+    Favorite,
 )
 
 
@@ -310,4 +315,3 @@ class SubscribersDetailSerializer(SubscribersListSerializer):
     class Meta:
         model = Subscription
         fields = SubscribersListSerializer.Meta.fields
-

@@ -2,12 +2,18 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
+
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, status, mixins
+
+from rest_framework import viewsets, status, mixins, permissions
 from rest_framework.decorators import action
-from rest_framework.generics import RetrieveAPIView, ListAPIView, \
+from rest_framework.generics import (
+    RetrieveAPIView,
+    ListAPIView,
     RetrieveDestroyAPIView
+)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -18,9 +24,9 @@ from wander_wave.models import (
     Like,
     Comment,
     Subscription,
-    Hashtag, Favorite
+    Hashtag,
+    Favorite,
 )
-
 from wander_wave.serializers import (
     PostSerializer,
     PostDetailSerializer,
@@ -36,7 +42,9 @@ from wander_wave.serializers import (
     CommentDetailSerializer,
     LikeSerializer,
     LikeListSerializer,
-    LikeDetailSerializer, FavoriteSerializer, FavoriteListSerializer,
+    LikeDetailSerializer,
+    FavoriteSerializer,
+    FavoriteListSerializer,
     FavoriteDetailSerializer,
 )
 
