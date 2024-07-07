@@ -72,6 +72,7 @@ class SubscriptionView(APIView):
 
 class SubscribersListView(generics.ListAPIView):
     serializer_class = SubscribersListSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Subscription.objects.filter(subscribed=self.request.user)
@@ -80,6 +81,7 @@ class SubscribersListView(generics.ListAPIView):
 class SubscribersDetailView(generics.RetrieveDestroyAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscribersDetailSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         subscription_id = self.kwargs.get("pk")
@@ -91,6 +93,7 @@ class SubscribersDetailView(generics.RetrieveDestroyAPIView):
 
 class SubscriptionsListView(generics.ListAPIView):
     serializer_class = SubscriptionsListSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Subscription.objects.filter(subscriber=self.request.user)
@@ -99,6 +102,7 @@ class SubscriptionsListView(generics.ListAPIView):
 class SubscriptionsDetailView(generics.RetrieveDestroyAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionsDetailSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         subscription_id = self.kwargs.get("pk")

@@ -13,7 +13,12 @@ from rest_framework.generics import (
     ListAPIView,
     RetrieveDestroyAPIView
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    AllowAny,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -53,6 +58,12 @@ class HashtagViewSet(viewsets.ModelViewSet):
     queryset = Hashtag.objects.all()
     serializer_class = HashtagSerializer
 
+    def get_permissions(self):
+        if self.action == "create" or self.action == "destroy":
+            return [IsAdminUser()]
+        else:
+            return [IsAuthenticated()]
+
     def get_serializer_class(self):
         if self.action == "list":
             return HashtagListSerializer
@@ -66,6 +77,12 @@ class HashtagViewSet(viewsets.ModelViewSet):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+    def get_permissions(self):
+        if self.action == "create" or self.action == "destroy":
+            return [IsAdminUser()]
+        else:
+            return [IsAuthenticated()]
 
     def get_queryset(self):
         city = self.request.query_params.get("city", None)
@@ -120,6 +137,14 @@ class LocationViewSet(viewsets.ModelViewSet):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [permissions.AllowAny()]
+        elif self.action == "retrieve":
+            return [permissions.IsAuthenticatedOrReadOnly()]
+        else:
+            return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         location = self.request.query_params.get("location", None)
@@ -282,6 +307,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class SubscriptionsPostViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PostListSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         user = self.request.user
@@ -298,6 +324,12 @@ class SubscriptionsPostViewSet(viewsets.ReadOnlyModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [permissions.AllowAny()]
+        else:
+            return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         username = self.request.query_params.get("user__username", None)
@@ -386,6 +418,7 @@ class LikeViewSet(
 ):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         username = self.request.query_params.get("user__username", None)
@@ -454,6 +487,7 @@ class LikeViewSet(
 
 class FavoriteListView(ListAPIView):
     serializer_class = FavoriteListSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
@@ -461,6 +495,7 @@ class FavoriteListView(ListAPIView):
 
 class FavoriteDetailView(RetrieveDestroyAPIView):
     serializer_class = FavoriteDetailSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         favorite_id = self.kwargs["pk"]
