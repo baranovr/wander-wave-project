@@ -15,6 +15,9 @@ from wander_wave.models import (
 )
 
 
+POSTS_URL = "/api/platform/posts/"
+
+
 class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hashtag
@@ -227,7 +230,7 @@ class PostDetailSerializer(
             return None
 
         return request.build_absolute_uri(
-            f"/api/platform/posts/{obj.pk}/author-profile/"
+            f"{POSTS_URL}{obj.pk}/author-profile/"
         )
 
     def get_set_like(self, obj):
@@ -236,7 +239,7 @@ class PostDetailSerializer(
             return None
 
         return request.build_absolute_uri(
-            f"/api/platform/posts/{obj.pk}/set-like/"
+            f"{POSTS_URL}{obj.pk}/set-like/"
         )
 
     def get_add_to_favorites(self, obj):
@@ -245,7 +248,7 @@ class PostDetailSerializer(
             return None
 
         return request.build_absolute_uri(
-            f"/api/platform/posts/{obj.pk}/add-to-favorites/"
+            f"{POSTS_URL}{obj.pk}/add-to-favorites/"
         )
 
     class Meta:
