@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
-from rest_framework import viewsets, status, mixins, permissions
+from rest_framework import viewsets, status, mixins, permissions, generics
 from rest_framework.decorators import action
 from rest_framework.generics import (
     RetrieveAPIView,
@@ -134,6 +134,44 @@ class LocationViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
+class HashtagAutocompleteView(generics.ListCreateAPIView):
+    serializer_class = HashtagSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params.get("q", "")
+        return Hashtag.objects.filter(name__icontains__istartswith=query)[:10]
+
+    def create(self, request, *args, **kwargs):
+        name = request.data.get("name", "")
+        hashtag, created = Hashtag.objects.get_or_create(name=name)
+        serializer = self.get_serializer(hashtag)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
+
+
+class LocationAutocomplete(generics.ListCreateAPIView):
+    serializer_class = LocationSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params.get("q", "")
+        return Location.objects.filter(
+            name__icontains__istartswith=query
+        )[:10]
+
+    def create(self, request, *args, **kwargs):
+        location = request.data.get("location", "")
+        location_in, created = Location.objects.get_or_create(
+            location=location
+        )
+        serializer = self.get_serializer(location_in)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
+
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -256,8 +294,6 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(
             favorite_serializer.data, status=status.HTTP_201_CREATED
         )
-
-
 
     @extend_schema(
         parameters=[
@@ -480,7 +516,7 @@ class LikeViewSet(
         liker = like.user
 
         if liker != request.user:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
         return super().destroy(request, *args, **kwargs)
 

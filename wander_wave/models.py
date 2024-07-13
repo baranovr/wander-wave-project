@@ -35,8 +35,8 @@ def post_photo_path(instance, filename):
 
 
 class Post(models.Model):
-    photos = models.ImageField(
-        upload_to=post_photo_path, blank=True, null=True
+    photos = models.ManyToManyField(
+        "PostPhoto", related_name='posts', blank=True
     )
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, related_name="posts"
@@ -56,6 +56,17 @@ class Post(models.Model):
     class Meta:
         ordering = ["created_at"]
         unique_together = (("user", "title"),)
+
+
+class PostPhoto(models.Model):
+    post = models.ForeignKey(
+        Post, related_name='post_photos', on_delete=models.CASCADE
+    )
+    photo = models.ImageField(upload_to=post_photo_path)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Photo for {self.post.title}"
 
 
 class Comment(models.Model):

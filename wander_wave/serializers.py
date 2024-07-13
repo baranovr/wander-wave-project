@@ -11,6 +11,7 @@ from wander_wave.models import (
     Subscription,
     Location,
     Favorite,
+    PostPhoto,
 )
 
 
@@ -79,19 +80,58 @@ class CommentInPostSerializer(CommentSerializer):
         fields = ("id", "text", "user", "created_date", "updated_date")
 
 
+class PostPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostPhoto
+        fields = ("id", "photo")
+
+
 class PostSerializer(serializers.ModelSerializer):
+    post_photos = PostPhotoSerializer(many=True, read_only=True)
+    photos = serializers.ListField(
+        child=serializers.ImageField(
+            max_length=1000000,
+            allow_empty_file=False,
+            use_url=False
+        ),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Post
         fields = (
             "id",
-            "photos",
             "location",
             "title",
+            "post_photos",
+            "photos",
             "content",
+            "user",
             "hashtags",
             "created_at",
             "updated_at",
         )
+
+    def create(self, validated_data):
+        photos = validated_data.pop("photos", [])
+        post = Post.objects.create(**validated_data)
+
+        for photo in photos:
+            PostPhoto.objects.create(post=post, photo=photo)
+
+        return post
+
+    def update(self, instance, validated_data):
+        photos = validated_data.pop("photos", None)
+        instance = super().update(instance, validated_data)
+
+        if photos is not None:
+            instance.post_photos.all().delete()
+            for photo in photos:
+                PostPhoto.objects.create(post=instance, photo=photo)
+
+        return instance
 
 
 class LikeSerializer(serializers.ModelSerializer):

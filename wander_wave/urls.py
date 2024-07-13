@@ -8,6 +8,8 @@ from wander_wave.views import (
     CommentViewSet,
     LikeViewSet,
     SubscriptionsPostViewSet,
+    LocationAutocomplete,
+    HashtagAutocompleteView,
 
 )
 
@@ -29,6 +31,18 @@ router.register("likes", LikeViewSet, basename="likes")
 
 urlpatterns = [
     path("", include(router.urls)),
+
+    path(
+        "hashtags/autocomplete/",
+        HashtagAutocompleteView.as_view(),
+        name="hashtag-autocomplete"
+    ),
+    path(
+        "locations/autocomplete/",
+        LocationAutocomplete.as_view(),
+        name="location-autocomplete"
+    ),
+
     path(
         "posts/<int:pk>/author-profile/",
         PostViewSet.as_view({"get": "author"}),
