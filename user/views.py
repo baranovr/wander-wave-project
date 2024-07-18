@@ -1,22 +1,26 @@
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 
-from rest_framework import generics
+from rest_framework import generics, mixins
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from user.serializers import UserSerializer, MyProfileSerializer
+from user.serializers import (
+    UserSerializer,
+    MyProfileSerializer,
+    AuthorProfileSerializer
+)
 
 from wander_wave.models import Subscription
 
 from wander_wave.serializers import (
     SubscriptionsListSerializer,
-    SubscriptionsDetailSerializer,
     SubscribersListSerializer,
-    SubscribersDetailSerializer,
     SubscriptionSerializer,
 )
 
@@ -120,43 +124,55 @@ class UnsubscribeView(APIView):
             )
 
 
-class SubscribersListView(generics.ListAPIView):
-    serializer_class = SubscribersListSerializer
+class SubscribersViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet
+):
+    serializer_class = SubscriptionSerializer
     permission_classes = (IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return SubscribersListSerializer
+
+        return SubscriptionSerializer
 
     def get_queryset(self):
         return Subscription.objects.filter(subscribed=self.request.user)
 
+    @action(detail=True, methods=["GET"])
+    def view_more(self, request, pk=None):
+        sub = self.get_object()
+        serializer = AuthorProfileSerializer(sub.subscriber)
+        return Response(serializer.data)
 
-class SubscribersDetailView(generics.RetrieveDestroyAPIView):
-    queryset = Subscription.objects.all()
-    serializer_class = SubscribersDetailSerializer
+    @action(detail=True, methods=["POST"])
+    def destroy(self, request, *args, **kwargs):
+        sub = self.get_object()
+
+
+class SubscriptionsViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet
+):
+    serializer_class = SubscriptionSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
-        subscription_id = self.kwargs.get("pk")
-        subscription = Subscription.objects.get(
-            id=subscription_id, subscribed=self.request.user
-        )
-        return subscription
+    def get_serializer_class(self):
+        if self.action == "list":
+            return SubscriptionsListSerializer
 
-
-class SubscriptionsListView(generics.ListAPIView):
-    serializer_class = SubscriptionsListSerializer
-    permission_classes = (IsAuthenticated,)
+        return SubscriptionSerializer
 
     def get_queryset(self):
         return Subscription.objects.filter(subscriber=self.request.user)
 
-
-class SubscriptionsDetailView(generics.RetrieveDestroyAPIView):
-    queryset = Subscription.objects.all()
-    serializer_class = SubscriptionsDetailSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_object(self):
-        subscription_id = self.kwargs.get("pk")
-        subscription = Subscription.objects.get(
-            id=subscription_id, subscriber=self.request.user
-        )
-        return subscription
+    @action(detail=True, methods=["GET"])
+    def view_more(self, request, pk=None):
+        sub = self.get_object()
+        serializer = AuthorProfileSerializer(sub.subscribed)
+        return Response(serializer.data)

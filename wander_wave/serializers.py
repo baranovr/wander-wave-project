@@ -16,6 +16,8 @@ from wander_wave.models import (
 
 
 POSTS_URL = "/api/platform/posts/"
+SUBSCRIBERS_URL = "/api/user/my_profile/subscribers/"
+SUBSCRIPTIONS_URL = "/api/user/my_profile/subscriptions/"
 
 
 class HashtagSerializer(serializers.ModelSerializer):
@@ -305,50 +307,74 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionsListSerializer(SubscriptionSerializer):
-    class Meta:
-        model = Subscription
-        fields = ("id", "subscribed",)
-
-
-class SubscriptionsDetailSerializer(SubscriptionSerializer):
     avatar = serializers.CharField(source="subscribed.avatar", read_only=True)
     username = serializers.CharField(
         source="subscribed.username", read_only=True
     )
+    status = serializers.CharField(source="subscribed.status", read_only=True)
     email = serializers.CharField(
         source="subscribed.email", read_only=True
     )
     full_name = serializers.CharField(
         source="subscribed.full_name", read_only=True
     )
-    about_user = serializers.CharField(
-        source="subscribed.about_me", read_only=True
-    )
+    view_more = serializers.SerializerMethodField()
+
+    def get_view_more(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return None
+
+        return request.build_absolute_uri(
+            f"{SUBSCRIPTIONS_URL}{obj.pk}/view_more/"
+        )
 
     class Meta:
         model = Subscription
         fields = (
-            "id", "avatar", "username", "full_name", "email", "about_user"
+            "id",
+            "avatar",
+            "username",
+            "status",
+            "email",
+            "full_name",
+            "view_more"
         )
-        read_only_fields = ("created_at",)
 
 
-class SubscribersListSerializer(serializers.ModelSerializer):
+class SubscribersListSerializer(SubscriptionSerializer):
     avatar = serializers.CharField(source="subscriber.avatar", read_only=True)
     username = serializers.CharField(
         source="subscriber.username", read_only=True
     )
+    status = serializers.CharField(
+        source="subscriber.status", read_only=True
+    )
+    email = serializers.CharField(
+        source="subscriber.email", read_only=True
+    )
     full_name = serializers.CharField(
         source="subscriber.full_name", read_only=True
     )
+    view_more = serializers.SerializerMethodField()
+
+    def get_view_more(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return None
+
+        return request.build_absolute_uri(
+            f"{SUBSCRIBERS_URL}{obj.pk}/view_more/"
+        )
 
     class Meta:
         model = Subscription
-        fields = ("id", "avatar", "username", "full_name",)
-        read_only_fields = ("created_at",)
-
-
-class SubscribersDetailSerializer(SubscribersListSerializer):
-    class Meta:
-        model = Subscription
-        fields = SubscribersListSerializer.Meta.fields
+        fields = (
+            "id",
+            "avatar",
+            "username",
+            "status",
+            "email",
+            "full_name",
+            "view_more"
+        )

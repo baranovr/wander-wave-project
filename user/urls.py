@@ -10,10 +10,8 @@ from user.views import (
     CreateUserViewSet,
     LogoutView,
     MyProfileView,
-    SubscriptionsListView,
-    SubscribersListView,
-    SubscriptionsDetailView,
-    SubscribersDetailView,
+    SubscriptionsViewSet,
+    SubscribersViewSet,
 )
 
 from wander_wave.views import (
@@ -33,21 +31,22 @@ urlpatterns = [
 
     path(
         "my_profile/subscriptions/",
-        SubscriptionsListView.as_view(),
+        SubscriptionsViewSet.as_view({"get": "list"}),
         name="subscriptions"
     ),
     path(
-        "my_profile/subscriptions/<int:pk>/",
-        SubscriptionsDetailView.as_view(),
-        name="subscriptions-detail"),
+        "my_profile/subscriptions/<int:pk>/view_more/",
+        SubscriptionsViewSet.as_view({"get": "view_more"}),
+        name="subscriptions-detail"
+    ),
     path(
         "my_profile/subscribers/",
-        SubscribersListView.as_view(),
+        SubscribersViewSet.as_view({"get": "list"}),
         name="subscribers"
     ),
     path(
-        "my_profile/subscribers/<int:pk>/",
-        SubscribersDetailView.as_view(),
+        "my_profile/subscribers/<int:pk>/view_more/",
+        SubscribersViewSet.as_view({"get": "view_more"}),
         name="subscribers-detail"
     ),
 
