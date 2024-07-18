@@ -34,17 +34,23 @@ def post_photo_path(instance, filename):
     return os.path.join("uploads/posts_photos/", filename)
 
 
+# class PostPhoto(models.Model):
+#     post = models.ForeignKey("Post", on_delete=models.CASCADE)
+#     photo = models.ImageField(upload_to=post_photo_path)
+
+
 class Post(models.Model):
-    photos = models.ManyToManyField(
-        "PostPhoto", related_name='posts', blank=True
-    )
+    photo = models.ImageField(upload_to=post_photo_path, null=True, blank=True)
     location = models.ForeignKey(
-        Location, on_delete=models.CASCADE, related_name="posts"
+        Location, on_delete=models.CASCADE,
+        related_name="posts",
+        null=True,
+        blank=True
     )
     title = models.CharField(max_length=255)
     content = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
     )
     hashtags = models.ManyToManyField(Hashtag)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -56,17 +62,6 @@ class Post(models.Model):
     class Meta:
         ordering = ["created_at"]
         unique_together = (("user", "title"),)
-
-
-class PostPhoto(models.Model):
-    post = models.ForeignKey(
-        Post, related_name='post_photos', on_delete=models.CASCADE
-    )
-    photo = models.ImageField(upload_to=post_photo_path)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Photo for {self.post.title}"
 
 
 class Comment(models.Model):

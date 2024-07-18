@@ -59,7 +59,7 @@ class HashtagViewSet(viewsets.ModelViewSet):
     serializer_class = HashtagSerializer
 
     def get_permissions(self):
-        if self.action == "create" or self.action == "destroy":
+        if self.action == "destroy":
             return [IsAdminUser()]
         else:
             return [IsAuthenticated()]
@@ -79,7 +79,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     serializer_class = LocationSerializer
 
     def get_permissions(self):
-        if self.action == "create" or self.action == "destroy":
+        if self.action == "destroy":
             return [IsAdminUser()]
         else:
             return [IsAuthenticated()]
@@ -355,6 +355,13 @@ class SubscriptionsPostViewSet(viewsets.ReadOnlyModelViewSet):
         return Post.objects.filter(
             user__in=subscribed_users
         ).order_by("-created_at")
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return PostListSerializer
+
+        if self.action == "retrieve":
+            return PostDetailSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):

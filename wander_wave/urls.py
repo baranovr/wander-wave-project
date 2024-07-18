@@ -13,8 +13,7 @@ from wander_wave.views import (
 
 )
 
-from user.views import SubscriptionView
-
+from user.views import SubscriptionView, UnsubscribeView
 
 router = routers.DefaultRouter()
 
@@ -62,6 +61,11 @@ urlpatterns = [
         "posts/<int:user_id>/author-profile/subscribe/",
         SubscriptionView.as_view(),
         name="subscribe"
+    ),
+    path(
+        "posts/<int:user_id>/author-profile/unsubscribe/",
+        UnsubscribeView.as_view(),
+        name="unsubscribe"
     ),
 ]
 

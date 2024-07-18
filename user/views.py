@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
+
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -82,6 +84,39 @@ class SubscriptionView(APIView):
             return Response(
                 {"error": "Subscription could not be created"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class UnsubscribeView(APIView):
+    def delete(self, request, user_id):
+        try:
+            subscribed_user = get_user_model().objects.get(id=user_id)
+        except get_user_model().DoesNotExist:
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if subscribed_user == request.user:
+            return Response(
+                {"error": "You cannot unsubscribe to yourself"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            subscription = Subscription.objects.get(
+                subscriber=request.user,
+                subscribed=subscribed_user
+            )
+            subscription.delete()
+            return Response(
+                {"message": "You are unsubscribed from this user"},
+                status=status.HTTP_200_OK
+            )
+        except Subscription.DoesNotExist:
+            return Response(
+                {"error": "You are not subscribed to this user"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
 

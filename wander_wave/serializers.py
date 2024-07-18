@@ -11,7 +11,7 @@ from wander_wave.models import (
     Subscription,
     Location,
     Favorite,
-    PostPhoto,
+    # PostPhoto,
 )
 
 
@@ -83,32 +83,31 @@ class CommentInPostSerializer(CommentSerializer):
         fields = ("id", "text", "user", "created_date", "updated_date")
 
 
-class PostPhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PostPhoto
-        fields = ("id", "photo")
+# class PostPhotoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PostPhoto
+#         fields = "__all__"
 
 
 class PostSerializer(serializers.ModelSerializer):
-    post_photos = PostPhotoSerializer(many=True, read_only=True)
-    photos = serializers.ListField(
-        child=serializers.ImageField(
-            max_length=1000000,
-            allow_empty_file=False,
-            use_url=False
-        ),
-        write_only=True,
-        required=False
-    )
+    # photos = PostPhotoSerializer(many=True, read_only=True)
+    # uploaded_photos = serializers.ListField(
+    #     child=serializers.ImageField(
+    #         allow_empty_file=False,
+    #         use_url=False,
+    #         write_only=True
+    #     )
+    # )
 
     class Meta:
         model = Post
         fields = (
             "id",
             "location",
+            "photo",
+            # "photos",
+            # "uploaded_photos",
             "title",
-            "post_photos",
-            "photos",
             "content",
             "user",
             "hashtags",
@@ -116,25 +115,14 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    def create(self, validated_data):
-        photos = validated_data.pop("photos", [])
-        post = Post.objects.create(**validated_data)
-
-        for photo in photos:
-            PostPhoto.objects.create(post=post, photo=photo)
-
-        return post
-
-    def update(self, instance, validated_data):
-        photos = validated_data.pop("photos", None)
-        instance = super().update(instance, validated_data)
-
-        if photos is not None:
-            instance.post_photos.all().delete()
-            for photo in photos:
-                PostPhoto.objects.create(post=instance, photo=photo)
-
-        return instance
+    # def create(self, validated_data):
+    #     uploaded_photos = validated_data.pop("uploaded_photos")
+    #     post = Post.objects.create(**validated_data)
+    #
+    #     for photo in uploaded_photos:
+    #         PostPhoto.objects.create(post=post, photo=photo)
+    #
+    #     return post
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -168,11 +156,14 @@ class LikeDetailSerializer(LikeSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     hashtags = HashtagSerializer(many=True, read_only=True)
+    location = LocationDetailSerializer(read_only=True)
+
+    likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
-    location = LocationDetailSerializer(read_only=True)
-    likes_count = serializers.SerializerMethodField()
+
+    # photos = PostPhotoSerializer(many=True, read_only=True)
 
     def get_likes_count(self, obj):
         return Like.objects.filter(post=obj).count()
@@ -192,7 +183,8 @@ class PostListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
-            "photos",
+            "photo",
+            # "photos",
             "location",
             "title",
             "content",
@@ -212,6 +204,7 @@ class PostDetailSerializer(
     author_profile = serializers.SerializerMethodField()
     set_like = serializers.SerializerMethodField()
     add_to_favorites = serializers.SerializerMethodField()
+
     username = serializers.CharField(source="user.username", read_only=True)
     user_email = serializers.CharField(source="user.email", read_only=True)
     full_name = serializers.CharField(source="user.full_name", read_only=True)
@@ -260,7 +253,8 @@ class PostDetailSerializer(
             "user_status",
             "full_name",
             "user_email",
-            "photos",
+            "photo",
+            # "photos",
             "location",
             "title",
             "likes_count",
