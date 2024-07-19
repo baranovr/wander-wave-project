@@ -8,6 +8,30 @@ from django.utils.text import slugify
 from wander_wave_project import settings
 
 
+class PostNotification(models.Model):
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="post_notifications"
+    )
+    post = models.ForeignKey("Post", on_delete=models.CASCADE)
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_post_notifications"
+    )
+    text = models.CharField(max_length=355)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at',]
+
+    def __str__(self):
+        return (f"Notification for {self.recipient.username} "
+                f"about {self.post.title}")
+
+
 class Location(models.Model):
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)

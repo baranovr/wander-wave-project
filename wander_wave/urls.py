@@ -10,6 +10,7 @@ from wander_wave.views import (
     SubscriptionsPostViewSet,
     LocationAutocomplete,
     HashtagAutocompleteView,
+    PostNotificationViewSet,
 
 )
 
@@ -27,6 +28,11 @@ router.register("locations", LocationViewSet, basename="locations")
 router.register("hashtags", HashtagViewSet, basename="hashtags")
 router.register("comments", CommentViewSet, basename="comments")
 router.register("likes", LikeViewSet, basename="likes")
+router.register(
+    "post_notifications",
+    PostNotificationViewSet,
+    basename="post_notifications"
+)
 
 urlpatterns = [
     path("", include(router.urls)),

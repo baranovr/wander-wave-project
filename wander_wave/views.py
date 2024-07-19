@@ -31,7 +31,9 @@ from wander_wave.models import (
     Subscription,
     Hashtag,
     Favorite,
+    PostNotification,
 )
+from wander_wave.notifications_functions import create_post_notification
 from wander_wave.serializers import (
     PostSerializer,
     PostDetailSerializer,
@@ -51,6 +53,7 @@ from wander_wave.serializers import (
     FavoriteSerializer,
     FavoriteListSerializer,
     FavoriteDetailSerializer,
+    PostNotificationSerializer,
 )
 
 
@@ -172,6 +175,83 @@ class LocationAutocomplete(generics.ListCreateAPIView):
         )
 
 
+class PostNotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = PostNotificationSerializer
+    permission_classes = [IsAuthenticated,]
+
+    def get_queryset(self):
+        return PostNotification.objects.filter(recipient=self.request.user)
+
+    @action(detail=False, methods=["POST"])
+    def mark_all_as_read(self, request):
+        post_notifications = PostNotification.objects.filter(
+            recipient=self.request.user, is_read=False
+        )
+        if not post_notifications:
+            return Response(
+                {
+                    "message": "All notifications are already marked as read"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        updated_count = post_notifications.update(is_read=True)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                "message": "All notifications marked as read",
+                "updated_count": updated_count
+            }
+        )
+
+    @action(detail=True, methods=["POST"])
+    def mark_as_read(self, request, pk=None):
+        post_notification = self.get_object()
+        if not post_notification:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={"message": "Notification not found"}
+            )
+
+        post_notification.is_read = True
+        post_notification.save()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={"message": "Notification marked as read"}
+
+        )
+
+    @action(detail=False, methods=["DELETE"])
+    def delete_all_notifications(self, request, pk=None):
+        post_notifications = self.get_queryset()
+        if not post_notifications:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={"message": "No notifications found"}
+            )
+
+        post_notifications.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+            data={"message": "All notifications deleted"}
+        )
+
+    @action(detail=True, methods=["DELETE"])
+    def delete_notification(self, request, pk=None):
+        post_notification = self.get_object()
+        if not post_notification:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={"message": "Notification not found"}
+            )
+
+        post_notification.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+            data={"message": "Notification deleted"}
+        )
+
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -231,8 +311,14 @@ class PostViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        post = serializer.save(user=self.request.user)
+        create_post_notification(post)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
     def update(self, request, *args, **kwargs):
         post = get_object_or_404(
@@ -352,9 +438,17 @@ class SubscriptionsPostViewSet(viewsets.ReadOnlyModelViewSet):
                 subscriber=user
             ).values_list("subscribed", flat=True)
         )
-        return Post.objects.filter(
+        queryset = Post.objects.filter(
             user__in=subscribed_users
         ).order_by("-created_at")
+
+        Notification.objects.filter(
+            recipient=user,
+            post__in=queryset,
+            is_read=False,
+        ).update(is_read=True)
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
