@@ -40,6 +40,11 @@ urlpatterns = [
         name="subscriptions-detail"
     ),
     path(
+        "my_profile/subscriptions/<int:pk>/unsubscribe/",
+        SubscriptionsViewSet.as_view({"delete": "unsubscribe"}),
+        name="subscriptions-unsubscribe"
+    ),
+    path(
         "my_profile/subscribers/",
         SubscribersViewSet.as_view({"get": "list"}),
         name="subscribers"
@@ -48,6 +53,11 @@ urlpatterns = [
         "my_profile/subscribers/<int:pk>/view_more/",
         SubscribersViewSet.as_view({"get": "view_more"}),
         name="subscribers-detail"
+    ),
+    path(
+        "my_profile/subscribers/<int:pk>/remove_subscriber/",
+        SubscribersViewSet.as_view({"delete": "remove_subscriber"}),
+        name="subscribers-remove_subscriber"
     ),
 
     path(

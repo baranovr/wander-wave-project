@@ -146,7 +146,7 @@ class UnsubscribeView(APIView):
             )
 
 
-class SubscribersViewSet(
+class BaseSubscriptionViewSet(
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
@@ -157,44 +157,56 @@ class SubscribersViewSet(
 
     def get_serializer_class(self):
         if self.action == "list":
-            return SubscribersListSerializer
+            return self.list_serializer_class
 
-        return SubscriptionSerializer
+        return self.serializer_class
+
+    @action(detail=True, methods=["GET"])
+    def view_more(self, request, pk=None):
+        sub = self.get_object()
+        profile_user = self.get_profile_user(sub)
+        serializer = AuthorProfileSerializer(profile_user)
+        return Response(serializer.data)
+
+    def get_profile_user(self, sub):
+        raise NotImplementedError(
+            "Subclasses must implement get_profile_user"
+        )
+
+
+class SubscribersViewSet(BaseSubscriptionViewSet):
+    list_serializer_class = SubscribersListSerializer
 
     def get_queryset(self):
         return Subscription.objects.filter(subscribed=self.request.user)
 
-    @action(detail=True, methods=["GET"])
-    def view_more(self, request, pk=None):
-        sub = self.get_object()
-        serializer = AuthorProfileSerializer(sub.subscriber)
-        return Response(serializer.data)
+    def get_profile_user(self, sub):
+        return sub.subscriber
 
-    @action(detail=True, methods=["POST"])
-    def destroy(self, request, *args, **kwargs):
-        sub = self.get_object()
+    @action(detail=True, methods=["DELETE"])
+    def remove_subscriber(self, request, pk=None):
+        subscription = self.get_object()
+        subscription.delete()
+        return Response(
+            {"message": "Subscriber removed"},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
-class SubscriptionsViewSet(
-    mixins.RetrieveModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    GenericViewSet
-):
-    serializer_class = SubscriptionSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return SubscriptionsListSerializer
-
-        return SubscriptionSerializer
+class SubscriptionsViewSet(BaseSubscriptionViewSet):
+    list_serializer_class = SubscriptionsListSerializer
 
     def get_queryset(self):
         return Subscription.objects.filter(subscriber=self.request.user)
 
-    @action(detail=True, methods=["GET"])
-    def view_more(self, request, pk=None):
-        sub = self.get_object()
-        serializer = AuthorProfileSerializer(sub.subscribed)
-        return Response(serializer.data)
+    def get_profile_user(self, sub):
+        return sub.subscribed
+
+    @action(detail=True, methods=["DELETE"])
+    def unsubscribe(self, request, pk=None):
+        subscription = self.get_object()
+        subscription.delete()
+        return Response(
+            {"message": "Subscription removed"},
+            status=status.HTTP_204_NO_CONTENT
+        )
