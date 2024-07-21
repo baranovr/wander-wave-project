@@ -56,35 +56,6 @@ class LocationDetailSerializer(LocationSerializer):
         fields = LocationSerializer.Meta.fields
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = (
-            "id", "post", "text", "created_date", "updated_date",
-        )
-
-
-class CommentListSerializer(CommentSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-    post_title = serializers.CharField(source="post.title", read_only=True)
-
-    class Meta:
-        model = Comment
-        fields = ("id", "post_title", "text", "username", "created_date",)
-
-
-class CommentDetailSerializer(CommentSerializer):
-    class Meta:
-        model = Comment
-        fields = CommentSerializer.Meta.fields
-
-
-class CommentInPostSerializer(CommentSerializer):
-    class Meta:
-        model = Comment
-        fields = ("id", "text", "user", "created_date", "updated_date")
-
-
 class PostNotificationSerializer(serializers.ModelSerializer):
     sender_username = serializers.CharField(
         source="sender.username", read_only=True
@@ -281,6 +252,54 @@ class PostListSerializer(serializers.ModelSerializer):
             "hashtags",
             "created_at",
             "updated_at",
+        )
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = (
+            "id", "post", "text", "created_date", "updated_date",
+        )
+
+
+class CommentListSerializer(CommentSerializer):
+    commentator_username = serializers.CharField(
+        source="user.username", read_only=True
+    )
+    post_title = serializers.CharField(source="post.title", read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = (
+            "id",
+            "post_title",
+            "text",
+            "commentator_username",
+            "created_date",
+        )
+
+
+class CommentDetailSerializer(CommentSerializer):
+    post = PostListSerializer()
+    commentator_username = serializers.CharField(
+        source="user.username", read_only=True
+    )
+
+    class Meta:
+        model = Comment
+        fields = CommentSerializer.Meta.fields + ("commentator_username",)
+
+
+class CommentInPostSerializer(CommentSerializer):
+    class Meta:
+        model = Comment
+        fields = (
+            "id",
+            "text",
+            "commentator_username",
+            "created_date",
+            "updated_date"
         )
 
 

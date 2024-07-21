@@ -18,7 +18,7 @@ class BaseNotificationViewSet(viewsets.ReadOnlyModelViewSet):
         if not notifications:
             return Response(
                 {
-                    "message": "All notification_utils are already marked as read"
+                    "message": "All notification are already marked as read"
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -27,7 +27,7 @@ class BaseNotificationViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(
             status=status.HTTP_200_OK,
             data={
-                "message": "All notification_utils marked as read",
+                "message": "All notification marked as read",
                 "read_count": read_count
             }
         )
@@ -54,14 +54,14 @@ class BaseNotificationViewSet(viewsets.ReadOnlyModelViewSet):
         if not notifications:
             return Response(
                 status=status.HTTP_404_NOT_FOUND,
-                data={"message": "No notification_utils found"}
+                data={"message": "No notification found"}
             )
 
         deleted_count, _ = notifications.delete()
         return Response(
             status=status.HTTP_204_NO_CONTENT,
             data={
-                "message": "All notification_utils deleted",
+                "message": "All notification deleted",
                 "deleted_count": deleted_count
             }
         )

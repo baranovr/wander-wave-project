@@ -43,8 +43,7 @@ def create_comment_notification(comment):
             comment=comment,
             commentator=comment.user,
             recipient=comment.post.user,
-            text=f"{comment.user.username} commented on your post:\n"
-                 f"Post: {post_title}\n"
-                 f"Comment: {comment.text}"
+            text=f"{comment.user.username} commented on your post"
+                 f" {post_title}: {comment.text}"
         )
         comment_notification.save()

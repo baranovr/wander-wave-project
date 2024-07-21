@@ -197,7 +197,7 @@ class LikeNotificationViewSet(BaseNotificationViewSet):
         return LikeNotification.objects.filter(recipient=self.request.user)
 
 
-class CommentNotificationsViewSet(BaseNotificationViewSet):
+class CommentNotificationViewSet(BaseNotificationViewSet):
     serializer_class = CommentNotificationSerializer
     permission_classes = [IsAuthenticated,]
 
@@ -286,7 +286,7 @@ class PostViewSet(viewsets.ModelViewSet):
         post = get_object_or_404(Post, pk=kwargs["pk"])
         author = post.user
 
-        if author != self.request.user:
+        if author != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         return super().destroy(request, *args, **kwargs)
@@ -445,9 +445,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user)
+        comment = serializer.save(user=self.request.user)
         create_comment_notification(comment)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
     def update(self, request, *args, **kwargs):
         comment = get_object_or_404(
@@ -455,16 +460,29 @@ class CommentViewSet(viewsets.ModelViewSet):
         )
         serializer = self.get_serializer(comment, data=request.data)
         serializer.is_valid(raise_exception=True)
+        commentator = comment.user
+
+        if self.request.user != commentator.user:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={
+                    "message": "You do not have permission "
+                               "to update this comment."
+                }
+            )
+
         serializer.save()
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         comment = get_object_or_404(Comment, pk=kwargs["pk"])
-        author = post.user
+        author = comment.post.user
         commentator = comment.user
 
         if author != self.request.user or commentator != self.request.user:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         return super().destroy(request, *args, **kwargs)
 
