@@ -1,4 +1,8 @@
-from wander_wave.models import PostNotification, Subscription
+from wander_wave.models import (
+    PostNotification,
+    Subscription,
+    LikeNotification
+)
 
 
 def create_post_notification(post):
@@ -18,3 +22,15 @@ def create_post_notification(post):
         )
         post_notifications.append(post_notification)
     PostNotification.objects.bulk_create(post_notifications)
+
+
+def create_like_notification(like):
+    if like.user != like.post.user:
+        post_title = like.post.title
+        like_notification = LikeNotification(
+            like=like,
+            liker=like.user,
+            recipient=like.post.user,
+            text=f"{like.user.username} liked your post: {post_title}"
+        )
+        like_notification.save()

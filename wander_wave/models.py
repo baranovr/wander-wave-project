@@ -12,7 +12,7 @@ class PostNotification(models.Model):
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="post_notifications"
+        related_name="received_post_notifications"
     )
     post = models.ForeignKey("Post", on_delete=models.CASCADE)
     sender = models.ForeignKey(
@@ -25,11 +25,46 @@ class PostNotification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at',]
+        ordering = ["-created_at",]
 
     def __str__(self):
         return (f"Notification for {self.recipient.username} "
                 f"about {self.post.title}")
+
+
+class LikeNotification(models.Model):
+    like = models.ForeignKey("Like", on_delete=models.CASCADE)
+    liker = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_like_notifications"
+    )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_like_notifications"
+    )
+    text = models.CharField(max_length=355)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.liker.username} liked {self.like.post.title}"
+
+
+class FavoriteNotification(models.Model):
+    pass
+
+
+class CommentNotification(models.Model):
+    pass
+
+
+class SubscriptionNotification(models.Model):
+    pass
 
 
 class Location(models.Model):

@@ -10,7 +10,7 @@ from wander_wave.models import (
     Like,
     Subscription,
     Location,
-    Favorite, PostNotification,
+    Favorite, PostNotification, LikeNotification,
     # PostPhoto,
 )
 
@@ -111,6 +111,32 @@ class PostNotificationSerializer(serializers.ModelSerializer):
             "created_at"
         )
 
+
+class LikeNotificationSerializer(serializers.ModelSerializer):
+    liker_username = serializers.CharField(
+        source="liker.username", read_only=True
+    )
+    liked_post_title = serializers.CharField(
+        source="like.post.title", read_only=True
+    )
+
+    class Meta:
+        model = LikeNotification
+        fields = (
+            "id",
+            "liker_username",
+            "liked_post_title",
+            "text",
+            "is_read",
+            "created_at"
+        )
+        read_only_fields = (
+            "id",
+            "liker_username",
+            "liked_post_title",
+            "text",
+            "created_at"
+        )
 
 
 # class PostPhotoSerializer(serializers.ModelSerializer):

@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth import get_user_model
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -9,15 +8,12 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status, mixins, permissions, generics
 from rest_framework.decorators import action
 from rest_framework.generics import (
-    RetrieveAPIView,
     ListAPIView,
     RetrieveDestroyAPIView
 )
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAdminUser,
-    AllowAny,
-    IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -32,8 +28,15 @@ from wander_wave.models import (
     Hashtag,
     Favorite,
     PostNotification,
+    LikeNotification,
 )
-from wander_wave.notifications_functions import create_post_notification
+from wander_wave.notification_utils.notifications_functions import (
+    create_post_notification,
+    create_like_notification
+)
+from wander_wave.notification_utils.base_notiftcations import (
+    BaseNotificationViewSet
+)
 from wander_wave.serializers import (
     PostSerializer,
     PostDetailSerializer,
@@ -54,6 +57,7 @@ from wander_wave.serializers import (
     FavoriteListSerializer,
     FavoriteDetailSerializer,
     PostNotificationSerializer,
+    LikeNotificationSerializer,
 )
 
 
@@ -175,81 +179,20 @@ class LocationAutocomplete(generics.ListCreateAPIView):
         )
 
 
-class PostNotificationViewSet(viewsets.ReadOnlyModelViewSet):
+class PostNotificationViewSet(BaseNotificationViewSet):
     serializer_class = PostNotificationSerializer
     permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):
         return PostNotification.objects.filter(recipient=self.request.user)
 
-    @action(detail=False, methods=["POST"])
-    def mark_all_as_read(self, request):
-        post_notifications = PostNotification.objects.filter(
-            recipient=self.request.user, is_read=False
-        )
-        if not post_notifications:
-            return Response(
-                {
-                    "message": "All notifications are already marked as read"
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
-        updated_count = post_notifications.update(is_read=True)
-        return Response(
-            status=status.HTTP_200_OK,
-            data={
-                "message": "All notifications marked as read",
-                "updated_count": updated_count
-            }
-        )
+class LikeNotificationViewSet(BaseNotificationViewSet):
+    serializer_class = LikeNotificationSerializer
+    permission_classes = [IsAuthenticated, ]
 
-    @action(detail=True, methods=["POST"])
-    def mark_as_read(self, request, pk=None):
-        post_notification = self.get_object()
-        if not post_notification:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={"message": "Notification not found"}
-            )
-
-        post_notification.is_read = True
-        post_notification.save()
-        return Response(
-            status=status.HTTP_200_OK,
-            data={"message": "Notification marked as read"}
-
-        )
-
-    @action(detail=False, methods=["DELETE"])
-    def delete_all_notifications(self, request, pk=None):
-        post_notifications = self.get_queryset()
-        if not post_notifications:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={"message": "No notifications found"}
-            )
-
-        post_notifications.delete()
-        return Response(
-            status=status.HTTP_204_NO_CONTENT,
-            data={"message": "All notifications deleted"}
-        )
-
-    @action(detail=True, methods=["DELETE"])
-    def delete_notification(self, request, pk=None):
-        post_notification = self.get_object()
-        if not post_notification:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={"message": "Notification not found"}
-            )
-
-        post_notification.delete()
-        return Response(
-            status=status.HTTP_204_NO_CONTENT,
-            data={"message": "Notification deleted"}
-        )
+    def get_queryset(self):
+        return LikeNotification.objects.filter(recipient=self.request.user)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -359,6 +302,7 @@ class PostViewSet(viewsets.ModelViewSet):
             )
 
         like_serializer = LikeSerializer(like)
+        create_like_notification(like)
         return Response(
             like_serializer.data, status=status.HTTP_201_CREATED
         )
@@ -441,12 +385,6 @@ class SubscriptionsPostViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = Post.objects.filter(
             user__in=subscribed_users
         ).order_by("-created_at")
-
-        Notification.objects.filter(
-            recipient=user,
-            post__in=queryset,
-            is_read=False,
-        ).update(is_read=True)
 
         return queryset
 
@@ -558,16 +496,15 @@ class LikeViewSet(
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        username = self.request.query_params.get("user__username", None)
-        post_title = self.request.query_params.get("post__title", None)
-
+        username = self.request.query_params.get("user__username")
+        post_title = self.request.query_params.get("post__title")
         queryset = self.queryset
 
         if username:
-            queryset = self.queryset.filter(username__icontains=username)
+            queryset = queryset.filter(user__username__icontains=username)
 
         if post_title:
-            queryset = self.queryset.filter(title__icontains=post_title)
+            queryset = queryset.filter(post__title__icontains=post_title)
 
         return queryset.distinct()
 
@@ -605,12 +542,6 @@ class LikeViewSet(
         :return:
         """
         return super().list(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         like = get_object_or_404(Like, pk=kwargs["pk"])

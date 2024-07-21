@@ -11,6 +11,7 @@ from wander_wave.views import (
     LocationAutocomplete,
     HashtagAutocompleteView,
     PostNotificationViewSet,
+    LikeNotificationViewSet,
 
 )
 
@@ -32,6 +33,11 @@ router.register(
     "post_notifications",
     PostNotificationViewSet,
     basename="post_notifications"
+)
+router.register(
+    "like_notifications",
+    LikeNotificationViewSet,
+    basename="like_notifications"
 )
 
 urlpatterns = [
