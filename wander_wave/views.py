@@ -28,15 +28,19 @@ from wander_wave.models import (
     Hashtag,
     Favorite,
     PostNotification,
-    LikeNotification, CommentNotification,
+    LikeNotification,
+    CommentNotification,
 )
-from wander_wave.notification_utils.notifications_functions import (
+from wander_wave.notification_utils.base_notification_viewset import (
+    BaseUserNotificationViewSet
+)
+from wander_wave.notification_utils.notification_functions import (
     create_post_notification,
     create_like_notification,
     create_comment_notification
 )
-from wander_wave.notification_utils.base_notiftcations import (
-    BaseNotificationViewSet
+from wander_wave.notification_utils.base_notification_actions import (
+    BaseNotificationActionsViewSet
 )
 from wander_wave.serializers import (
     PostSerializer,
@@ -60,6 +64,7 @@ from wander_wave.serializers import (
     PostNotificationSerializer,
     LikeNotificationSerializer,
     CommentNotificationSerializer,
+    SubscriptionNotificationSerializer,
 )
 
 
@@ -181,28 +186,19 @@ class LocationAutocomplete(generics.ListCreateAPIView):
         )
 
 
-class PostNotificationViewSet(BaseNotificationViewSet):
+class PostNotificationViewSet(BaseUserNotificationViewSet):
+    notification_model = PostNotification
     serializer_class = PostNotificationSerializer
-    permission_classes = [IsAuthenticated,]
-
-    def get_queryset(self):
-        return PostNotification.objects.filter(recipient=self.request.user)
 
 
-class LikeNotificationViewSet(BaseNotificationViewSet):
+class LikeNotificationViewSet(BaseUserNotificationViewSet):
+    notification_model = LikeNotification
     serializer_class = LikeNotificationSerializer
-    permission_classes = [IsAuthenticated,]
-
-    def get_queryset(self):
-        return LikeNotification.objects.filter(recipient=self.request.user)
 
 
-class CommentNotificationViewSet(BaseNotificationViewSet):
+class CommentNotificationViewSet(BaseUserNotificationViewSet):
+    notification_model = CommentNotification
     serializer_class = CommentNotificationSerializer
-    permission_classes = [IsAuthenticated,]
-
-    def get_queryset(self):
-        return CommentNotification.objects.filter(recipient=self.request.user)
 
 
 class PostViewSet(viewsets.ModelViewSet):

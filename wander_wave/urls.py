@@ -16,9 +16,15 @@ from wander_wave.views import (
 
 )
 
-from user.views import SubscriptionView, UnsubscribeView
+from user.views import (
+    SubscriptionView,
+    UnsubscribeView,
+    SubscriptionNotificationViewSet
+)
+
 
 router = routers.DefaultRouter()
+
 
 router.register("posts", PostViewSet, basename="posts")
 router.register(
@@ -45,7 +51,11 @@ router.register(
     CommentNotificationViewSet,
     basename="comment_notifications"
 )
-
+router.register(
+    "subscription_notifications",
+    SubscriptionNotificationViewSet,
+    basename="subscription_notifications"
+)
 urlpatterns = [
     path("", include(router.urls)),
 

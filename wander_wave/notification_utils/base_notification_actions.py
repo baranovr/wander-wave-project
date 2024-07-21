@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 
-class BaseNotificationViewSet(viewsets.ReadOnlyModelViewSet):
+class BaseNotificationActionsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):

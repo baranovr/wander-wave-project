@@ -16,12 +16,19 @@ from user.serializers import (
     AuthorProfileSerializer
 )
 
-from wander_wave.models import Subscription
-
+from wander_wave.models import Subscription, SubscriptionNotification
+from wander_wave.notification_utils.base_notification_viewset import (
+    BaseUserNotificationViewSet
+)
+from wander_wave.notification_utils.notification_functions import (
+    create_subscription_notification
+)
 from wander_wave.serializers import (
     SubscriptionsListSerializer,
     SubscribersListSerializer,
     SubscriptionSerializer,
+    SubscriptionNotificationSerializer,
+    SubscriptionNotificationListSerializer,
 )
 
 
@@ -51,6 +58,18 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
+class SubscriptionNotificationViewSet(BaseUserNotificationViewSet):
+    notification_model = SubscriptionNotification
+    serializer_class = SubscriptionNotificationSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return SubscriptionNotificationListSerializer
+
+        return SubscriptionNotificationSerializer
+
+
 class SubscriptionView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -75,6 +94,9 @@ class SubscriptionView(APIView):
                 subscribed=subscribed_user
             )
             if created:
+                notification = create_subscription_notification(
+                    request.user, subscribed_user
+                )
                 return Response(
                     {"message": "Successfully subscribed"},
                     status=status.HTTP_201_CREATED
