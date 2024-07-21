@@ -224,17 +224,24 @@ class PostListSerializer(serializers.ModelSerializer):
     location = LocationDetailSerializer(read_only=True)
 
     likes_count = serializers.SerializerMethodField()
+    favorites_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
 
     # photos = PostPhotoSerializer(many=True, read_only=True)
 
+    def get_base_count(self, model, obj):
+        return model.objects.filter(post=obj).count()
+
     def get_likes_count(self, obj):
-        return Like.objects.filter(post=obj).count()
+        return self.get_base_count(Like, obj)
+
+    def get_favorites_count(self, obj):
+        return self.get_base_count(Favorite, obj)
 
     def get_comments_count(self, obj):
-        return Comment.objects.filter(post=obj).count()
+        return self.get_base_count(Comment, obj)
 
     def get_content(self, obj):
         content = obj.content
@@ -254,6 +261,7 @@ class PostListSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "likes_count",
+            "favorites_count",
             "comments_count",
             "hashtags",
             "created_at",
@@ -376,6 +384,7 @@ class PostDetailSerializer(
             "title",
             "content",
             "likes_count",
+            "favorites_count",
             "comments",
             "hashtags",
             "created_at",
