@@ -9,16 +9,16 @@ from wander_wave_project import settings
 
 
 class PostNotification(models.Model):
-    recipient = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="received_post_notifications"
-    )
     post = models.ForeignKey("Post", on_delete=models.CASCADE)
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="sent_post_notifications"
+    )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_post_notifications"
     )
     text = models.CharField(max_length=355)
     is_read = models.BooleanField(default=False)
@@ -55,16 +55,52 @@ class LikeNotification(models.Model):
         return f"{self.liker.username} liked {self.like.post.title}"
 
 
-class FavoriteNotification(models.Model):
-    pass
-
-
 class CommentNotification(models.Model):
-    pass
+    comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
+    commentator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_comment_notifications"
+    )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_comment_notifications"
+    )
+    text = models.CharField(max_length=355)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return (f"{self.commentator} commented your post:\n"
+                f"Post title: {self.comment.post.title}\n"
+                f"Comment: {self.comment.text}\n")
 
 
 class SubscriptionNotification(models.Model):
-    pass
+    subscription = models.ForeignKey("Subscription", on_delete=models.CASCADE)
+    subscriber = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_subscription_notifications"
+    )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_subscription_notifications"
+    )
+    text = models.CharField(max_length=355)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.subscriber.username} has subscribed to you"
 
 
 class Location(models.Model):
@@ -99,17 +135,14 @@ def post_photo_path(instance, filename):
 
 
 class Post(models.Model):
-    photo = models.ImageField(upload_to=post_photo_path, null=True, blank=True)
+    photo = models.ImageField(upload_to=post_photo_path)
     location = models.ForeignKey(
-        Location, on_delete=models.CASCADE,
-        related_name="posts",
-        null=True,
-        blank=True
+        Location, on_delete=models.CASCADE, related_name="posts",
     )
     title = models.CharField(max_length=255)
     content = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
     )
     hashtags = models.ManyToManyField(Hashtag)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -125,10 +158,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(
-        Post, on_delete=models.CASCADE,
-        related_name="comments",
-        null=True,
-        blank=True
+        Post, on_delete=models.CASCADE, related_name="comments",
     )
     text = models.TextField()
     user = models.ForeignKey(

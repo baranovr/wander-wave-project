@@ -28,11 +28,12 @@ from wander_wave.models import (
     Hashtag,
     Favorite,
     PostNotification,
-    LikeNotification,
+    LikeNotification, CommentNotification,
 )
 from wander_wave.notification_utils.notifications_functions import (
     create_post_notification,
-    create_like_notification
+    create_like_notification,
+    create_comment_notification
 )
 from wander_wave.notification_utils.base_notiftcations import (
     BaseNotificationViewSet
@@ -58,6 +59,7 @@ from wander_wave.serializers import (
     FavoriteDetailSerializer,
     PostNotificationSerializer,
     LikeNotificationSerializer,
+    CommentNotificationSerializer,
 )
 
 
@@ -189,10 +191,18 @@ class PostNotificationViewSet(BaseNotificationViewSet):
 
 class LikeNotificationViewSet(BaseNotificationViewSet):
     serializer_class = LikeNotificationSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):
         return LikeNotification.objects.filter(recipient=self.request.user)
+
+
+class CommentNotificationsViewSet(BaseNotificationViewSet):
+    serializer_class = CommentNotificationSerializer
+    permission_classes = [IsAuthenticated,]
+
+    def get_queryset(self):
+        return CommentNotification.objects.filter(recipient=self.request.user)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -436,6 +446,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=self.request.user)
+        create_comment_notification(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
