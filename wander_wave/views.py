@@ -577,6 +577,24 @@ class LikeViewSet(
         return super().destroy(request, *args, **kwargs)
 
 
+class LikeListView(generics.ListAPIView):
+    serializer_class = LikeListSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Like.objects.filter(user=self.request.user)
+
+
+class LikeDetailView(generics.RetrieveAPIView):
+    serializer_class = LikeDetailSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        like_id = self.kwargs["pk"]
+        like = Like.objects.get(pk=like_id, user=self.request.user)
+        return like
+
+
 class FavoriteListView(ListAPIView):
     serializer_class = FavoriteListSerializer
     permission_classes = (IsAuthenticated,)

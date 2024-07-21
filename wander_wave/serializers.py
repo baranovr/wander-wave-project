@@ -218,34 +218,6 @@ class PostSerializer(serializers.ModelSerializer):
     #     return post
 
 
-class LikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Like
-        fields = ("id", "user", "post")
-
-
-class LikeListSerializer(LikeSerializer):
-    user_like = serializers.CharField(source="user.username", read_only=True)
-    post_title = serializers.CharField(source="post.title", read_only=True)
-    post_id = serializers.IntegerField(source="post.id", read_only=True)
-    user_post = serializers.CharField(
-        source="post.user.username", read_only=True
-    )
-
-    class Meta:
-        model = Like
-        fields = ("id", "user_like", "post_id", "post_title", "user_post")
-
-
-class LikeDetailSerializer(LikeSerializer):
-    user = serializers.CharField(source="user.username", read_only=True)
-    post = PostSerializer(read_only=True)
-
-    class Meta:
-        model = Like
-        fields = ("id", "user", "post")
-
-
 class PostListSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     hashtags = HashtagSerializer(many=True, read_only=True)
@@ -402,8 +374,8 @@ class PostDetailSerializer(
             # "photos",
             "location",
             "title",
-            "likes_count",
             "content",
+            "likes_count",
             "comments",
             "hashtags",
             "created_at",
@@ -413,26 +385,53 @@ class PostDetailSerializer(
         )
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class BasePostRelatedSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Favorite
         fields = ("id", "post")
 
 
-class FavoriteListSerializer(FavoriteSerializer):
+class BasePostRelatedListSerializer(BasePostRelatedSerializer):
     post = PostListSerializer(read_only=True)
 
-    class Meta:
-        model = Favorite
-        fields = FavoriteSerializer.Meta.fields
+    class Meta(BasePostRelatedSerializer.Meta):
+        pass
 
 
-class FavoriteDetailSerializer(FavoriteSerializer):
+class BasePostRelatedDetailSerializer(BasePostRelatedSerializer):
     post = PostDetailSerializer(read_only=True)
 
-    class Meta:
+    class Meta(BasePostRelatedSerializer.Meta):
+        pass
+
+
+class LikeSerializer(BasePostRelatedSerializer):
+    class Meta(BasePostRelatedSerializer.Meta):
+        model = Like
+
+
+class LikeListSerializer(BasePostRelatedListSerializer):
+    class Meta(BasePostRelatedListSerializer.Meta):
+        model = Like
+
+
+class LikeDetailSerializer(BasePostRelatedDetailSerializer):
+    class Meta(BasePostRelatedDetailSerializer.Meta):
+        model = Like
+
+
+class FavoriteSerializer(BasePostRelatedSerializer):
+    class Meta(BasePostRelatedSerializer.Meta):
         model = Favorite
-        fields = FavoriteSerializer.Meta.fields
+
+
+class FavoriteListSerializer(BasePostRelatedListSerializer):
+    class Meta(BasePostRelatedListSerializer.Meta):
+        model = Favorite
+
+
+class FavoriteDetailSerializer(BasePostRelatedDetailSerializer):
+    class Meta(BasePostRelatedDetailSerializer.Meta):
+        model = Favorite
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

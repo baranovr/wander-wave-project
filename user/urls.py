@@ -17,6 +17,8 @@ from user.views import (
 from wander_wave.views import (
     FavoriteListView,
     FavoriteDetailView,
+    LikeListView,
+    LikeDetailView,
 )
 
 
@@ -60,6 +62,17 @@ urlpatterns = [
         name="subscribers-remove_subscriber"
     ),
 
+    path(
+        "my_profile/my_liked/",
+        LikeListView.as_view(),
+        name="my_liked"
+
+    ),
+    path(
+        "my_profile/my_liked/<int:pk>/",
+        LikeDetailView.as_view(),
+        name="my_liked-detail"
+    ),
     path(
         "my_profile/my_favorites/",
         FavoriteListView.as_view(),
