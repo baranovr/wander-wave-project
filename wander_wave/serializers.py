@@ -268,12 +268,16 @@ class CommentListSerializer(CommentSerializer):
         source="user.username", read_only=True
     )
     post_title = serializers.CharField(source="post.title", read_only=True)
+    author_username = serializers.CharField(
+        source="post.user.username", read_only=True
+    )
 
     class Meta:
         model = Comment
         fields = (
             "id",
             "post_title",
+            "author_username",
             "text",
             "commentator_username",
             "created_date",

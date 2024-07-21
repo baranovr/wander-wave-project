@@ -476,13 +476,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         comment = get_object_or_404(Comment, pk=kwargs["pk"])
-        author = comment.post.user
+        post = comment.post
+        author = post.user
         commentator = comment.user
 
-        if author != self.request.user or commentator != self.request.user:
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        if author != request.user and commentator != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
         return super().destroy(request, *args, **kwargs)
 
