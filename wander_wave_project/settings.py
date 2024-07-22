@@ -84,6 +84,7 @@ WSGI_APPLICATION = "wander_wave_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -94,6 +95,7 @@ DATABASES = {
         "PORT": os.environ["POSTGRES_PORT"],
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

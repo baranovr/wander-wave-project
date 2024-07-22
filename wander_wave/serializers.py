@@ -419,8 +419,13 @@ class LikeSerializer(BasePostRelatedSerializer):
 
 
 class LikeListSerializer(BasePostRelatedListSerializer):
+    liker_username = serializers.CharField(
+        source="user.username", read_only=True
+    )
+
     class Meta(BasePostRelatedListSerializer.Meta):
         model = Like
+        fields = BasePostRelatedSerializer.Meta.fields + ("liker_username",)
 
 
 class LikeDetailSerializer(BasePostRelatedDetailSerializer):
