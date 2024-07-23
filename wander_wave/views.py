@@ -39,9 +39,6 @@ from wander_wave.notification_utils.notification_functions import (
     create_like_notification,
     create_comment_notification
 )
-from wander_wave.notification_utils.base_notification_actions import (
-    BaseNotificationActionsViewSet
-)
 from wander_wave.serializers import (
     PostSerializer,
     PostDetailSerializer,
@@ -64,7 +61,6 @@ from wander_wave.serializers import (
     PostNotificationSerializer,
     LikeNotificationSerializer,
     CommentNotificationSerializer,
-    SubscriptionNotificationSerializer,
 )
 
 
@@ -169,17 +165,18 @@ class LocationAutocomplete(generics.ListCreateAPIView):
     serializer_class = LocationSerializer
 
     def get_queryset(self):
-        query = self.request.query_params.get("q", "")
-        return Location.objects.filter(
-            name__icontains__istartswith=query
-        )[:10]
+        query = self.request.query_params.get("query", "")
+        return Location.objects.filter(name__icontains=query)[:10]
 
     def create(self, request, *args, **kwargs):
-        location = request.data.get("location", "")
-        location_in, created = Location.objects.get_or_create(
-            location=location
+        name = request.data.get("name", "")
+        country, city = name.split(",") if "," in name else (name, "")
+        location, created = Location.objects.get_or_create(
+            country=country.strip(),
+            city=city.strip(),
+            defaults={"name": name}
         )
-        serializer = self.get_serializer(location_in)
+        serializer = self.get_serializer(location)
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
@@ -224,11 +221,7 @@ class PostViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         if location:
-            try:
-                location_id = int(location)
-                queryset = queryset.filter(location_id=location_id)
-            except ValueError:
-                pass
+            queryset = queryset.filter(location__name__icontains=location)
 
         if country:
             queryset = queryset.filter(location__country__icontains=country)

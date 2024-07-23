@@ -1,3 +1,6 @@
+import base64
+
+from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from django.utils.text import Truncator
 
@@ -14,7 +17,7 @@ from wander_wave.models import (
     PostNotification,
     LikeNotification,
     CommentNotification,
-    SubscriptionNotification,
+    SubscriptionNotification, PostPhoto,
     # PostPhoto,
 )
 
@@ -45,7 +48,7 @@ class HashtagDetailSerializer(HashtagSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ("id", "country", "city")
+        fields = ("id", "country", "city", "name")
 
 
 class LocationListSerializer(LocationSerializer):
@@ -176,30 +179,34 @@ class SubscriptionNotificationListSerializer(
         model = SubscriptionNotification
         fields = SubscriptionNotificationSerializer.Meta.fields
 
-# class PostPhotoSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = PostPhoto
-#         fields = "__all__"
+
+class PostPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostPhoto
+        fields = "__all__"
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # photos = PostPhotoSerializer(many=True, read_only=True)
-    # uploaded_photos = serializers.ListField(
-    #     child=serializers.ImageField(
-    #         allow_empty_file=False,
-    #         use_url=False,
-    #         write_only=True
-    #     )
-    # )
+    photos = PostPhotoSerializer(many=True, read_only=True)
+    uploaded_photos = serializers.ListField(
+        child=serializers.ImageField(
+            allow_empty_file=False,
+            use_url=False,
+            write_only=True
+        )
+    )
+    location = serializers.CharField(source="location.name")
+    hashtags = serializers.ListField(
+        child=serializers.CharField(), write_only=True
+    )
 
     class Meta:
         model = Post
         fields = (
             "id",
             "location",
-            "photo",
-            # "photos",
-            # "uploaded_photos",
+            "photos",
+            "uploaded_photos",
             "title",
             "content",
             "user",
@@ -208,14 +215,28 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    # def create(self, validated_data):
-    #     uploaded_photos = validated_data.pop("uploaded_photos")
-    #     post = Post.objects.create(**validated_data)
-    #
-    #     for photo in uploaded_photos:
-    #         PostPhoto.objects.create(post=post, photo=photo)
-    #
-    #     return post
+    def create(self, validated_data):
+        """
+        Add photos to post (ability to add images in base64 format)
+        :param validated_data:
+        :return:
+        """
+        uploaded_photos = validated_data.pop("uploaded_photos", [])
+        post = Post.objects.create(**validated_data)
+
+        for photo in uploaded_photos:
+            if isinstance(photo, str) and photo.startswith("data:image"):
+                format, img_str = photo.split(";base64,")
+                ext = format.split("/")[-1]
+                photo_data = ContentFile(
+                    base64.b64decode(img_str), name=f"photo.{ext}"
+                )
+            else:
+                photo_data = photo
+
+            PostPhoto.objects.create(post=post, photo=photo_data)
+
+        return post
 
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -229,7 +250,7 @@ class PostListSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
 
-    # photos = PostPhotoSerializer(many=True, read_only=True)
+    photos = PostPhotoSerializer(many=True, read_only=True)
 
     def get_base_count(self, model, obj):
         return model.objects.filter(post=obj).count()
@@ -255,8 +276,7 @@ class PostListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
-            "photo",
-            # "photos",
+            "photos",
             "location",
             "title",
             "content",
@@ -378,8 +398,7 @@ class PostDetailSerializer(
             "user_status",
             "full_name",
             "user_email",
-            "photo",
-            # "photos",
+            "photos",
             "location",
             "title",
             "content",
