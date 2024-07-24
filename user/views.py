@@ -135,6 +135,7 @@ class UnsubscribeView(APIView):
                 subscribed=subscribed_user
             )
             subscription.delete()
+            Subscription.objects.filter(subscriber=request.user)
             return Response(
                 {"message": "You are unsubscribed from this user"},
                 status=status.HTTP_200_OK
@@ -186,7 +187,10 @@ class SubscribersViewSet(BaseSubscriptionViewSet):
     @action(detail=True, methods=["DELETE"])
     def remove_subscriber(self, request, pk=None):
         subscription = self.get_object()
+
         subscription.delete()
+        Subscription.objects.filter(subscribed=self.request.user).delete()
+
         return Response(
             {"message": "Subscriber removed"},
             status=status.HTTP_204_NO_CONTENT
@@ -205,7 +209,10 @@ class SubscriptionsViewSet(BaseSubscriptionViewSet):
     @action(detail=True, methods=["DELETE"])
     def unsubscribe(self, request, pk=None):
         subscription = self.get_object()
+
         subscription.delete()
+        Subscription.objects.filter(subscriber=self.request.user).delete()
+
         return Response(
             {"message": "Subscription removed"},
             status=status.HTTP_204_NO_CONTENT
