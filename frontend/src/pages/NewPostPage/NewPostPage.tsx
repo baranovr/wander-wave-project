@@ -15,7 +15,7 @@ type HashtagOption = {
 
 const loadHashtagOptions = (inputValue: string): Promise<HashtagOption[]> => {
   return axios
-    .get(`/api/hashtags/autocomplete/?query=${inputValue}`)
+    .get(`http://127.0.0.1:8080/api/platform/hashtags/autocomplete/?query=${inputValue}`)
     .then(response => {
       return response.data.map((hashtag: any) => ({
         value: hashtag.id,
@@ -26,7 +26,7 @@ const loadHashtagOptions = (inputValue: string): Promise<HashtagOption[]> => {
 
 const loadLocationOptions = (inputValue: string): Promise<HashtagOption[]> => {
   return axios
-    .get(`/api/locations/autocomplete/?query=${inputValue}`)
+    .get(`http://127.0.0.1:8080/api/platform/locations/autocomplete/?query=${inputValue}`)
     .then(response => {
       return response.data.map((location: any) => ({
         value: location.id,
@@ -38,7 +38,7 @@ const loadLocationOptions = (inputValue: string): Promise<HashtagOption[]> => {
 const createOption = (inputValue: string): Promise<HashtagOption> => {
   return new Promise(resolve => {
     axios
-      .post('/api/hashtags/autocomplete/', { name: inputValue })
+      .post('http://127.0.0.1:8080/api/hashtags/autocomplete/', { name: inputValue })
       .then(response => {
         const newOption = {
           value: response.data.id,
@@ -52,7 +52,7 @@ const createOption = (inputValue: string): Promise<HashtagOption> => {
 const createLocationOption = (inputValue: string): Promise<HashtagOption> => {
   return new Promise(resolve => {
     axios
-      .post('/api/locations/autocomplete/', { name: inputValue })
+      .post('http://127.0.0.1:8080/api/locations/autocomplete/', { name: inputValue })
       .then(response => {
         const newOption = {
           value: response.data.id,

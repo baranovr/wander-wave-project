@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { PostDetails } from '../types/PostDetails';
 import { Comment, CommentData } from '../types/Comments';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 type DetailsState = {
   postId: number;
@@ -22,7 +22,7 @@ const initialState: DetailsState = {
 export const fetchPostDetails = createAsyncThunk(
   'posts/fetchPostDetails',
   async (postId: string) => {
-    const response = await axios.get(`/api/platform/posts/${postId}`);
+    const response = await axiosInstance.get(`http://127.0.0.1:8080/api/platform/posts/${postId}`);
     return response.data;
   },
 );
@@ -38,7 +38,7 @@ export const addComment = createAsyncThunk(
     userId: number;
     postId: number;
   }) => {
-    const response = await axios.post('/api/platform/comments/', {
+    const response = await axiosInstance.post('http://127.0.0.1:8080/api/platform/comments/', {
       text,
       userId,
       postId,
@@ -51,8 +51,8 @@ export const setLike = createAsyncThunk(
   'posts/setLike',
   async (postId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `/api/platform/posts/${postId}/set-like/`,
+      const response = await axiosInstance.post(
+        `http://127.0.0.1:8080/api/platform/posts/${postId}/set-like/`,
         null,
         {
           headers: {
@@ -71,8 +71,8 @@ export const addToFavorites = createAsyncThunk(
   'posts/addToFavorites',
   async (postId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `/api/platform/posts/${postId}/add-to-favorites/`,
+      const response = await axiosInstance.post(
+        `http://127.0.0.1:8080/api/platform/posts/${postId}/add-to-favorites/`,
         null,
         {
           headers: {

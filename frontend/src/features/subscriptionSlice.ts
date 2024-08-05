@@ -1,7 +1,7 @@
 // src/features/posts/subscriptionSlice.ts
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 interface SubscriptionState {
   loading: boolean;
@@ -17,8 +17,8 @@ export const subscribeToAuthor = createAsyncThunk(
   'posts/subscribeToAuthor',
   async ({ postId }: { postId: number }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `/api/platform/posts/${postId}/author-profile/subscribe/`,
+      const response = await axiosInstance.post(
+        `http://127.0.0.1:8080/api/platform/posts/${postId}/author-profile/subscribe/`,
       );
       return response.data;
     } catch (error) {
@@ -31,8 +31,8 @@ export const unsubscribeFromAuthor = createAsyncThunk(
   'posts/unsubscribeFromAuthor',
   async ({ postId }: { postId: number }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `/api/platform/posts/${postId}/author-profile/unsubscribe/`,
+      const response = await axiosInstance.post(
+        `http://127.0.0.1:8080/api/platform/posts/${postId}/author-profile/unsubscribe/`,
       );
       return response.data;
     } catch (error) {

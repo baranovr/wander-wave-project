@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 import { Notification } from '../types/Notification';
 
 type NotificationState = {
@@ -19,10 +19,10 @@ export const fetchAllNotifications = createAsyncThunk(
   async () => {
     const [subscriptionResponse, postResponse, likeResponse, commentResponse] =
       await Promise.all([
-        axios.get('/api/platform/subscription_notifications/'),
-        axios.get('/api/platform/post_notifications/'),
-        axios.get('/api/platform/like_notifications/'),
-        axios.get('/api/platform/comment_notifications/'),
+        axiosInstance.get('http://127.0.0.1:8080/api/platform/subscription_notifications/'),
+        axiosInstance.get('http://127.0.0.1:8080/api/platform/post_notifications/'),
+        axiosInstance.get('http://127.0.0.1:8080/api/platform/like_notifications/'),
+        axiosInstance.get('http://127.0.0.1:8080/api/platform/comment_notifications/'),
       ]);
 
     return [
@@ -54,8 +54,8 @@ export const markNotificationAsRead = createAsyncThunk(
       type = 'comment';
     }
 
-    const response = await axios.post(
-      `/api/platform/${type}_notifications/${id}/mark_as_read/`,
+    const response = await axiosInstance.post(
+      `http://127.0.0.1:8080/api/platform/${type}_notifications/${id}/mark_as_read/`,
     );
     return { id, text, ...response.data };
   },
@@ -65,10 +65,10 @@ export const markAllNotificationsAsRead = createAsyncThunk(
   'notifications/markAllNotificationsAsRead',
   async () => {
     await Promise.all([
-      axios.post('/api/platform/subscription_notifications/mark_all_as_read/'),
-      axios.post('/api/platform/post_notifications/mark_all_as_read/'),
-      axios.post('/api/platform/like_notifications/mark_all_as_read/'),
-      axios.post('/api/platform/comment_notifications/mark_all_as_read/'),
+      axiosInstance.post('http://127.0.0.1:8080/api/platform/subscription_notifications/mark_all_as_read/'),
+      axiosInstance.post('http://127.0.0.1:8080/api/platform/post_notifications/mark_all_as_read/'),
+      axiosInstance.post('http://127.0.0.1:8080/api/platform/like_notifications/mark_all_as_read/'),
+      axiosInstance.post('http://127.0.0.1:8080/api/platform/comment_notifications/mark_all_as_read/'),
     ]);
   },
 );
@@ -92,8 +92,8 @@ export const deleteNotification = createAsyncThunk(
     if (text.includes('commented')) {
       type = 'comment';
     }
-    const response = await axios.delete(
-      `/api/platform/${type}_notifications/${id}/delete_notification`,
+    const response = await axiosInstance.delete(
+      `http://127.0.0.1:8080/api/platform/${type}_notifications/${id}/delete_notification`,
     );
     return { id, text, ...response.data };
   },
@@ -103,13 +103,13 @@ export const deleteAllNotifications = createAsyncThunk(
   'notifications/deleteAllNotifications',
   async () => {
     await Promise.all([
-      axios.post(
-        '/api/platform/subscription_notifications/delete_all_notifications',
+      axiosInstance.post(
+        'http://127.0.0.1:8080/api/platform/subscription_notifications/delete_all_notifications',
       ),
-      axios.post('/api/platform/post_notifications/delete_all_notifications'),
-      axios.post('/api/platform/like_notifications/delete_all_notifications'),
-      axios.post(
-        '/api/platform/lcomment_notifications/delete_all_notifications',
+      axiosInstance.post('http://127.0.0.1:8080/api/platform/post_notifications/delete_all_notifications'),
+      axiosInstance.post('http://127.0.0.1:8080/api/platform/like_notifications/delete_all_notifications'),
+      axiosInstance.post(
+        'http://127.0.0.1:8080/api/platform/lcomment_notifications/delete_all_notifications',
       ),
     ]);
   },
@@ -118,8 +118,8 @@ export const deleteAllNotifications = createAsyncThunk(
 export const deleteAllCommentNotifications = createAsyncThunk(
   'notifications/deleteAllCommentNotifications',
   async () => {
-    const response = await axios.post(
-      '/api/platform/comment_notifications/delete_all_notifications',
+    const response = await axiosInstance.post(
+      'http://127.0.0.1:8080/api/platform/comment_notifications/delete_all_notifications',
     );
     return response.data;
   },

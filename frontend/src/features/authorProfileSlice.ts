@@ -1,7 +1,7 @@
 // src/features/author/authorSlice.ts
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 import { User } from '../types/User';
 
 interface AuthorState {
@@ -20,7 +20,7 @@ export const fetchAuthorProfile = createAsyncThunk(
   'author/fetchAuthorProfile',
   async (postId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `/api/platform/posts/${postId}/author-profile/`,
       );
       return response.data;

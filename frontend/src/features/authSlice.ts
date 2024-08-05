@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
+
+
 
 interface AuthState {
   accessToken: string | null;
@@ -28,6 +30,7 @@ type registerData = {
   avatar: string;
 };
 
+
 export const login = createAsyncThunk(
   'auth/login',
   async (
@@ -35,7 +38,7 @@ export const login = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await axios.post('/api/token/', { username, password });
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/', { username, password });
       const { access, refresh } = response.data;
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
@@ -53,7 +56,7 @@ export const refreshToken = createAsyncThunk(
     const refreshToken = state.auth.refreshToken;
 
     try {
-      const response = await axios.post('/api/token/refresh/', {
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/refresh/', {
         refresh: refreshToken,
       });
       const { access, refresh } = response.data;
@@ -73,7 +76,7 @@ export const logout = createAsyncThunk(
     const refreshToken = state.auth.refreshToken;
 
     try {
-      const response = await axios.post('/api/my_profile/logout/', {
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/my_profile/logout/', {
         refresh_token: refreshToken,
       });
       if (response.status === 205) {
@@ -93,8 +96,8 @@ export const register = createAsyncThunk(
   'auth/register',
   async (registrationData: registerData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        '/api/user/register/',
+      const response = await axiosInstance.post(
+        'http://127.0.0.1:8080/api/user/register/',
         registrationData,
         {
           headers: {
