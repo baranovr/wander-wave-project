@@ -10,20 +10,20 @@ from rest_framework import status
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from user.serializers import (
+from backend.user.serializers import (
     UserSerializer,
     MyProfileSerializer,
     AuthorProfileSerializer
 )
 
 from wander_wave.models import Subscription, SubscriptionNotification
-from wander_wave.notification_utils.base_notification_viewset import (
+from backend.wander_wave.notification_utils.base_notification_viewset import (
     BaseUserNotificationViewSet
 )
-from wander_wave.notification_utils.notification_functions import (
+from backend.wander_wave.notification_utils.notification_functions import (
     create_subscription_notification
 )
-from wander_wave.serializers import (
+from backend.wander_wave.serializers import (
     SubscriptionsListSerializer,
     SubscribersListSerializer,
     SubscriptionSerializer,

@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from user.views import (
+from backend.user.views import (
     CreateUserViewSet,
     LogoutView,
     MyProfileView,
@@ -14,7 +14,7 @@ from user.views import (
     SubscribersViewSet,
 )
 
-from wander_wave.views import (
+from backend.wander_wave.views import (
     FavoriteListView,
     FavoriteDetailView,
     LikeListView,

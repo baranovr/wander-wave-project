@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "drf_spectacular",
     "debug_toolbar",
-    "wander_wave",
-    "user"
+    "backend.wander_wave",
+    "backend.user"
 ]
 
 MIDDLEWARE = [
@@ -61,7 +61,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "wander_wave_project.urls"
+ROOT_URLCONF = "backend.wander_wave_project.urls"
 
 TEMPLATES = [
     {

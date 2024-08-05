@@ -4,7 +4,7 @@ from wander_wave.models import Subscription, Post
 
 from rest_framework import serializers
 
-from wander_wave.serializers import PostListSerializer
+from backend.wander_wave.serializers import PostListSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):

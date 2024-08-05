@@ -2,9 +2,7 @@
 
 import django.contrib.auth.models
 from django.db import migrations, models
-import django.db.models.manager
 import django.utils.timezone
-import user.models
 
 
 class Migration(migrations.Migration):
@@ -25,7 +23,7 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to=user.models.avatar_path, verbose_name='avatar')),
+                ('avatar', models.ImageField(blank=True, null=True, upload_to=backend.user.models.avatar_path, verbose_name='avatar')),
                 ('username', models.CharField(max_length=50, unique=True, verbose_name='username')),
                 ('status', models.CharField(choices=[('Road Tripper', 'Road Tripper'), ('Cruiser', 'Cruiser'), ('Backpacker', 'Backpacker'), ('Flyer', 'Flyer'), ('Cyclist', 'Cyclist'), ('Hiker', 'Hiker'), ('Railway Explorer', 'Rail Exp'), ('Sailor', 'Sailor'), ('Recreational Vehicle Traveler', 'Rver'), ('Nomad', 'Nomad')], max_length=50, verbose_name='status')),
                 ('email', models.EmailField(max_length=254, unique=True, verbose_name='email address')),
