@@ -6,7 +6,7 @@ from django.utils.text import Truncator
 
 from rest_framework import serializers
 
-from wander_wave.models import (
+from backend.wander_wave.models import (
     Post,
     Hashtag,
     Comment,

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from wander_wave.models import Subscription, Post
+from backend.wander_wave.models import Subscription, Post
 
 from rest_framework import serializers
 

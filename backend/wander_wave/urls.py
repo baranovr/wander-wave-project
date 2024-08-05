@@ -16,7 +16,7 @@ from backend.wander_wave.views import (
 
 )
 
-from backend.user import (
+from backend.user.views import (
     SubscriptionView,
     UnsubscribeView,
     SubscriptionNotificationViewSet

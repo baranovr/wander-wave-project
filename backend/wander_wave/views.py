@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from backend.user.serializers import AuthorProfileSerializer
-from wander_wave.models import (
+from backend.wander_wave.models import (
     Post,
     Location,
     Like,

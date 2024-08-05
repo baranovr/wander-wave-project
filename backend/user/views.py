@@ -16,7 +16,7 @@ from backend.user.serializers import (
     AuthorProfileSerializer
 )
 
-from wander_wave.models import Subscription, SubscriptionNotification
+from backend.wander_wave.models import Subscription, SubscriptionNotification
 from backend.wander_wave.notification_utils.base_notification_viewset import (
     BaseUserNotificationViewSet
 )
