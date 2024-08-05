@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
       - ./backend:/app
       - ./backend/my_media:/files/media
