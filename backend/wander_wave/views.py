@@ -244,10 +244,8 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer
-
         if self.action == "retrieve":
             return PostDetailSerializer
-
         return PostSerializer
 
     def create(self, request, *args, **kwargs):
@@ -266,7 +264,9 @@ class PostViewSet(viewsets.ModelViewSet):
         post = get_object_or_404(
             Post, pk=kwargs["pk"], user=self.request.user
         )
-        serializer = self.get_serializer(post, data=request.data)
+        serializer = self.get_serializer(
+            post, data=request.data, partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
