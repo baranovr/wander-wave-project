@@ -1,19 +1,20 @@
 import './Login.scss';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../app/store';
-import { login } from '../../features/authSlice';
+import { login, refreshToken } from '../../features/authSlice';
 import { useAppSelector } from '../../app/hooks';
 
 type Props = {
   handleShowRegister: () => void;
+  handleShowProfile: () => void;
 };
 
-export const Login: React.FC<Props> = ({ handleShowRegister }) => {
+export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { loading, error, expiresAt } = useAppSelector(state => state.auth);
   const [showError, setShowError] = useState(false);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +29,20 @@ export const Login: React.FC<Props> = ({ handleShowRegister }) => {
 
       return () => clearTimeout(timer);
     }
+
+    if (!error) {
+      handleShowProfile();
+    }
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (expiresAt && expiresAt * 1000 <= Date.now()) {
+        dispatch(refreshToken());
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [dispatch, expiresAt]);
 
   return (
     <div className="login">

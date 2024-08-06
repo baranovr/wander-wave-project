@@ -29,7 +29,11 @@ export const LoginPage = () => {
     <>
       {visibleProfile && <ProfilePage handleShowLogin={handleShowLogin} />}
 
-      {visibleLogin && <Login handleShowRegister={handleShowRegister} />}
+      {visibleLogin && (
+        <Login
+          handleShowRegister={handleShowRegister}
+          handleShowProfile={handleShowProfile}
+        />)}
 
       {visibleRegistration && (
         <Register
