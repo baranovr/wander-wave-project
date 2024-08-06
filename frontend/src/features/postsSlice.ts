@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Post } from '../types/Post';
-import { getPosts } from '../api/posts';
 import axiosInstance from '../api/axiosInstance';
 import { PostData } from '../types/PostDetails';
 
@@ -21,12 +20,15 @@ const initialState: PostsState = {
   createError: false,
 };
 
-export const init = createAsyncThunk('posts/fetch', getPosts);
+export const init = createAsyncThunk('posts/fetchPosts', async () => {
+  const response = await axiosInstance.get('api/platform/posts');
+  return response.data;
+});
 
 export const createPost = createAsyncThunk(
   'posts/createPost',
   async (formData: PostData) => {
-    const response = await axiosInstance.post('http://127.0.0.1:8080/api/posts/', formData, {
+    const response = await axiosInstance.post('/api/posts/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
