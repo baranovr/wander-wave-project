@@ -2,7 +2,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Post } from '../types/Post';
 import axiosInstance from '../api/axiosInstance';
-import { PostData } from '../types/PostDetails';
 
 type PostsState = {
   posts: Post[];
@@ -27,7 +26,7 @@ export const init = createAsyncThunk('posts/fetchPosts', async () => {
 
 export const createPost = createAsyncThunk(
   'posts/createPost',
-  async (formData: PostData) => {
+  async (formData: any) => {
     const response = await axiosInstance.post('/api/posts/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

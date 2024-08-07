@@ -14,6 +14,7 @@ export interface PostDetails {
     id: number;
     country: string;
     city: string;
+    name: string;
   };
   title: string;
   likes_count: number;
@@ -39,14 +40,7 @@ export interface PostDetails {
 export type PostData = {
   title: string;
   content: string;
-  hashtags: {
-    id: number;
-    name: string;
-  }[];
-  uploaded_photos: string[];
-  location: {
-    id: number;
-    country: string;
-    city: string;
-  };
+  hashtags: string[];
+  uploaded_photos: File[];
+  location_name: string;
 };

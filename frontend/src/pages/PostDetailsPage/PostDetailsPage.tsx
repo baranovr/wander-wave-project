@@ -125,11 +125,11 @@ export const PostDetailsPage = () => {
                 <Link
                   className="details__location-link"
                   target="_blank"
-                  to={`https://www.google.com/maps/place/${post?.location.city},${post?.location.country}/`}
+                  to={`https://www.google.com/maps/place/${post?.location.name}/`}
                 >
                   <div className="details__location">
                     <span className="details__icon-location" />
-                    {post?.location.city}, {post?.location.country}
+                    {post?.location.name}
                   </div>
                 </Link>
                 <div className="details__hashtags">{hashtags}</div>
