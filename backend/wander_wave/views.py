@@ -144,45 +144,6 @@ class LocationViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
-class HashtagAutocompleteView(generics.ListCreateAPIView):
-    serializer_class = HashtagSerializer
-
-    def get_queryset(self):
-        query = self.request.query_params.get("q", "")
-        return Hashtag.objects.filter(name__icontains__istartswith=query)[:10]
-
-    def create(self, request, *args, **kwargs):
-        name = request.data.get("name", "")
-        hashtag, created = Hashtag.objects.get_or_create(name=name)
-        serializer = self.get_serializer(hashtag)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        )
-
-
-class LocationAutocomplete(generics.ListCreateAPIView):
-    serializer_class = LocationSerializer
-
-    def get_queryset(self):
-        query = self.request.query_params.get("query", "")
-        return Location.objects.filter(name__icontains=query)[:10]
-
-    def create(self, request, *args, **kwargs):
-        name = request.data.get("name", "")
-        country, city = name.split(",") if "," in name else (name, "")
-        location, created = Location.objects.get_or_create(
-            country=country.strip(),
-            city=city.strip(),
-            defaults={"name": name}
-        )
-        serializer = self.get_serializer(location)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        )
-
-
 class PostNotificationViewSet(BaseUserNotificationViewSet):
     notification_model = PostNotification
     serializer_class = PostNotificationSerializer

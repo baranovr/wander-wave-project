@@ -192,10 +192,9 @@ class PostSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(allow_empty_file=False, use_url=False),
         write_only=True
     )
-    location_name = serializers.CharField(write_only=True)
+    location_name = serializers.CharField(write_only=True, allow_blank=True, required=False)
     hashtags = serializers.ListField(
-        child=serializers.CharField(),
-        write_only=True
+        child=serializers.CharField(), write_only=True
     )
 
     class Meta:
@@ -218,25 +217,16 @@ class PostSerializer(serializers.ModelSerializer):
         location_name = validated_data.pop('location_name', None)
         hashtags_data = validated_data.pop('hashtags', [])
 
-        # Create or get location
         if location_name:
-            country, city = location_name.split(',')
-            location, _ = Location.objects.get_or_create(
-                country=country.strip(),
-                city=city.strip(),
-                defaults={'name': location_name.strip()}
-            )
+            location, _ = Location.objects.get_or_create(name=location_name.strip())
             validated_data['location'] = location
 
-        # Create post
         post = Post.objects.create(**validated_data)
 
-        # Add hashtags
         for tag_name in hashtags_data:
             tag, _ = Hashtag.objects.get_or_create(name=tag_name.strip())
             post.hashtags.add(tag)
 
-        # Add photos
         for photo in uploaded_photos:
             if isinstance(photo, str) and photo.startswith("data:image"):
                 format, img_str = photo.split(";base64,")
