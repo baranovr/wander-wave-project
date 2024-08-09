@@ -98,64 +98,16 @@ export const Register: React.FC<Props> = ({
             onSubmit={handleRegister}
           >
             <h1 className="login__title">Register</h1>
-
             <div className="login__inputs">
               <div className="login__box">
                 <input
-                  type="text"
-                  name="username"
+                  type="file"
+                  name="avatar"
                   className="login__input"
-                  placeholder="User name"
-                  value={registerData.username}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="login__box">
-                <input
-                  type="password"
-                  name="password"
-                  value={registerData.password}
-                  placeholder="Password"
-                  className="login__input"
-                  onChange={e => handleChange(e)}
-                  required
-                />
-              </div>
-
-              <div className="login__box">
-                <input
-                  type="email"
-                  name="email"
-                  className="login__input"
-                  placeholder="Email"
-                  value={registerData.email}
-                  onChange={e => handleChange(e)}
-                  required
-                />
-              </div>
-
-              <div className="login__box">
-                <input
-                  type="text"
-                  name="first_name"
-                  className="login__input"
-                  placeholder="First name"
-                  value={registerData.first_name}
-                  onChange={e => handleChange(e)}
-                  required
-                />
-              </div>
-
-              <div className="login__box">
-                <input
-                  type="text"
-                  name="last_name"
-                  className="login__input"
-                  placeholder="Last name"
-                  value={registerData.last_name}
-                  onChange={e => handleChange(e)}
+                  accept="image/png, image/jpeg, imgae/jpg"
+                  alt="user photo"
+                  placeholder="Your photo"
+                  onChange={e => handleFileChange(e)}
                   required
                 />
               </div>
@@ -201,28 +153,78 @@ export const Register: React.FC<Props> = ({
                 </select>
               </div>
 
-              <div className="login__box">
-                <textarea
-                  name="about_me"
-                  className="login__input login__textarea"
-                  placeholder="About me"
-                  value={registerData.about_me}
-                  onChange={e => handleChange(e)}
-                  required
-                />
-              </div>
+              <div className="login__inputs">
+                <div className="login__box">
+                  <input
+                    type="text"
+                    name="username"
+                    className="login__input"
+                    placeholder="User name"
+                    value={registerData.username}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-              <div className="login__box">
-                <input
-                  type="file"
-                  name="avatar"
-                  className="login__input"
-                  accept="image/png, image/jpeg"
-                  alt="user photo"
-                  placeholder="Your photo"
-                  onChange={e => handleFileChange(e)}
-                  required
-                />
+                <div className="login__box">
+                  <input
+                    type="email"
+                    name="email"
+                    className="login__input"
+                    placeholder="Email"
+                    value={registerData.email}
+                    onChange={e => handleChange(e)}
+                    required
+                  />
+                </div>
+
+                <div className="login__box">
+                  <input
+                    type="text"
+                    name="first_name"
+                    className="login__input"
+                    placeholder="First name"
+                    value={registerData.first_name}
+                    onChange={e => handleChange(e)}
+                    required
+                  />
+                </div>
+
+                <div className="login__box">
+                  <input
+                    type="text"
+                    name="last_name"
+                    className="login__input"
+                    placeholder="Last name"
+                    value={registerData.last_name}
+                    onChange={e => handleChange(e)}
+                    required
+                  />
+                </div>
+
+
+                <div className="login__box">
+                  <textarea
+                    name="about_me"
+                    className="login__input login__textarea"
+                    placeholder="About me"
+                    value={registerData.about_me}
+                    onChange={e => handleChange(e)}
+                    required
+                  />
+                </div>
+
+                <div className="login__box">
+                  <input
+                    type="password"
+                    name="password"
+                    value={registerData.password}
+                    placeholder="Password"
+                    className="login__input"
+                    onChange={e => handleChange(e)}
+                    required
+                  />
+                </div>
               </div>
             </div>
 
@@ -236,12 +238,12 @@ export const Register: React.FC<Props> = ({
               Have an account?{' '}
               <button
                 type="button"
-                onClick={handleShowLogin}
-                className="login__register-button"
-              >
-                Login
-              </button>
-            </div>
+                  onClick={handleShowLogin}
+                  className="login__register-button"
+                >
+                  Login
+                </button>
+              </div>
           </form>
         </div>
       </div>

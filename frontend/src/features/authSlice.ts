@@ -90,7 +90,7 @@ export const logout = createAsyncThunk(
 
     try {
       const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/my_profile/logout/', {
-        refresh_token: refreshToken,
+        refresh: refreshToken,
       });
       if (response.status === 205) {
         localStorage.removeItem('access');

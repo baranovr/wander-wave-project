@@ -45,7 +45,7 @@ export const fetchUserProfile = createAsyncThunk(
   'profile/fetchUserProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile');
+      const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
       return response.data;
     } catch (error) {
       return rejectWithValue('Failed to fetch user profile');
