@@ -47,7 +47,14 @@ export const fetchUserProfile = createAsyncThunk(
     try {
       const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as any;
+
+      if (err.error.response.status === 429) {
+
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
+      }
       return rejectWithValue('Failed to fetch user profile');
     }
   },
