@@ -1,11 +1,11 @@
 from django.urls import path
 
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
 
+from backend.user.custom_token.token_view import CustomTokenObtainPairView
 from backend.user.views import (
     CreateUserViewSet,
     LogoutView,
@@ -27,7 +27,7 @@ urlpatterns = [
     path("my_profile/", MyProfileView.as_view(), name="my_profile"),
     path("my_profile/logout/", LogoutView.as_view(), name="logout"),
 
-    path("token/", TokenObtainPairView.as_view(), name="create-token"),
+    path("token/", CustomTokenObtainPairView.as_view(), name="create-token"),
     path("token/refresh/", TokenRefreshView.as_view(), name="refresh-token"),
     path("token/verify/", TokenVerifyView.as_view(), name="verify"),
 

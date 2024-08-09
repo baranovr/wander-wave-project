@@ -22,7 +22,7 @@ const initialState: DetailsState = {
 export const fetchPostDetails = createAsyncThunk(
   'posts/fetchPostDetails',
   async (postId: string) => {
-    const response = await axiosInstance.get(`/api/platform/posts/${postId}`);
+    const response = await axiosInstance.get(`http://127.0.0.1:8080/api/platform/posts/${postId}`);
     return response.data;
   },
 );
@@ -38,7 +38,7 @@ export const addComment = createAsyncThunk(
     userId: number;
     postId: number;
   }) => {
-    const response = await axiosInstance.post('/api/platform/comments/', {
+    const response = await axiosInstance.post('http://127.0.0.1:8080/api/platform/comments/', {
       text,
       userId,
       postId,
@@ -52,7 +52,7 @@ export const setLike = createAsyncThunk(
   async (postId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `/api/platform/posts/${postId}/set-like/`,
+        `http://127.0.0.1:8080/api/platform/posts/${postId}/set-like/`,
         null
       );
       return response.data;
@@ -67,7 +67,7 @@ export const addToFavorites = createAsyncThunk(
   async (postId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `/api/platform/posts/${postId}/add-to-favorites/`,
+        `http://127.0.0.1:8080/api/platform/posts/${postId}/add-to-favorites/`,
         null
       );
       return response.data;

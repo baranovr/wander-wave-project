@@ -12,14 +12,14 @@ type Props = {
 
 export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { loading, error, expiresAt } = useAppSelector(state => state.auth);
   const [showError, setShowError] = useState(false);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(login({ username, password }));
+    dispatch(login({ email, password }));
 
     if (error) {
       setShowError(true);
@@ -56,9 +56,9 @@ export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }
                 <input
                   type="text"
                   className="login__input"
-                  placeholder="User name"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
+                  placeholder="Email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   required
                 />
                 <i className="login__icon login__icon--user" />

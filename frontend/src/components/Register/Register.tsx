@@ -15,25 +15,25 @@ export const Register: React.FC<Props> = ({
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector(state => state.auth);
   const [registerData, setRegisterData] = useState({
+    avatar: '',
+    status: '',
     username: '',
     email: '',
-    password: '',
     first_name: '',
     last_name: '',
-    status: '',
     about_me: '',
-    avatar: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState({
+    avatar: false,
+    status: false,
     username: false,
     email: false,
-    password: false,
     first_name: false,
     last_name: false,
-    status: false,
     about_me: false,
-    avatar: false,
+    password: false,
   });
 
   const [showError, setShowError] = useState(false);

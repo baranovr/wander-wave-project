@@ -38,16 +38,7 @@ class CreateUserViewSet(generics.CreateAPIView):
 
 class LogoutView(APIView):
     def post(self, request):
-        try:
-            refresh_token = request.data["refresh_token"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(e)},
-            )
+        return Response(status=status.HTTP_205_RESET_CONTENT)
 
 
 class MyProfileView(generics.RetrieveUpdateAPIView):

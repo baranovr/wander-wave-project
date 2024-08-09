@@ -15,8 +15,8 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  accessToken: localStorage.getItem('access_token'),
-  refreshToken: localStorage.getItem('refresh_token'),
+  accessToken: localStorage.getItem('access'),
+  refreshToken: localStorage.getItem('refresh'),
   loading: false,
   error: null,
   isAuthenticated: false,
@@ -38,15 +38,15 @@ type registerData = {
 export const login = createAsyncThunk(
   'auth/authenticate',
   async (
-    { username, password }: { username: string; password: string },
+    { email, password }: { email: string; password: string },
     { rejectWithValue }
   ) => {
     try {
       // Step 1: Log in and get tokens
-      const response = await axiosInstance.post('/api/user/token/', { username, password });
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/', { email, password });
       const { access, refresh } = response.data;
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
+      localStorage.setItem('access', access);
+      localStorage.setItem('refresh', refresh);
 
       // Step 2: Decode token to get expiration time
       const { exp } = jwtDecode<{ exp: number }>(access);
@@ -69,12 +69,12 @@ export const refreshToken = createAsyncThunk(
   'auth/refreshToken',
   async (_, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance.post('/api/user/token/refresh/', {
-      refresh: localStorage.getItem('refresh_token'),
+    const { data } = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/refresh/', {
+      refresh: localStorage.getItem('refresh'),
     });
     const { access, refresh } = data;
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
+    localStorage.setItem('access', access);
+    localStorage.setItem('refresh', refresh);
     const { exp } = jwtDecode<{ exp: number }>(access);
     return { accessToken: access, refreshToken: refresh, expiresAt: exp };
   } catch (error) {
@@ -89,12 +89,12 @@ export const logout = createAsyncThunk(
     const refreshToken = state.auth.refreshToken;
 
     try {
-      const response = await axiosInstance.post('/api/user/my_profile/logout/', {
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/my_profile/logout/', {
         refresh_token: refreshToken,
       });
       if (response.status === 205) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
         return;
       } else {
         return rejectWithValue('Logout failed');
@@ -110,7 +110,7 @@ export const register = createAsyncThunk(
   async (registrationData: registerData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        '/api/user/register/',
+        'http://127.0.0.1:8080/api/user/register/',
         registrationData,
         {
           headers: {
@@ -119,8 +119,8 @@ export const register = createAsyncThunk(
         },
       );
       const { access, refresh } = response.data;
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
+      localStorage.setItem('access', access);
+      localStorage.setItem('refresh', refresh);
       return { access, refresh };
     } catch (error) {
       return rejectWithValue('Registration failed');

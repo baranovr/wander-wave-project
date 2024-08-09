@@ -3,7 +3,7 @@ venv/
 **__pycache__/
 .env
 .idea/
-node_modules/
+**node_modules/
 my_media/
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 

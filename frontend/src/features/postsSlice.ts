@@ -20,14 +20,14 @@ const initialState: PostsState = {
 };
 
 export const init = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await axiosInstance.get('api/platform/posts');
+  const response = await axiosInstance.get('http://127.0.0.1:8080/api/platform/posts/');
   return response.data;
 });
 
 export const createPost = createAsyncThunk(
   'posts/createPost',
   async (formData: any) => {
-    const response = await axiosInstance.post('/api/posts/', formData, {
+    const response = await axiosInstance.post('http://127.0.0.1:8080/api/platform/posts/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
