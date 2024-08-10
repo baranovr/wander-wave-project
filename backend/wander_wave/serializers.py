@@ -192,16 +192,12 @@ class PostSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(allow_empty_file=False, use_url=False),
         write_only=True
     )
-    location_name = serializers.CharField(write_only=True, allow_blank=True, required=False)
-    hashtags = serializers.ListField(
-        child=serializers.CharField(), write_only=True
-    )
 
     class Meta:
         model = Post
         fields = (
             "id",
-            "location_name",
+            "location",
             "photos",
             "uploaded_photos",
             "title",

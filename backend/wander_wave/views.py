@@ -205,8 +205,10 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer
+
         if self.action == "retrieve":
             return PostDetailSerializer
+
         return PostSerializer
 
     def create(self, request, *args, **kwargs):
