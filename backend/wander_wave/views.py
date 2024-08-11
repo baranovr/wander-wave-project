@@ -163,6 +163,11 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    @staticmethod
+    def _params_to_ints(qs):
+        """Converts a list of string IDs to a list of integers"""
+        return [int(str_id) for str_id in qs.split(",")]
+
     def get_permissions(self):
         if self.action == "list":
             return [permissions.AllowAny()]
