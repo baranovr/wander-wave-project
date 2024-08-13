@@ -2,6 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Post } from '../types/Post';
 import axiosInstance from '../api/axiosInstance';
+import { PostData } from '../types/PostDetails';
 
 type PostsState = {
   posts: Post[];
@@ -20,19 +21,44 @@ const initialState: PostsState = {
 };
 
 export const init = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await axiosInstance.get('http://127.0.0.1:8080/api/platform/posts/');
+  const response = await axiosInstance.get(
+    'http://127.0.0.1:8080/api/platform/posts/',
+  );
   return response.data;
 });
 
 export const createPost = createAsyncThunk(
   'posts/createPost',
-  async (formData: any) => {
-    const response = await axiosInstance.post('http://127.0.0.1:8080/api/platform/posts/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+  async (postData: PostData, { getState }) => {
+    const token = localStorage.getItem('access');
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const postResponse = await axiosInstance.post(
+      'http://127.0.0.1:8080/api/platform/posts/',
+      postData,
+      {
+        headers: { ...headers, 'Content-Type': 'application/json' },
       },
-    });
-    return response.data;
+    );
+
+    const post = postResponse.data;
+
+    if (postData.uploaded_photos && postData.uploaded_photos.length > 0) {
+      const formData = new FormData();
+      postData.uploaded_photos.forEach((file, index) => {
+        formData.append(`${index}`, file);
+      });
+
+      await axiosInstance.post(
+        `http://127.0.0.1:8080/api/platform/posts/${post.id}/uploaded_photos`,
+        formData,
+        {
+          headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+        },
+      );
+    }
+
+    return post;
   },
 );
 

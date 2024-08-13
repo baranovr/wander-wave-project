@@ -21,10 +21,10 @@ interface Hashtag {
 export const NewPostPage = () => {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const [locationInput, setLocationInput] = useState<string>('');
+  const [visibleLocation, setVisibleLocation] = useState(false);
   const [locationSuggestions, setLocationSuggestions] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [hashtagInput, setHashtagInput] = useState<string>('');
+  const [visibleHashtags, setVisibleHashtags] = useState(false);
   const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
   const [photos, setPhotos] = useState<File[]>([]);
@@ -54,7 +54,7 @@ export const NewPostPage = () => {
 
   const fetchLocationSuggestions = async () => {
     try {
-      const response = await axiosInstance.get(`/api/locations/autocomplete/?query=${locationInput}`);
+      const response = await axiosInstance.get('/api/locations/');
       setLocationSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching location suggestions:', error);
@@ -63,7 +63,7 @@ export const NewPostPage = () => {
 
   const fetchHashtagSuggestions = async () => {
     try {
-      const response = await axiosInstance.get(`/api/hashtags/autocomplete/?q=${hashtagInput}`);
+      const response = await axiosInstance.get('/api/hashtags/');
       setHashtagSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching hashtag suggestions:', error);
@@ -71,33 +71,26 @@ export const NewPostPage = () => {
   };
 
   useEffect(() => {
-    if (locationInput.length > 2) {
-      fetchLocationSuggestions();
-    } else {
-      setLocationSuggestions([]);
-    }
-  }, [locationInput]);
+    fetchLocationSuggestions();
+  }, []);
 
   useEffect(() => {
-    if (hashtagInput.length > 1) {
-      fetchHashtagSuggestions();
-    } else {
-      setHashtagSuggestions([]);
-    }
-  }, [hashtagInput]);
+    fetchHashtagSuggestions();
+  }, []);
 
   const handleLocationSelect = (location: Location) => {
     setSelectedLocation(location.name);
-    setLocationInput(location.name);
-    setLocationSuggestions([]);
+
+    setErrors((current => ({ ...current, selectedLocation: false })));
+    setVisibleLocation(false);
   };
 
   const handleHashtagSelect = (hashtag: Hashtag) => {
     if (!selectedHashtags.includes(hashtag.name)) {
       setSelectedHashtags([...selectedHashtags, hashtag.name]);
+      setErrors((current => ({ ...current, selectedHashtags: false })));
     }
-    setHashtagInput('');
-    setHashtagSuggestions([]);
+    setVisibleHashtags(false);
   };
 
   const handleRemoveHashtag = (hashtag: string) => {
@@ -114,16 +107,9 @@ export const NewPostPage = () => {
   const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append('location_name', selectedLocation);
-    selectedHashtags.forEach(tag => formData.append('hashtags', tag));
-    photos.forEach(photo => formData.append('uploaded_photos', photo));
-
     setErrors({
-      locationInput: !locationInput.trim(),
-      hashtagInput: !selectedHashtags.length,
+      selectedLocation: !selectedLocation,
+      selectedHashtags: !selectedHashtags.length,
       title: !title.trim(),
       content: !content.trim(),
       photos: !photos.length,
@@ -132,7 +118,7 @@ export const NewPostPage = () => {
 
     if (
       !title.trim() ||
-      !locationInput.trim() ||
+      !selectedLocation ||
       !selectedHashtags.length ||
       !photos.length ||
       !content.trim()
@@ -140,15 +126,24 @@ export const NewPostPage = () => {
       return;
     }
 
-    await dispatch(createPost(formData));
+    await dispatch(
+      createPost({
+        title,
+        content,
+        hashtags: selectedHashtags,
+        uploaded_photos: photos,
+        location_name: selectedLocation,
+      })
+    );
+
     clearForm();
   };
 
   const [errors, setErrors] = useState({
     title: false,
-    locationInput: false,
+    selectedLocation: false,
     content: false,
-    hashtagInput: false,
+    selectedHashtags: false,
     photos: false,
   });
 
@@ -156,14 +151,14 @@ export const NewPostPage = () => {
   const clearForm = () => {
     setTitle('');
     setContent('');
-    setLocationInput('');
-    setHashtagInput('');
+    setSelectedLocation('');
+    setSelectedHashtags([]);
     setPhotos([]);
     setErrors({
       title: false,
-      locationInput: false,
+      selectedLocation: false,
       content: false,
-      hashtagInput: false,
+      selectedHashtags: false,
       photos: false,
     });
   };
@@ -178,16 +173,6 @@ export const NewPostPage = () => {
     setErrors((current => ({ ...current, content: false })))
   }
 
-  const handleLocationInputChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    setLocationInput(ev.target.value);
-    setErrors((current => ({ ...current, locationInput: false })))
-  }
-
-  const handleHashtagInputChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    setHashtagInput(ev.target.value);
-    setErrors((current => ({ ...current, hashtagInput: false })))
-  }
-
   return (
     <div className="newpost">
       <div className="container">
@@ -198,14 +183,14 @@ export const NewPostPage = () => {
           </h4>
           <form onSubmit={handleSubmit} onReset={clearForm}>
             <div className="newpost__field">
-              <label className="newpost__label" htmlFor="comment-author-name">
+              <label className="newpost__label" htmlFor="post-title">
                 Title
               </label>
               <div className="newpost__control">
                 <input
                   type="text"
                   name="title"
-                  id="comment-author-name"
+                  id="post-title"
                   placeholder="Title"
                   className={classNames('newpost__input', {
                     'is-danger': errors.title,
@@ -229,28 +214,23 @@ export const NewPostPage = () => {
             </div>
 
             <div className="newpost__field">
-              <label className="newpost__label" htmlFor="comment-author-name">
+              <label className="newpost__label" htmlFor="post-location">
                 Location
               </label>
               <div className="newpost__control">
-                <input
-                  type="text"
-                  value={locationInput}
+                <button
+                  type="button"
+                  id="post-location"
                   className="newpost__select"
-                  onChange={handleLocationInputChange}
-                  placeholder="Location"
-                />
-                {locationSuggestions.length > 0 && (
+                  onClick={() => setVisibleLocation(true)}
+                >
+                  {selectedLocation ? selectedLocation : 'Choose location'}
+                  <span className={classNames('newpost__icon newpost__icon--arrow',
+                    { 'newpost__icon--arrow--active': visibleLocation }
+                  )} />
+                </button>
+                {visibleLocation && (
                   <ul>
-                    {locationInput && (
-                      <li
-                        onClick={() => handleLocationSelect({ name: locationInput })}
-                        className="newpost__suggestions"
-                      >
-
-                        {locationInput}
-                      </li>
-                    )}
                     {locationSuggestions.map((location) => (
                       <li
                         key={location.id}
@@ -263,7 +243,7 @@ export const NewPostPage = () => {
                   </ul>
                 )}
               </div>
-              {errors.locationInput && (
+              {errors.selectedLocation && (
                 <p
                   className="newpost__help newpost__is-danger"
                   data-cy="ErrorMessage"
@@ -278,28 +258,23 @@ export const NewPostPage = () => {
             </div>
 
             <div className="newpost__field">
-              <label className="newpost__label" htmlFor="comment-author-name">
+              <label className="newpost__label" htmlFor="post-hashtags">
                 Hashtags
               </label>
               <div className="newpost__control">
-                <input
-                  type="text"
+                <button
+                  type="button"
+                  id="post-hashtags"
                   className="newpost__select"
-                  value={hashtagInput}
-                  onChange={handleHashtagInputChange}
-                  placeholder="Add hashtag"
-                />
-                {hashtagSuggestions.length > 0 && (
+                  onClick={() => setVisibleHashtags(true)}
+                >
+                  Choose hashtag
+                  <span className={classNames('newpost__icon newpost__icon--arrow',
+                    { 'newpost__icon--arrow--active': visibleHashtags }
+                  )} />
+                </button>
+                {visibleHashtags && (
                   <ul>
-                    {hashtagInput && (
-                      <li
-                        onClick={() => handleHashtagSelect({ name: hashtagInput })}
-                        className="newpost__suggestions"
-                      >
-
-                        {hashtagInput}
-                      </li>
-                    )}
                     {hashtagSuggestions.map((hashtag) => (
                       <li
                         key={hashtag.id}
@@ -327,7 +302,7 @@ export const NewPostPage = () => {
                   ))}
                 </div>
               </div>
-              {errors.hashtagInput && (
+              {errors.selectedHashtags && (
                 <p
                   className="newpost__help newpost__is-danger"
                   data-cy="ErrorMessage"
@@ -342,12 +317,13 @@ export const NewPostPage = () => {
             </div>
 
             <div className="newpost__field" data-cy="BodyField">
-              <label className="newpost__label" htmlFor="comment-body">
+              <label className="newpost__label" htmlFor="post-body">
                 Posts text
               </label>
               <div className="newpost__control">
                 <textarea
                   name="content"
+                  id="post-body"
                   placeholder="Type your post here"
                   className={classNames('newpost__textarea', {
                     'is-danger': errors.content,
@@ -371,13 +347,14 @@ export const NewPostPage = () => {
             </div>
 
             <div className="newpost__field">
-              <label className="newpost__label" htmlFor="comment-author-name">
+              <label className="newpost__label" htmlFor="post-photos">
                 Add photos
               </label>
               <div className="newpost__control">
                 <input
                   type="file"
                   multiple
+                  id="post-photos"
                   onChange={handlePhotoUpload}
                   accept="image/*"
                   placeholder="Photos"

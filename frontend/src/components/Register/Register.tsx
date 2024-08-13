@@ -1,6 +1,6 @@
 import '../Login/Login.scss';
 import React, { useState } from 'react';
-import { register } from '../../features/authSlice';
+import { register, registerData } from '../../features/authSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 type Props = {
@@ -14,8 +14,8 @@ export const Register: React.FC<Props> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector(state => state.auth);
-  const [registerData, setRegisterData] = useState({
-    avatar: '',
+  const [registerData, setRegisterData] = useState<registerData>({
+    avatar: null,
     status: '',
     username: '',
     email: '',
@@ -48,23 +48,18 @@ export const Register: React.FC<Props> = ({
     setErrors(current => ({ ...current, [field]: false }));
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-
-    let avatarBase64 = '';
-    if (file) {
-      const reader = new FileReader();
-      avatarBase64 = await new Promise<string>((resolve, reject) => {
-        reader.onloadend = () => {
-          resolve(reader.result as string);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    setRegisterData(prevState => ({ ...prevState, avatar: avatarBase64 }));
-    setErrors(current => ({ ...current, avatar: false }));
+  
+    setRegisterData(prevState => ({
+      ...prevState,
+      avatar: file,
+    }));
+  
+    setErrors(current => ({
+      ...current,
+      avatar: false,
+    }));
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -107,7 +102,7 @@ export const Register: React.FC<Props> = ({
                   accept="image/png, image/jpeg, imgae/jpg"
                   alt="user photo"
                   placeholder="Your photo"
-                  onChange={e => handleFileChange(e)}
+                  onChange={handleFileChange}
                   required
                 />
               </div>
@@ -161,7 +156,7 @@ export const Register: React.FC<Props> = ({
                     className="login__input"
                     placeholder="User name"
                     value={registerData.username}
-                    onChange={handleChange}
+                    onChange={e => handleChange(e)}
                     required
                   />
                 </div>

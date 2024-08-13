@@ -23,7 +23,7 @@ const initialState: AuthState = {
   expiresAt: null,
 };
 
-type registerData = {
+export type registerData = {
   username: string;
   email: string;
   password: string;
@@ -31,7 +31,7 @@ type registerData = {
   last_name: string;
   status: string;
   about_me: string;
-  avatar: string;
+  avatar: File | null;
 };
 
 
