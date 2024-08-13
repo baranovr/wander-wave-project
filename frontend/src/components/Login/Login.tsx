@@ -1,5 +1,5 @@
 import './Login.scss';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../app/store';
 import { login, refreshToken } from '../../features/authSlice';
@@ -14,35 +14,23 @@ export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }
   const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { loading, error, expiresAt } = useAppSelector(state => state.auth);
-  const [showError, setShowError] = useState(false);
+  const { loading, error } = useAppSelector(state => state.auth);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(login({ email, password }));
-
-    if (error) {
-      setShowError(true);
-      const timer = setTimeout(() => {
-        setShowError(false);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-
-    if (!error) {
+    try {
+      await dispatch(login({ email, password })).unwrap();
       handleShowProfile();
-    }
-  };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (expiresAt && expiresAt * 1000 <= Date.now()) {
+      const refreshInterval = 14 * 60 * 1000;
+      setInterval(() => {
         dispatch(refreshToken());
-      }
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [dispatch, expiresAt]);
+      }, refreshInterval);
+
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  }, [dispatch, email, password, handleShowProfile])
 
   return (
     <div className="login">
@@ -80,7 +68,7 @@ export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }
               {loading ? 'Logging in...' : 'Login'}
             </button>
 
-            {showError && <p className="login__error">{error}</p>}
+            {/*{showError && <p className="login__error">{error}</p>}*/}
 
             <div className="login__register">
               Don't have an account?{' '}

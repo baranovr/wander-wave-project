@@ -1,21 +1,18 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  // baseURL: process.env.VITE_API_URL,
+  baseURL: 'http://127.0.0.1:8080/api/',
 });
 
-// Add a request interceptor to include the auth token in the headers
 axiosInstance.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('access'); // Retrieve token from local storage or auth state
+  (config) => {
+    const token = localStorage.getItem('access');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default axiosInstance;

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
 import { User } from '../types/User';
 import { Post } from '../types/Post';
+import {refreshToken} from "./authSlice";
 
 export type Subscription = {
   id: number;
@@ -41,23 +42,51 @@ const initialState: ProfileState = {
   favError: false,
 };
 
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const retryWithBackoff = async (fn: () => Promise<any>, maxRetries = 3) => {
+  let retries = 0;
+  while (retries < maxRetries) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      if (error.response && error.response.status === 429) {
+        retries++;
+        const delay = Math.pow(2, retries) * 1000; // Exponential backoff
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error('Max retries reached');
+};
+
 export const fetchUserProfile = createAsyncThunk(
   'profile/fetchUserProfile',
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
+      const response = await retryWithBackoff(() => axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/'));
       return response.data;
-    } catch (error: unknown) {
-      const err = error as any;
-
-      if (err.error.response.status === 429) {
-
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        return await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        // If error 401 - try to refresh
+        try {
+          await dispatch(refreshToken()).unwrap();
+          // If the token update was successful, retry the profile request
+          const retryResponse = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
+          return retryResponse.data;
+        } catch (refreshError) {
+          // If the token update fails, redirect to the login page
+          // Here you can dispatch action to redirect or use navigate from react-router
+          return rejectWithValue('Session expired. Please log in again.');
+        }
       }
       return rejectWithValue('Failed to fetch user profile');
     }
-  },
+  }
 );
 
 export const fetchSubscriptions = createAsyncThunk(

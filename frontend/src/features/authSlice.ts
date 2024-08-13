@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
+import axiosPublicInstance from '../api/axiosPublicInstance';
 import { fetchUserProfile } from './myProfileSlice';
 import { jwtDecode } from 'jwt-decode';
+import axios from "axios";
 
 
 
@@ -36,31 +38,21 @@ export type registerData = {
 
 
 export const login = createAsyncThunk(
-  'auth/authenticate',
-  async (
-    { email, password }: { email: string; password: string },
-    { rejectWithValue }
-  ) => {
+  'auth/login',
+  async (credentials: { email: string; password: string }, { dispatch }) => {
     try {
-      // Step 1: Log in and get tokens
-      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/', { email, password });
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/', credentials);
       const { access, refresh } = response.data;
       localStorage.setItem('access', access);
       localStorage.setItem('refresh', refresh);
 
-      // Step 2: Decode token to get expiration time
-      const { exp } = jwtDecode<{ exp: number }>(access);
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access}`;
 
-      // Step 3: Fetch user data if token is valid
-      if (exp * 1000 > Date.now()) {
-        const user = await fetchUserProfile();
-        return { access, refresh, user, expiresAt: exp };
-      }
+      await dispatch(fetchUserProfile());
 
-      // Step 4: Refresh token if expired
-      await refreshToken();
+      return { access, refresh };
     } catch (error) {
-      return rejectWithValue('Authentication failed');
+      throw error;
     }
   }
 );
@@ -68,19 +60,25 @@ export const login = createAsyncThunk(
 export const refreshToken = createAsyncThunk(
   'auth/refreshToken',
   async (_, { rejectWithValue }) => {
-  try {
-    const { data } = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/refresh/', {
-      refresh: localStorage.getItem('refresh'),
-    });
-    const { access, refresh } = data;
-    localStorage.setItem('access', access);
-    localStorage.setItem('refresh', refresh);
-    const { exp } = jwtDecode<{ exp: number }>(access);
-    return { accessToken: access, refreshToken: refresh, expiresAt: exp };
-  } catch (error) {
-    return rejectWithValue('Token refresh failed');
+    try {
+      const refreshToken = localStorage.getItem('refresh');
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/refresh/', { refresh: refreshToken });
+      const { access } = response.data;
+      localStorage.setItem('access', access);
+
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+
+      return access;
+    } catch (error) {
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
+      return rejectWithValue('Failed to refresh token');
+    }
   }
-});
+);
 
 export const logout = createAsyncThunk(
   'auth/logout',
@@ -109,8 +107,9 @@ export const register = createAsyncThunk(
   'auth/register',
   async (registrationData: registerData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(
-        'http://127.0.0.1:8080/api/user/register/',
+      // Step 1: User register
+      const registerResponse = await axiosPublicInstance.post(
+        'user/register/',
         registrationData,
         {
           headers: {
@@ -118,12 +117,28 @@ export const register = createAsyncThunk(
           },
         },
       );
-      const { access, refresh } = response.data;
+
+      console.log('Registration response:', registerResponse);
+
+      // Step: get tokens
+      const { data } = await axiosPublicInstance.post('user/token/', {
+        email: registrationData.email,
+        password: registrationData.password
+      });
+
+      const { access, refresh } = data;
       localStorage.setItem('access', access);
       localStorage.setItem('refresh', refresh);
-      return { access, refresh };
+
+      const { exp } = jwtDecode<{ exp: number }>(access);
+
+      return { access, refresh, expiresAt: exp };
     } catch (error) {
-      return rejectWithValue('Registration failed');
+      if (axios.isAxiosError(error)) {
+        console.error('Registration error:', error.response?.data);
+        return rejectWithValue(error.response?.data || 'Registration failed');
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   },
 );
@@ -138,68 +153,72 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.isAuthenticated = false;
+      state.expiresAt = null;
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(login.pending, state => {
+      // Login
+      .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<{ access: string; refresh: string; user: any; expiresAt: number } | undefined>) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload) {
-          state.accessToken = action.payload.access;
-          state.refreshToken = action.payload.refresh;
-          state.loading = false;
-          state.isAuthenticated = true;
-          state.expiresAt = action.payload.expiresAt;
-        } else {
-          state.error = 'Authentication failed';
-        }
+        state.accessToken = action.payload.access;
+        state.refreshToken = action.payload.refresh;
+        state.isAuthenticated = true;
+        // state.expiresAt = action.payload.expiresAt;
+        state.error = null;
       })
-      .addCase(login.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message || 'Login failed';
+        state.isAuthenticated = false;
       })
+
+      // Refresh Token
       .addCase(refreshToken.fulfilled, (state, action) => {
-        state.accessToken = action.payload?.accessToken;
-        state.refreshToken = action.payload?.refreshToken;
-        state.expiresAt = action.payload?.expiresAt;
-      })
-      .addCase(logout.pending, state => {
-        state.loading = true;
+        state.accessToken = action.payload;
         state.error = null;
       })
-      .addCase(logout.fulfilled, state => {
-        state.loading = false;
+      .addCase(refreshToken.rejected, (state) => {
         state.accessToken = null;
         state.refreshToken = null;
         state.isAuthenticated = false;
+        state.error = 'Token refresh failed';
       })
-      .addCase(logout.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
+
+      // Logout
+      .addCase(logout.fulfilled, (state) => {
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.isAuthenticated = false;
+        state.error = null;
       })
-      .addCase(register.pending, state => {
+      .addCase(logout.rejected, (state, action) => {
+        state.error = action.error.message || 'Logout failed';
+      })
+
+      // Register
+      .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        register.fulfilled,
-        (state, action: PayloadAction<{ access: string; refresh: string }>) => {
-          state.loading = false;
-          state.accessToken = action.payload.access;
-          state.refreshToken = action.payload.refresh;
-          state.isAuthenticated = true;
-        },
-      )
-      .addCase(register.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.accessToken = action.payload.access;
+        state.refreshToken = action.payload.refresh;
+        state.isAuthenticated = true;
+        state.expiresAt = action.payload.expiresAt;
+        state.error = null;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Registration failed';
+        state.isAuthenticated = false;
       });
   },
 });
-
 export const { clearAuthState } = authSlice.actions;
 export default authSlice.reducer;

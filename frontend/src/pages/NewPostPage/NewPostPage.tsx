@@ -54,7 +54,7 @@ export const NewPostPage = () => {
 
   const fetchLocationSuggestions = async () => {
     try {
-      const response = await axiosInstance.get('/api/locations/');
+      const response = await axiosInstance.get('http://127.0.0.1:8080/api/platform/locations/');
       setLocationSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching location suggestions:', error);
@@ -63,7 +63,7 @@ export const NewPostPage = () => {
 
   const fetchHashtagSuggestions = async () => {
     try {
-      const response = await axiosInstance.get('/api/hashtags/');
+      const response = await axiosInstance.get('http://127.0.0.1:8080/api/platform/hashtags/');
       setHashtagSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching hashtag suggestions:', error);

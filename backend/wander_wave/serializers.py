@@ -1,5 +1,3 @@
-import base64
-
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from django.utils.text import Truncator
@@ -17,8 +15,8 @@ from backend.wander_wave.models import (
     PostNotification,
     LikeNotification,
     CommentNotification,
-    SubscriptionNotification, PostPhoto,
-    # PostPhoto,
+    SubscriptionNotification,
+    Photo,
 )
 
 
@@ -180,62 +178,27 @@ class SubscriptionNotificationListSerializer(
         fields = SubscriptionNotificationSerializer.Meta.fields
 
 
-class PostPhotoSerializer(serializers.ModelSerializer):
+class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PostPhoto
-        fields = "__all__"
+        model = Photo
+        fields = ["id", "image"]
 
 
 class PostSerializer(serializers.ModelSerializer):
-    photos = PostPhotoSerializer(many=True, read_only=True)
-    uploaded_photos = serializers.ListField(
-        child=serializers.ImageField(allow_empty_file=False, use_url=False),
-        write_only=True
-    )
-
+    photos = PhotoSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Post
-        fields = (
-            "id",
-            "location",
-            "photos",
-            "uploaded_photos",
-            "title",
-            "content",
-            "user",
-            "hashtags",
-            "created_at",
-            "updated_at",
-        )
+        fields = ["id", "title", "content", "location", "hashtags", "photos", "created_at"]
 
     def create(self, validated_data):
-        uploaded_photos = validated_data.pop("uploaded_photos", [])
-        location_name = validated_data.pop('location_name', None)
-        hashtags_data = validated_data.pop('hashtags', [])
-
-        if location_name:
-            location, _ = Location.objects.get_or_create(name=location_name.strip())
-            validated_data['location'] = location
-
+        photos_data = validated_data.pop("uploaded_photos")
         post = Post.objects.create(**validated_data)
 
-        for tag_name in hashtags_data:
-            tag, _ = Hashtag.objects.get_or_create(name=tag_name.strip())
-            post.hashtags.add(tag)
-
-        for photo in uploaded_photos:
-            if isinstance(photo, str) and photo.startswith("data:image"):
-                format, img_str = photo.split(";base64,")
-                ext = format.split("/")[-1]
-                photo_data = ContentFile(
-                    base64.b64decode(img_str), name=f"photo.{ext}"
-                )
-            else:
-                photo_data = photo
-
-            PostPhoto.objects.create(post=post, photo=photo_data)
-
-        return post
+        if photos_data:
+            for photo_data in photos_data:
+                Photo.objects.create(post=post, image=photo_data)
+            return post
 
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -249,7 +212,7 @@ class PostListSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
 
-    photos = PostPhotoSerializer(many=True, read_only=True)
+    photos = PhotoSerializer(many=True, read_only=True)
 
     def get_base_count(self, model, obj):
         return model.objects.filter(post=obj).count()
@@ -354,6 +317,8 @@ class PostDetailSerializer(
     full_name = serializers.CharField(source="user.full_name", read_only=True)
     user_status = serializers.CharField(source="user.status", read_only=True)
     comments = CommentInPostSerializer(many=True, read_only=True)
+
+    photos = PhotoSerializer(many=True, read_only=True)
 
     def get_content(self, obj):
         return obj.content

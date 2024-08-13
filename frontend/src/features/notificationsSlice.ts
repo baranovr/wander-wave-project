@@ -14,25 +14,39 @@ const initialState: NotificationState = {
   error: null,
 };
 
+type NotificationsArray = Notification[] | null;
+
+let cachedNotifications: NotificationsArray = null;
+
 export const fetchAllNotifications = createAsyncThunk(
   'notifications/fetchAllNotifications',
-  async () => {
+  async (_, { getState }) => {
+    if (cachedNotifications) {
+      return cachedNotifications;
+    }
+
     const [subscriptionResponse, postResponse, likeResponse, commentResponse] =
       await Promise.all([
-        axiosInstance.get('http://127.0.0.1:8080/api/platform/subscription_notifications/'),
-        axiosInstance.get('http://127.0.0.1:8080/api/platform/post_notifications/'),
-        axiosInstance.get('http://127.0.0.1:8080/api/platform/like_notifications/'),
-        axiosInstance.get('http://127.0.0.1:8080/api/platform/comment_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/subscription_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/post_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/like_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/comment_notifications/'),
       ]);
 
-    return [
+    cachedNotifications = [
       ...subscriptionResponse.data,
       ...postResponse.data,
       ...likeResponse.data,
       ...commentResponse.data,
     ];
+
+    return cachedNotifications;
   },
 );
+
+export const clearNotificationsCache = () => {
+  cachedNotifications = null;
+};
 
 export const markNotificationAsRead = createAsyncThunk(
   'notifications/markNotificationAsRead',
