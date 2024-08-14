@@ -43,11 +43,9 @@ export const createPost = createAsyncThunk(
 
     const post = postResponse.data;
 
-    if (postData.uploaded_photos && postData.uploaded_photos.length > 0) {
+    if (postData.uploaded_photos) {
       const formData = new FormData();
-      postData.uploaded_photos.forEach((file, index) => {
-        formData.append(`${index}`, file);
-      });
+      formData.append('image', postData.uploaded_photos);
 
       await axiosInstance.post(
         `http://127.0.0.1:8080/api/platform/posts/${post.id}/uploaded_photos`,

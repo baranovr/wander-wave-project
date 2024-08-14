@@ -41,6 +41,6 @@ export type PostData = {
   title: string;
   content: string;
   hashtags: string[];
-  uploaded_photos: File[];
+  uploaded_photos: File;
   location_name: string;
 };

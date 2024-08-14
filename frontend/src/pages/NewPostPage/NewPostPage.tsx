@@ -27,7 +27,7 @@ export const NewPostPage = () => {
   const [visibleHashtags, setVisibleHashtags] = useState(false);
   const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
-  const [photos, setPhotos] = useState<File[]>([]);
+  const [photos, setPhotos] = useState<File | null>(null);
   const dispatch = useAppDispatch();
   const { createError, createLoading } = useAppSelector(state => state.posts);
   const navigate = useNavigate();
@@ -98,10 +98,19 @@ export const NewPostPage = () => {
   };
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setPhotos([...photos, ...Array.from(event.target.files)]);
-      setErrors(current => ({ ...current, photos: false }))
-    }
+    // if (event.target.files) {
+    //   setPhotos([...photos, ...Array.from(event.target.files)]);
+    //   setErrors(current => ({ ...current, photos: false }))
+    // }
+
+    const file = event.target.files?.[0] || null;
+  
+    setPhotos(file);
+  
+    setErrors(current => ({
+      ...current,
+      photos: false,
+    }));
   };
 
   const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
@@ -112,7 +121,7 @@ export const NewPostPage = () => {
       selectedHashtags: !selectedHashtags.length,
       title: !title.trim(),
       content: !content.trim(),
-      photos: !photos.length,
+      photos: !photos,
     });
 
 
@@ -120,7 +129,7 @@ export const NewPostPage = () => {
       !title.trim() ||
       !selectedLocation ||
       !selectedHashtags.length ||
-      !photos.length ||
+      !photos ||
       !content.trim()
     ) {
       return;
@@ -153,7 +162,7 @@ export const NewPostPage = () => {
     setContent('');
     setSelectedLocation('');
     setSelectedHashtags([]);
-    setPhotos([]);
+    setPhotos(null);
     setErrors({
       title: false,
       selectedLocation: false,
@@ -353,7 +362,7 @@ export const NewPostPage = () => {
               <div className="newpost__control">
                 <input
                   type="file"
-                  multiple
+                  //multiple
                   id="post-photos"
                   onChange={handlePhotoUpload}
                   accept="image/*"
