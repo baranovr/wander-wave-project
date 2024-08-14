@@ -41,7 +41,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { dispatch }) => {
     try {
-      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/', credentials);
+      const response = await axiosInstance.post('http://127.0.0.1:8008/api/user/token/', credentials);
       const { access, refresh } = response.data;
       localStorage.setItem('access', access);
       localStorage.setItem('refresh', refresh);
@@ -65,7 +65,7 @@ export const refreshToken = createAsyncThunk(
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
-      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/token/refresh/', { refresh: refreshToken });
+      const response = await axiosInstance.post('http://127.0.0.1:8008/api/user/token/refresh/', { refresh: refreshToken });
       const { access } = response.data;
       localStorage.setItem('access', access);
 
@@ -82,27 +82,22 @@ export const refreshToken = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'auth/logout',
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState() as { auth: AuthState };
-    const refreshToken = state.auth.refreshToken;
-
+  async (_, { dispatch }) => {
     try {
-      const response = await axiosInstance.post('http://127.0.0.1:8080/api/user/my_profile/logout/', {
-        refresh: refreshToken,
-      });
-      if (response.status === 205) {
-        localStorage.removeItem('access');
-        localStorage.removeItem('refresh');
-        return;
-      } else {
-        return rejectWithValue('Logout failed');
-      }
-    } catch (error) {
-      return rejectWithValue('Logout failed');
-    }
-  },
-);
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
 
+      delete axiosInstance.defaults.headers.common['Authorization'];
+
+      dispatch(clearAuthState());
+
+      return;
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
+  }
+);
 export const register = createAsyncThunk(
   'auth/register',
   async (registrationData: registerData, { rejectWithValue }) => {

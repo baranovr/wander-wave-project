@@ -27,10 +27,10 @@ export const fetchAllNotifications = createAsyncThunk(
 
     const [subscriptionResponse, postResponse, likeResponse, commentResponse] =
       await Promise.all([
-        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/subscription_notifications/'),
-        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/post_notifications/'),
-        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/like_notifications/'),
-        axiosInstance.get<Notification[]>('http://127.0.0.1:8080/api/platform/comment_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8008/api/platform/subscription_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8008/api/platform/post_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8008/api/platform/like_notifications/'),
+        axiosInstance.get<Notification[]>('http://127.0.0.1:8008/api/platform/comment_notifications/'),
       ]);
 
     cachedNotifications = [

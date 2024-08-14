@@ -68,7 +68,7 @@ export const fetchUserProfile = createAsyncThunk(
   'profile/fetchUserProfile',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await retryWithBackoff(() => axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/'));
+      const response = await retryWithBackoff(() => axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/'));
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -76,7 +76,7 @@ export const fetchUserProfile = createAsyncThunk(
         try {
           await dispatch(refreshToken()).unwrap();
           // If the token update was successful, retry the profile request
-          const retryResponse = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/');
+          const retryResponse = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/');
           return retryResponse.data;
         } catch (refreshError) {
           // If the token update fails, redirect to the login page
@@ -93,7 +93,7 @@ export const fetchSubscriptions = createAsyncThunk(
   'profile/fetchMySubscriptions',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/subscriptions/');
+      const response = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/subscriptions/');
       return response.data;
     } catch (error) {
       return rejectWithValue('Failed to fetch subscriptions');
@@ -105,7 +105,7 @@ export const fetchMyLiked = createAsyncThunk(
   'profile/fetchMyLiked',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/my_liked/');
+      const response = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/my_liked/');
       return response.data;
     } catch (error) {
       return rejectWithValue('Failed to fetch likes');
@@ -117,7 +117,7 @@ export const fetchMyFavorites = createAsyncThunk(
   'profile/fetchMyFavorites',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8080/api/user/my_profile/my_favorites/');
+      const response = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/my_favorites/');
       return response.data;
     } catch (error) {
       return rejectWithValue('Failed to fetch favorites');

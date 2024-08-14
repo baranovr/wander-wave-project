@@ -19,7 +19,7 @@ export const fetchAuthorProfile = createAsyncThunk(
   async (postId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `http://127.0.0.1:8080/api/platform/posts/${postId}/author-profile/`,
+        `http://127.0.0.1:8008/api/platform/posts/${postId}/author-profile/`,
       );
       return response.data;
     } catch (error) {

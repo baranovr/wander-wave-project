@@ -22,7 +22,7 @@ const initialState: PostsState = {
 
 export const init = createAsyncThunk('posts/fetchPosts', async () => {
   const response = await axiosInstance.get(
-    'http://127.0.0.1:8080/api/platform/posts/',
+    'http://127.0.0.1:8008/api/platform/posts/',
   );
   return response.data;
 });
@@ -34,7 +34,7 @@ export const createPost = createAsyncThunk(
     const headers = { Authorization: `Bearer ${token}` };
 
     const postResponse = await axiosInstance.post(
-      'http://127.0.0.1:8080/api/platform/posts/',
+      'http://127.0.0.1:8008/api/platform/posts/',
       postData,
       {
         headers: { ...headers, 'Content-Type': 'application/json' },
@@ -48,7 +48,7 @@ export const createPost = createAsyncThunk(
       formData.append('image', postData.uploaded_photos);
 
       await axiosInstance.post(
-        `http://127.0.0.1:8080/api/platform/posts/${post.id}/uploaded_photos`,
+        `http://127.0.0.1:8008/api/platform/posts/${post.id}/uploaded_photos`,
         formData,
         {
           headers: { ...headers, 'Content-Type': 'multipart/form-data' },

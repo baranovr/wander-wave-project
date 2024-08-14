@@ -16,7 +16,6 @@ from backend.wander_wave.models import (
     LikeNotification,
     CommentNotification,
     SubscriptionNotification,
-    Photo,
 )
 
 
@@ -178,27 +177,11 @@ class SubscriptionNotificationListSerializer(
         fields = SubscriptionNotificationSerializer.Meta.fields
 
 
-class PhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Photo
-        fields = ["id", "image"]
-
-
 class PostSerializer(serializers.ModelSerializer):
-    photos = PhotoSerializer(many=True, read_only=True)
     
     class Meta:
         model = Post
         fields = ["id", "title", "content", "location", "hashtags", "photos", "created_at"]
-
-    def create(self, validated_data):
-        photos_data = validated_data.pop("uploaded_photos")
-        post = Post.objects.create(**validated_data)
-
-        if photos_data:
-            for photo_data in photos_data:
-                Photo.objects.create(post=post, image=photo_data)
-            return post
 
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -211,8 +194,6 @@ class PostListSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
-
-    photos = PhotoSerializer(many=True, read_only=True)
 
     def get_base_count(self, model, obj):
         return model.objects.filter(post=obj).count()
@@ -317,8 +298,6 @@ class PostDetailSerializer(
     full_name = serializers.CharField(source="user.full_name", read_only=True)
     user_status = serializers.CharField(source="user.status", read_only=True)
     comments = CommentInPostSerializer(many=True, read_only=True)
-
-    photos = PhotoSerializer(many=True, read_only=True)
 
     def get_content(self, obj):
         return obj.content

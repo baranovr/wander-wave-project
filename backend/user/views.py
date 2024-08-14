@@ -36,11 +36,6 @@ class CreateUserViewSet(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
-class LogoutView(APIView):
-    def post(self, request):
-        return Response(status=status.HTTP_205_RESET_CONTENT)
-
-
 class MyProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = MyProfileSerializer
     permission_classes = (IsAuthenticated,)

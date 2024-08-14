@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import (
 from backend.user.custom_token.token_view import CustomTokenObtainPairView
 from backend.user.views import (
     CreateUserViewSet,
-    LogoutView,
     MyProfileView,
     SubscriptionsViewSet,
     SubscribersViewSet,
@@ -25,7 +24,6 @@ from backend.wander_wave.views import (
 urlpatterns = [
     path("register/", CreateUserViewSet.as_view(), name="register"),
     path("my_profile/", MyProfileView.as_view(), name="my_profile"),
-    path("my_profile/logout/", LogoutView.as_view(), name="logout"),
 
     path("token/", CustomTokenObtainPairView.as_view(), name="create-token"),
     path("token/refresh/", TokenRefreshView.as_view(), name="refresh-token"),
