@@ -69,7 +69,7 @@ export const markNotificationAsRead = createAsyncThunk(
     }
 
     const response = await axiosInstance.post(
-      `/api/platform/${type}_notifications/${id}/mark_as_read/`,
+      `/platform/${type}_notifications/${id}/mark_as_read/`,
     );
     return { id, text, ...response.data };
   },
@@ -79,10 +79,10 @@ export const markAllNotificationsAsRead = createAsyncThunk(
   'notifications/markAllNotificationsAsRead',
   async () => {
     await Promise.all([
-      axiosInstance.post('/api/platform/subscription_notifications/mark_all_as_read/'),
-      axiosInstance.post('/api/platform/post_notifications/mark_all_as_read/'),
-      axiosInstance.post('/api/platform/like_notifications/mark_all_as_read/'),
-      axiosInstance.post('/api/platform/comment_notifications/mark_all_as_read/'),
+      axiosInstance.post('/platform/subscription_notifications/mark_all_as_read/'),
+      axiosInstance.post('/platform/post_notifications/mark_all_as_read/'),
+      axiosInstance.post('/platform/like_notifications/mark_all_as_read/'),
+      axiosInstance.post('/platform/comment_notifications/mark_all_as_read/'),
     ]);
   },
 );
@@ -107,7 +107,7 @@ export const deleteNotification = createAsyncThunk(
       type = 'comment';
     }
     const response = await axiosInstance.delete(
-      `/api/platform/${type}_notifications/${id}/delete_notification`,
+      `/api/platform/${type}_notifications/${id}/delete_notification/`,
     );
     return { id, text, ...response.data };
   },
@@ -118,12 +118,12 @@ export const deleteAllNotifications = createAsyncThunk(
   async () => {
     await Promise.all([
       axiosInstance.post(
-        '/api/platform/subscription_notifications/delete_all_notifications',
+        '/platform/subscription_notifications/delete_all_notifications/',
       ),
-      axiosInstance.post('/api/platform/post_notifications/delete_all_notifications'),
-      axiosInstance.post('/api/platform/like_notifications/delete_all_notifications'),
+      axiosInstance.post('/platform/post_notifications/delete_all_notifications/'),
+      axiosInstance.post('/platform/like_notifications/delete_all_notifications/'),
       axiosInstance.post(
-        '/api/platform/lcomment_notifications/delete_all_notifications',
+        '/platform/comment_notifications/delete_all_notifications/',
       ),
     ]);
   },
@@ -133,7 +133,7 @@ export const deleteAllCommentNotifications = createAsyncThunk(
   'notifications/deleteAllCommentNotifications',
   async () => {
     const response = await axiosInstance.post(
-      '/api/platform/comment_notifications/delete_all_notifications',
+      '/platform/comment_notifications/delete_all_notifications/',
     );
     return response.data;
   },
