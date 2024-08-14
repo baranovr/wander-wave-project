@@ -7,20 +7,18 @@ import { useAppSelector } from '../../app/hooks';
 
 type Props = {
   handleShowRegister: () => void;
-  handleShowProfile: () => void;
 };
 
-export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }) => {
+export const Login: React.FC<Props> = ({ handleShowRegister }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { loading, error, isAuthenticated } = useAppSelector(state => state.auth);
 
   const handleLogin = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await dispatch(login({ email, password })).unwrap();
-      handleShowProfile();
 
       const refreshInterval = 14 * 60 * 1000;
       setInterval(() => {
@@ -30,7 +28,7 @@ export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }
     } catch (err) {
       console.error('Login failed:', err);
     }
-  }, [dispatch, email, password, handleShowProfile])
+  }, [dispatch, email, password])
 
   return (
     <div className="login">
@@ -69,6 +67,7 @@ export const Login: React.FC<Props> = ({ handleShowRegister, handleShowProfile }
             </button>
 
             {/*{showError && <p className="login__error">{error}</p>}*/}
+            {isAuthenticated && <p className="login__success">Login Success!</p>}
 
             <div className="login__register">
               Don't have an account?{' '}

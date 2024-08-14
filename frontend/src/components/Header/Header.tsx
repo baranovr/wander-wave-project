@@ -47,6 +47,9 @@ export const Header = () => {
             <NavLink to="/favorites" className={getLinkClass}>
               Favorites
             </NavLink>
+            <NavLink to="/my-profile" className={getLinkClass}>
+              My profile
+            </NavLink>
           </nav>
         </div>
 

@@ -12,6 +12,7 @@ import { NewPostPage } from './pages/NewPostPage';
 import { LoginPage } from './pages/LoginPage/LoginPage';
 import { AuthorPage } from './pages/AuthorPage/AuthorPage';
 import { FavoritesPage } from './pages/FavoritesPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 export const Root = () => (
   <Router>
@@ -28,6 +29,7 @@ export const Root = () => (
         <Route path="newpost" element={<NewPostPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
+        <Route path="my-profile" element={<ProfilePage />} />
         {/*<Route path="*" element={<NotFoundPage />} /> */}
       </Route>
     </Routes>

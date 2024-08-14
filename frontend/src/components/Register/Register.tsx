@@ -5,15 +5,13 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 type Props = {
   handleShowLogin: () => void;
-  handleShowProfile: () => void;
 };
 
 export const Register: React.FC<Props> = ({
-  handleShowLogin,
-  handleShowProfile,
+  handleShowLogin
 }) => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { loading, error, isAuthenticated } = useAppSelector(state => state.auth);
   const [registerData, setRegisterData] = useState<registerData>({
     avatar: null,
     status: '',
@@ -77,10 +75,6 @@ export const Register: React.FC<Props> = ({
       }, 3000);
 
       return () => clearTimeout(timer);
-    }
-
-    if (!error) {
-      handleShowProfile();
     }
   };
 
@@ -228,6 +222,7 @@ export const Register: React.FC<Props> = ({
             </button>
 
             {showError && <p className="login__error">{error}</p>}
+            {isAuthenticated && <p className="login__success">Congratulation, your account has been created!</p>}
 
             <div className="login__register">
               Have an account?{' '}

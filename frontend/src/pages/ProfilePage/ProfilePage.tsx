@@ -8,16 +8,13 @@ import {
 } from '../../features/myProfileSlice';
 import { logout } from '../../features/authSlice';
 import { Loader } from '../../components/Loader';
+import { Link } from 'react-router-dom';
 
-type Props = {
-  handleShowLogin: () => void;
-};
-
-export const ProfilePage: React.FC<Props> = ({ handleShowLogin }) => {
+export const ProfilePage = () => {
   const dispatch = useAppDispatch();
   const { profile, loading, error } = useAppSelector(state => state.myProfile);
   const [showError, setShowError] = useState(false);
-  const { error: logoutError } = useAppSelector(state => state.auth);
+  const { error: logoutError, isAuthenticated } = useAppSelector(state => state.auth);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -37,7 +34,6 @@ export const ProfilePage: React.FC<Props> = ({ handleShowLogin }) => {
     }
 
     dispatch(clearProfileState());
-    handleShowLogin();
   };
 
   return (
@@ -45,8 +41,15 @@ export const ProfilePage: React.FC<Props> = ({ handleShowLogin }) => {
       <div className="container">
         <div className="user__content">
           {loading && <Loader />}
-          {error && !loading && (
-            <p className="user__not-found">Oops...something went wrong. Please try again.</p>
+          {!isAuthenticated && !loading && (
+            <p className="user__not-found">Please login or register
+              <Link className="user__not-found--link" to="../login">here</Link>
+            </p>
+          )}
+          {error && !loading && isAuthenticated && (
+            <p className="user__not-found">
+              Oops...something went wrong. Please try again.
+            </p>
           )}
 
           {!error && !loading && profile && (

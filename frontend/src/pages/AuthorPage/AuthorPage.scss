@@ -173,6 +173,17 @@
     font-size: 30px;
     padding: 32px 0;
     color: rgb(15, 131, 77);
+
+    &--link {
+      text-decoration: none;
+      color: #58d375;
+      margin-left: 8px;
+
+      &:hover {
+        text-decoration: underline;
+        color:rgb(15, 131, 77)
+      }
+    }
   }
 
   &__error {
