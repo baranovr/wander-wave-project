@@ -79,8 +79,8 @@ export const PostDetailsPage = () => {
       dispatch(fetchPostDetails(postId));
     }
 
-    setCurrentImage(post?.photos[0].image);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setCurrentImage(post?.photos.image);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, postId]);
 
   const handleChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -151,12 +151,12 @@ export const PostDetailsPage = () => {
                 <div className="details__current-image-container">
                   <img
                     alt="product"
-                    src={currentImage || post?.photos[0].image}
+                    src={currentImage || post?.photos.image}
                     className="details__current-image"
                   />
                 </div>
 
-                <div className="details__images">
+                {/* <div className="details__images">
                   {post?.photos &&
                     post?.photos.map(photo => (
                       <button
@@ -175,7 +175,7 @@ export const PostDetailsPage = () => {
                         />
                       </button>
                     ))}
-                </div>
+                </div> */}
               </div>
             </div>
 

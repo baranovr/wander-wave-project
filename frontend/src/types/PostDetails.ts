@@ -9,7 +9,7 @@ export interface PostDetails {
     id: number;
     image: string;
     post?: number;
-  }[];
+  };
   location: {
     id: number;
     country: string;

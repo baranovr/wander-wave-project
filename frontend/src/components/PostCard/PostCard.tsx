@@ -15,6 +15,9 @@ export const PostCard: React.FC<Props> = ({ post }) => {
   const { liked, favorites } = useAppSelector(state => state.myProfile);
   const { isAuthenticated } = useAppSelector(state => state.auth);
   const [showError, setShowError] = useState(false);
+  const hashtags = post?.hashtags.map(hash =>
+    hash.name.slice(0, 1) === '#' ? hash.name + ' ' : '#' + hash.name + ' ',
+  );
 
   const likedPost = liked.some(like => like.post.id === post.id);
   const favoritePost = favorites.some(fav => fav.post.id === post.id);
@@ -67,10 +70,10 @@ export const PostCard: React.FC<Props> = ({ post }) => {
           </small>
         </div>
 
-        <p className="card__title">{post.title}</p>
+        <p className="card__title">{post.title.slice(0, 20)}...</p>
 
         <h4 className="card__hashtags">
-          {post.hashtags.map(hash => hash.name + ' ')}
+          {hashtags}
         </h4>
 
         <h5 className="card__user-name">

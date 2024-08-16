@@ -141,7 +141,7 @@ export const AuthorPage: React.FC = () => {
                   <h5 className="user__posts-count">{`${profile.posts.length} posts`}</h5>
                   <div className="user__list">
                     {profile.posts.map(post => (
-                      <PostCard post={post} />
+                      <PostCard post={post} key={post.id} />
                     ))}
                   </div>
                 </>
