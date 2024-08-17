@@ -79,7 +79,7 @@ export const PostDetailsPage = () => {
       dispatch(fetchPostDetails(postId));
     }
 
-    setCurrentImage(post?.photos.image);
+    setCurrentImage(post?.photos);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, postId]);
 
@@ -151,7 +151,7 @@ export const PostDetailsPage = () => {
                 <div className="details__current-image-container">
                   <img
                     alt="product"
-                    src={currentImage || post?.photos.image}
+                    src={currentImage || post?.photos}
                     className="details__current-image"
                   />
                 </div>

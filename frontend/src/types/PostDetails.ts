@@ -5,11 +5,7 @@ export interface PostDetails {
   user_status: string;
   full_name: string;
   user_email: string;
-  photos: {
-    id: number;
-    image: string;
-    post?: number;
-  };
+  photos: string;
   location: {
     id: number;
     country: string;
