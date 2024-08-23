@@ -1,7 +1,7 @@
 export interface Post {
   id: number;
   username: string;
-  photos: string;
+  photo: string;
   location: {
     id: number;
     country: string;

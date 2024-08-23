@@ -52,7 +52,7 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     <div className="card">
       <Link to={`../../posts/${post.id}`}>
         <div className="card__header">
-          <img className="card__img" src={post.photos} alt="nature" />
+          <img className="card__img" src={post.photo} alt="nature" />
         </div>
       </Link>
       <div className="card__body">

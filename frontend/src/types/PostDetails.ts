@@ -5,7 +5,7 @@ export interface PostDetails {
   user_status: string;
   full_name: string;
   user_email: string;
-  photos: string;
+  photo: string;
   location: {
     id: number;
     country: string;
@@ -37,6 +37,6 @@ export type PostData = {
   title: string;
   content: string;
   hashtags: string[];
-  uploaded_photos: File;
+  photo: File;
   location_name: string;
 };

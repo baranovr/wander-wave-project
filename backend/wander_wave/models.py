@@ -133,7 +133,7 @@ def post_photo_path(instance, filename):
 
 
 class Post(models.Model):
-    photos = models.ImageField(upload_to=post_photo_path)
+    photo = models.ImageField(upload_to=post_photo_path)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="posts")
     title = models.CharField(max_length=255, unique=False)
     content = models.TextField(null=True, blank=True, unique=False)

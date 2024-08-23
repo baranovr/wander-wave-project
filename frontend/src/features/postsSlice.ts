@@ -43,17 +43,17 @@ export const createPost = createAsyncThunk(
 
     const post = postResponse.data;
 
-    if (postData.uploaded_photos) {
+    if (postData.photo) {
       const formData = new FormData();
-      formData.append('image', postData.uploaded_photos);
+      formData.append('image', postData.photo);
 
-      await axiosInstance.post(
-        `http://127.0.0.1:8008/api/platform/posts/${post.id}/uploaded_photos`,
-        formData,
-        {
-          headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-        },
-      );
+      // await axiosInstance.post(
+      //   `http://127.0.0.1:8008/api/platform/posts/${post.id}/uploaded_photos/`,
+      //   formData,
+      //   {
+      //     headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+      //   },
+      // );
     }
 
     return post;

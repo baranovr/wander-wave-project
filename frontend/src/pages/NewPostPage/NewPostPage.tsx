@@ -27,7 +27,7 @@ export const NewPostPage = () => {
   const [visibleHashtags, setVisibleHashtags] = useState(false);
   const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
-  const [photos, setPhotos] = useState<File | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
   const dispatch = useAppDispatch();
   const { createError, createLoading } = useAppSelector(state => state.posts);
   const navigate = useNavigate();
@@ -105,11 +105,11 @@ export const NewPostPage = () => {
 
     const file = event.target.files?.[0] || null;
   
-    setPhotos(file);
+    setPhoto(file);
   
     setErrors(current => ({
       ...current,
-      photos: false,
+      photo: false,
     }));
   };
 
@@ -121,7 +121,7 @@ export const NewPostPage = () => {
       selectedHashtags: !selectedHashtags.length,
       title: !title.trim(),
       content: !content.trim(),
-      photos: !photos,
+      photo: !photo,
     });
 
 
@@ -129,7 +129,7 @@ export const NewPostPage = () => {
       !title.trim() ||
       !selectedLocation ||
       !selectedHashtags.length ||
-      !photos ||
+      !photo ||
       !content.trim()
     ) {
       return;
@@ -140,7 +140,7 @@ export const NewPostPage = () => {
         title,
         content,
         hashtags: selectedHashtags,
-        uploaded_photos: photos,
+        photo: photo,
         location_name: selectedLocation,
       })
     );
@@ -153,7 +153,7 @@ export const NewPostPage = () => {
     selectedLocation: false,
     content: false,
     selectedHashtags: false,
-    photos: false,
+    photo: false,
   });
 
 
@@ -162,13 +162,13 @@ export const NewPostPage = () => {
     setContent('');
     setSelectedLocation('');
     setSelectedHashtags([]);
-    setPhotos(null);
+    setPhoto(null);
     setErrors({
       title: false,
       selectedLocation: false,
       content: false,
       selectedHashtags: false,
-      photos: false,
+      photo: false,
     });
   };
 
@@ -368,11 +368,11 @@ export const NewPostPage = () => {
                   accept="image/*"
                   placeholder="Photos"
                   className={classNames('newpost__input', {
-                    'is-danger': errors.photos,
+                    'is-danger': errors.photo,
                   })}
                 />
               </div>
-              {errors.photos && (
+              {errors.photo && (
                 <p
                   className="newpost__help newpost__is-danger"
                   data-cy="ErrorMessage"
