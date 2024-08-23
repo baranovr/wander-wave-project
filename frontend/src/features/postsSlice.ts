@@ -33,30 +33,30 @@ export const createPost = createAsyncThunk(
     const token = localStorage.getItem('access');
     const headers = { Authorization: `Bearer ${token}` };
 
+    const formData = new FormData();
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('location', postData.location.toString());
+    postData.hashtags.forEach((tag, index) => {
+      formData.append(`hashtags`, tag.toString());
+    });
+
+    if (postData.photo) {
+      formData.append('photo', postData.photo);
+    }
+
     const postResponse = await axiosInstance.post(
       'http://127.0.0.1:8008/api/platform/posts/',
-      postData,
+      formData,
       {
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: {
+          ...headers,
+          'Content-Type': 'multipart/form-data'
+        },
       },
     );
 
-    const post = postResponse.data;
-
-    if (postData.photo) {
-      const formData = new FormData();
-      formData.append('image', postData.photo);
-
-      // await axiosInstance.post(
-      //   `http://127.0.0.1:8008/api/platform/posts/${post.id}/uploaded_photos/`,
-      //   formData,
-      //   {
-      //     headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-      //   },
-      // );
-    }
-
-    return post;
+    return postResponse.data;
   },
 );
 

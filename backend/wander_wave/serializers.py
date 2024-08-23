@@ -178,8 +178,6 @@ class SubscriptionNotificationListSerializer(
 
 
 class PostSerializer(serializers.ModelSerializer):
-    hashtags = HashtagSerializer(many=True, read_only=True)
-
     class Meta:
         model = Post
         fields = ["id", "title", "content", "location", "hashtags", "photo", "created_at"]

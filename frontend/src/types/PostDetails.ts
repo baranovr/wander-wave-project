@@ -36,7 +36,7 @@ export interface PostDetails {
 export type PostData = {
   title: string;
   content: string;
-  hashtags: string[];
+  hashtags: number[];
   photo: File;
-  location_name: string;
+  location: number;
 };

@@ -7,14 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 
 interface Location {
-  id?: string;
+  id?: number;
   city?: string;
   country?: string;
   name: string;
 }
 
 interface Hashtag {
-  id?: string;
+  id?: number;
   name: string;
 }
 
@@ -23,10 +23,10 @@ export const NewPostPage = () => {
   const [content, setContent] = useState<string>('');
   const [visibleLocation, setVisibleLocation] = useState(false);
   const [locationSuggestions, setLocationSuggestions] = useState<Location[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [visibleHashtags, setVisibleHashtags] = useState(false);
   const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
-  const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
+  const [selectedHashtags, setSelectedHashtags] = useState<number[]>([]);
   const [photo, setPhoto] = useState<File | null>(null);
   const dispatch = useAppDispatch();
   const { createError, createLoading } = useAppSelector(state => state.posts);
@@ -79,22 +79,22 @@ export const NewPostPage = () => {
   }, []);
 
   const handleLocationSelect = (location: Location) => {
-    setSelectedLocation(location.name);
+    setSelectedLocation(location.id ?? null);
 
     setErrors((current => ({ ...current, selectedLocation: false })));
     setVisibleLocation(false);
   };
 
   const handleHashtagSelect = (hashtag: Hashtag) => {
-    if (!selectedHashtags.includes(hashtag.name)) {
-      setSelectedHashtags([...selectedHashtags, hashtag.name]);
+    if (hashtag.id && !selectedHashtags.includes(hashtag.id)) {
+      setSelectedHashtags([...selectedHashtags, hashtag.id]);
       setErrors((current => ({ ...current, selectedHashtags: false })));
     }
     setVisibleHashtags(false);
   };
 
-  const handleRemoveHashtag = (hashtag: string) => {
-    setSelectedHashtags(selectedHashtags.filter(tag => tag !== hashtag));
+  const handleRemoveHashtag = (hashtagId: number) => {
+    setSelectedHashtags(selectedHashtags.filter(id => id !== hashtagId));
   };
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,14 +104,12 @@ export const NewPostPage = () => {
     // }
 
     const file = event.target.files?.[0] || null;
-  
-    setPhoto(file);
-  
-    setErrors(current => ({
-      ...current,
-      photo: false,
-    }));
-  };
+      setPhoto(file);
+      setErrors(current => ({
+        ...current,
+        photo: false,
+      }));
+    };
 
   const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -141,7 +139,7 @@ export const NewPostPage = () => {
         content,
         hashtags: selectedHashtags,
         photo: photo,
-        location_name: selectedLocation,
+        location: selectedLocation,
       })
     );
 
@@ -160,7 +158,7 @@ export const NewPostPage = () => {
   const clearForm = () => {
     setTitle('');
     setContent('');
-    setSelectedLocation('');
+    setSelectedLocation(null);
     setSelectedHashtags([]);
     setPhoto(null);
     setErrors({
@@ -366,7 +364,7 @@ export const NewPostPage = () => {
                   id="post-photos"
                   onChange={handlePhotoUpload}
                   accept="image/*"
-                  placeholder="Photos"
+                  placeholder="Photo"
                   className={classNames('newpost__input', {
                     'is-danger': errors.photo,
                   })}
