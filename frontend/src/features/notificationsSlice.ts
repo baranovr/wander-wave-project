@@ -107,7 +107,7 @@ export const deleteNotification = createAsyncThunk(
       type = 'comment';
     }
     const response = await axiosInstance.delete(
-      `/api/platform/${type}_notifications/${id}/delete_notification/`,
+      `/platform/${type}_notifications/${id}/delete_notification/`,
     );
     return { id, text, ...response.data };
   },
@@ -117,12 +117,12 @@ export const deleteAllNotifications = createAsyncThunk(
   'notifications/deleteAllNotifications',
   async () => {
     await Promise.all([
-      axiosInstance.post(
+      axiosInstance.delete(
         '/platform/subscription_notifications/delete_all_notifications/',
       ),
-      axiosInstance.post('/platform/post_notifications/delete_all_notifications/'),
-      axiosInstance.post('/platform/like_notifications/delete_all_notifications/'),
-      axiosInstance.post(
+      axiosInstance.delete('/platform/post_notifications/delete_all_notifications/'),
+      axiosInstance.delete('/platform/like_notifications/delete_all_notifications/'),
+      axiosInstance.delete(
         '/platform/comment_notifications/delete_all_notifications/',
       ),
     ]);
@@ -132,7 +132,7 @@ export const deleteAllNotifications = createAsyncThunk(
 export const deleteAllCommentNotifications = createAsyncThunk(
   'notifications/deleteAllCommentNotifications',
   async () => {
-    const response = await axiosInstance.post(
+    const response = await axiosInstance.delete(
       '/platform/comment_notifications/delete_all_notifications/',
     );
     return response.data;
@@ -153,9 +153,10 @@ const notificationsSlice = createSlice({
         state.notifications = action.payload;
       })
       .addCase(fetchAllNotifications.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
+          state.status = 'failed';
+          state.error = action.error.message;
+          state.notifications = [];
+        })
       .addCase(markNotificationAsRead.fulfilled, (state, action) => {
         const { id, text } = action.payload;
         const notification = state.notifications.find(

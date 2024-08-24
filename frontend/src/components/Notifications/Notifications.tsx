@@ -119,7 +119,7 @@ export const Notifications = () => {
                         notification.text.includes('commented'),
                     })}
                   />
-                  <div className="notification__text">{notification.text.slice(0, 30)}...</div>
+                  <div className="notification__text">{notification.text.slice(0, 50)}...</div>
                   <button
                     type="button"
                     className="notification__icon notification__icon--eye"
