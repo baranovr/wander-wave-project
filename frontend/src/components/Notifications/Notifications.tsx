@@ -39,20 +39,19 @@ export const Notifications = () => {
   };
 
   const filteredNotification = useMemo(() => {
-    return notifications.sort(
-      (a, b) =>
-        +b.created_at
-          .slice(0, 19)
-          .replaceAll('-', '')
-          .replaceAll(':', '')
-          .replace('T', '') -
-        +a.created_at
-          .slice(0, 19)
-          .replaceAll('-', '')
-          .replaceAll(':', '')
-          .replace('T', ''),
-    );
-  }, [notifications]);
+  return [...notifications].sort((a, b) => {
+    return +b.created_at.slice(0, 19).replaceAll(
+        '-', ''
+        ).replaceAll(':', ''
+        ).replace('T', ''
+        ) -
+           +a.created_at.slice(0, 19).replaceAll(
+               '-', ''
+           ).replaceAll(':', ''
+           ).replace('T', ''
+           );
+  });
+}, [notifications]);
 
   return (
     <div className="notification">

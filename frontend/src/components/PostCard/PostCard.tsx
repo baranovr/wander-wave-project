@@ -66,14 +66,14 @@ export const PostCard: React.FC<Props> = ({ post }) => {
           </Link>
 
           <small className="card__posted-date">
-            {post.created_at.slice(0, 10).split('-').reverse().join('.')}
+            {post.created_at ? post.created_at.slice(0, 10).split('-').reverse().join('.') : 'N/A'}
           </small>
         </div>
 
         <p className="card__title">{post.title.slice(0, 20)}...</p>
 
         <h4 className="card__hashtags">
-          {hashtags}
+          {post.hashtags ? hashtags : 'No hashtags available'}
         </h4>
 
         <h5 className="card__user-name">
