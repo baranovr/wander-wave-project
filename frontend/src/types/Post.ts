@@ -6,6 +6,7 @@ export interface Post {
     id: number;
     country: string;
     city: string;
+    name: string;
   };
   title: string;
   content: string;

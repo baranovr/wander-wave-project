@@ -40,8 +40,8 @@ export const addComment = createAsyncThunk(
   }) => {
     const response = await axiosInstance.post('http://127.0.0.1:8008/api/platform/comments/', {
       text,
-      userId,
-      postId,
+      user: userId,
+      post: postId,
     });
     return response.data;
   },

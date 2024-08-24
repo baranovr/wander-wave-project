@@ -292,7 +292,7 @@ export const PostDetailsPage = () => {
                 </div>
                 {post?.comments.map(comment => (
                   <div className="details__comment">
-                    <div className="details__comment-user">{comment.user}</div>
+                    <div className="details__comment-user">{comment.commentator_username}</div>
                     <div className="details__comment-body">{comment.text}</div>
                     <div className="details__comment-date">
                       {comment.created_date.slice(0, 10).split('-').reverse().join('.')}

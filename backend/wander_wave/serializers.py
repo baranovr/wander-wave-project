@@ -240,47 +240,37 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentListSerializer(CommentSerializer):
-    commentator_username = serializers.CharField(
-        source="user.username", read_only=True
-    )
-    post_title = serializers.CharField(source="post.title", read_only=True)
-    author_username = serializers.CharField(
-        source="post.user.username", read_only=True
-    )
+    commentator_username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = Comment
         fields = (
             "id",
-            "post_title",
-            "author_username",
+            "post",
             "text",
+            "user",
             "commentator_username",
             "created_date",
         )
 
 
 class CommentDetailSerializer(CommentSerializer):
-    post = PostListSerializer()
-    commentator_username = serializers.CharField(
-        source="user.username", read_only=True
-    )
+    commentator_username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = Comment
-        fields = CommentSerializer.Meta.fields + ("commentator_username",)
+        fields = CommentSerializer.Meta.fields + ("user", "commentator_username",)
 
 
 class CommentInPostSerializer(CommentSerializer):
-    commentator_username = serializers.CharField(
-        source="user.username", read_only=True
-    )
+    commentator_username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = Comment
         fields = (
             "id",
             "text",
+            "user",
             "commentator_username",
             "created_date",
             "updated_date"

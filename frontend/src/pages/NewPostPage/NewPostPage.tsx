@@ -231,7 +231,9 @@ export const NewPostPage = () => {
                   className="newpost__select"
                   onClick={() => setVisibleLocation(true)}
                 >
-                  {selectedLocation ? selectedLocation : 'Choose location'}
+                  {selectedLocation
+                    ? locationSuggestions.find(loc => loc.id === selectedLocation)?.name
+                    : 'Choose location'}
                   <span className={classNames('newpost__icon newpost__icon--arrow',
                     { 'newpost__icon--arrow--active': visibleLocation }
                   )} />
@@ -294,19 +296,22 @@ export const NewPostPage = () => {
                   </ul>
                 )}
                 <div className="newpost__tags">
-                  {selectedHashtags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="newpost__tag"
-                    >
-                      #{tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveHashtag(tag)}
-                        className="newpost__remove-button"
-                      />
-                    </span>
-                  ))}
+                  {selectedHashtags.map((tagId) => {
+                    const tag = hashtagSuggestions.find(h => h.id === tagId);
+                    return (
+                      <span
+                        key={tagId}
+                        className="newpost__tag"
+                      >
+                        #{tag ? tag.name : tagId}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveHashtag(tagId)}
+                          className="newpost__remove-button"
+                        />
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
               {errors.selectedHashtags && (
