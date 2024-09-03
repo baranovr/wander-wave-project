@@ -24,18 +24,23 @@ export const Notifications = () => {
 
   const handleMarkAllAsRead = () => {
     dispatch(markAllNotificationsAsRead());
+    dispatch(fetchAllNotifications());
   };
 
   const handleMarkAsRead = (id: number, text: string) => {
     dispatch(markNotificationAsRead({ text, id }));
+    dispatch(fetchAllNotifications());
   };
 
   const handleDelete = (id: number, text: string) => {
     dispatch(deleteNotification({ id, text }));
+    dispatch(fetchAllNotifications());
   };
 
   const handleDeleteAll = () => {
     dispatch(deleteAllNotifications());
+    dispatch(fetchAllNotifications());
+    setVisibleNotifications(false);
   };
 
   const filteredNotification = useMemo(() => {

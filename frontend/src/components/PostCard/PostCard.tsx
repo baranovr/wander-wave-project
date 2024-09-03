@@ -70,7 +70,7 @@ export const PostCard: React.FC<Props> = ({ post }) => {
           </small>
         </div>
 
-        <p className="card__title">{post.title.slice(0, 20)}...</p>
+        <p className="card__title">{post.title ? post.title.slice(0, 20) : 'No title'}...</p>
 
         <h4 className="card__hashtags">
           {post.hashtags ? hashtags : 'No hashtags available'}
