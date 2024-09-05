@@ -18,9 +18,10 @@ export const PostCard: React.FC<Props> = ({ post }) => {
   const hashtags = post?.hashtags.map(hash =>
     hash.name.slice(0, 1) === '#' ? hash.name + ' ' : '#' + hash.name + ' ',
   );
-
-  const likedPost = liked.some(like => like.post.id === post.id);
-  const favoritePost = favorites.some(fav => fav.post.id === post.id);
+  const [likedPost, setLikedPost] = useState(liked
+    .some(like => like.post.id === post.id));
+  const [favoritePost, setFavoritePost ]= useState(favorites
+    .some(fav => fav.post.id === post.id));
 
   const handleLike = () => {
     if (!isAuthenticated) {
@@ -33,6 +34,7 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     }
 
     dispatch(setLike(post.id));
+    setLikedPost(!likedPost);
   };
 
   const handleAddToFavorites = () => {
@@ -46,6 +48,7 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     }
 
     dispatch(addToFavorites(post.id));
+    setFavoritePost(!favoritePost);
   };
 
   return (
