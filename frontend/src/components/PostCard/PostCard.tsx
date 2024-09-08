@@ -16,9 +16,9 @@ export const PostCard: React.FC<Props> = ({ post }) => {
   const { liked, favorites } = useAppSelector(state => state.myProfile);
   const { isAuthenticated } = useAppSelector(state => state.auth);
   const [showError, setShowError] = useState(false);
-  const hashtags = post?.hashtags.map(hash =>
-    hash.name.slice(0, 1) === '#' ? hash.name + ' ' : '#' + hash.name + ' ',
-  );
+  const hashtags = post?.hashtags?.length > 0
+    ? post.hashtags.map(hash => (hash?.name && hash.name.startsWith('#') ? hash.name : `#${hash?.name || ''}`))
+    : 'No hashtags available';
   const [likedPost, setLikedPost] = useState(liked
     .some(like => like.post.id === post.id));
   const [favoritePost, setFavoritePost ]= useState(favorites
@@ -74,7 +74,7 @@ export const PostCard: React.FC<Props> = ({ post }) => {
           </Link>
 
           <small className="card__posted-date">
-            {post.created_at ? post.created_at.slice(0, 10).split('-').reverse().join('.') : 'N/A'}
+            {post?.created_at ? post.created_at.slice(0, 10).split('-').reverse().join('.') : 'N/A'}
           </small>
         </div>
 
