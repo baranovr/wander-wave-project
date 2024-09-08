@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { addToFavorites, setLike } from '../../features/postDetailsSlice';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { getImageUrl } from "../../api/imageUtils";
 
 type Props = {
   post: Post;
@@ -55,15 +56,19 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     <div className="card">
       <Link to={`../../posts/${post.id}`}>
         <div className="card__header">
-          <img className="card__img" src={post.photo} alt="nature" />
+          <img
+              className="card__img"
+              src={getImageUrl(post.photo)}
+              alt="nature"
+          />
         </div>
       </Link>
       <div className="card__body">
         <div className="card__top">
           <Link
-            className="card__location-link"
-            target="blank"
-            to={`https://www.google.com/maps/place/${post.location.city},${post.location.country}/`}
+              className="card__location-link"
+              target="blank"
+              to={`https://www.google.com/maps/place/${post.location.city},${post.location.country}/`}
           >
             <span className="card__location card__location--teal">{`${post.location.city}, ${post.location.country}`}</span>
           </Link>
