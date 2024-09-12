@@ -20,7 +20,7 @@ export const Notifications = () => {
 
   useEffect(() => {
     dispatch(fetchAllNotifications());
-  }, [notifications, dispatch]);
+  }, [dispatch]);
 
   const handleMarkAllAsRead = () => {
     dispatch(markAllNotificationsAsRead());

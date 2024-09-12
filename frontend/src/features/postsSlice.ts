@@ -60,6 +60,21 @@ export const createPost = createAsyncThunk(
   },
 );
 
+export const deletePost = createAsyncThunk(
+  'posts/deletePost',
+  async (postId: number, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(
+        `http://127.0.0.1:8008/api/platform/posts/${postId}/`
+      );
+      return postId;
+      ;
+    } catch (error) {
+      return rejectWithValue('Failed to delete post');
+    }
+  }
+);
+
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
@@ -93,6 +108,10 @@ const postsSlice = createSlice({
     builder.addCase(createPost.fulfilled, (state, action) => {
       state.createLoading = false;
       state.posts.push(action.payload);
+    });
+
+    builder.addCase(deletePost.fulfilled, (state, action) => {
+      state.posts = state.posts.filter(post => post.id !== action.payload);
     });
   },
 });

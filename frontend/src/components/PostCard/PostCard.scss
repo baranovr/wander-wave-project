@@ -28,6 +28,27 @@
     min-height: 250px;
   }
 
+  &__delete {
+    background-image: url(../../images/close.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #fff;
+    border-radius: 50%;
+    display: block;
+    height: 16px;
+    width: 16px;
+    position: relative;
+    bottom: 8px;
+    left: 256px;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
   &__top {
     display: flex;
     justify-content: space-between;

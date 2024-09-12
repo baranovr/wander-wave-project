@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Post } from '../../types/Post';
 import './PostCard.scss';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -6,6 +6,7 @@ import { addToFavorites, setLike } from '../../features/postDetailsSlice';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { getImageUrl } from "../../api/imageUtils";
+import { deletePost } from '../../features/postsSlice';
 
 type Props = {
   post: Post;
@@ -13,7 +14,8 @@ type Props = {
 
 export const PostCard: React.FC<Props> = ({ post }) => {
   const dispatch = useAppDispatch();
-  const { liked, favorites } = useAppSelector(state => state.myProfile);
+  const location = useLocation();
+  const { liked, favorites, profile } = useAppSelector(state => state.myProfile);
   const { isAuthenticated } = useAppSelector(state => state.auth);
   const [showError, setShowError] = useState(false);
   const hashtags = post?.hashtags?.length > 0
@@ -23,6 +25,9 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     .some(like => like.post.id === post.id));
   const [favoritePost, setFavoritePost ]= useState(favorites
     .some(fav => fav.post.id === post.id));
+    const canDeletePost = isAuthenticated
+    && post.username === profile?.username
+    && location.pathname === '/my-profile';
 
   const handleLike = () => {
     if (!isAuthenticated) {
@@ -52,6 +57,11 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     setFavoritePost(!favoritePost);
   };
 
+  const handleDeletePost = (postId: number) => (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    dispatch(deletePost(postId));
+  }
+
   return (
     <div className="card">
       <Link to={`../../posts/${post.id}`}>
@@ -64,6 +74,7 @@ export const PostCard: React.FC<Props> = ({ post }) => {
         </div>
       </Link>
       <div className="card__body">
+      {canDeletePost && <span className="card__delete" onClick={handleDeletePost(post.id)} />}
         <div className="card__top">
           <Link
               className="card__location-link"
