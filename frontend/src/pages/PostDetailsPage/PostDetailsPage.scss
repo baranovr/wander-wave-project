@@ -252,10 +252,16 @@
   &__comment-user {
     border-radius: 16px 16px 0 0;
     padding: 8px 16px;
+    background-color: #348b7c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__comment-user {
     color: aliceblue;
     font-family: 'Raleway', sans-serif;
     font-size: 16px;
-    background-color: #348b7c;
   }
 
   &__comment-body {
@@ -308,6 +314,23 @@
 
     &::placeholder {
       font-family: 'Raleway', sans-serif;
+    }
+  }
+
+  &__delete {
+    background-image: url(../../images/close-white.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-radius: 50%;
+    display: block;
+    height: 16px;
+    width: 16px;
+    border: 1px solid aliceblue;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
     }
   }
 

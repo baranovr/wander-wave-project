@@ -47,6 +47,20 @@ export const addComment = createAsyncThunk(
   },
 );
 
+export const deleteComment = createAsyncThunk(
+  'comments/deleteComment',
+  async (commentId: number, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(
+        `http://127.0.0.1:8008/api/platform/comments/${commentId}/`
+      );
+      return commentId;
+    } catch (error) {
+      return rejectWithValue('Failed to delete comment');
+    }
+  }
+);
+
 export const setLike = createAsyncThunk(
   'posts/setLike',
   async (postId: number, { rejectWithValue }) => {
@@ -112,6 +126,12 @@ const postDetailsSlice = createSlice({
         }
       },
     );
+
+    builder.addCase(deleteComment.fulfilled, (state, action) => {
+      if (state.post && state.post.comments) {
+        state.post.comments = state.post.comments.filter(comment => comment.id !== action.payload);
+      }
+    });
 
     builder.addCase(
       setLike.fulfilled,

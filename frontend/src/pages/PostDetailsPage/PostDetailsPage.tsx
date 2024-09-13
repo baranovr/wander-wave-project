@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   addComment,
   addToFavorites,
+  deleteComment,
   fetchPostDetails,
   setLike,
 } from '../../features/postDetailsSlice';
@@ -28,8 +29,10 @@ export const PostDetailsPage = () => {
   const { liked, favorites, profile } = useAppSelector(state => state.myProfile);
   const { isAuthenticated } = useAppSelector(state => state.auth);
 
-  const likedPost = liked.some(like => like.post.id === post?.id);
-  const favoritePost = favorites.some(fav => fav.post.id === post?.id);
+  const [likedPost, setLikedPost] = useState(liked
+    .some(like => like.post.id === post?.id));
+  const [favoritePost, setFavoritePost] = useState(favorites
+    .some(fav => fav.post.id === post?.id));
 
   const handleLike = () => {
     if (!isAuthenticated) {
@@ -43,6 +46,7 @@ export const PostDetailsPage = () => {
 
     if (post) {
       dispatch(setLike(post.id));
+      setLikedPost(!likedPost);
     }
   };
 
@@ -58,6 +62,7 @@ export const PostDetailsPage = () => {
 
     if (post) {
       dispatch(addToFavorites(post?.id));
+      setFavoritePost(!favoritePost);
     }
   };
 
@@ -107,6 +112,11 @@ export const PostDetailsPage = () => {
 
     setSubmitting(false);
     setBody('');
+  };
+
+  const handleDeleteComment = (commentId: number) => (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    dispatch(deleteComment(commentId));
   };
 
   return (
@@ -288,11 +298,25 @@ export const PostDetailsPage = () => {
               <div className="details__comments">
                 <div className="details__comments-top">
                   <h2 className="details__title-h2">Comments:</h2>
-                  <span className="details__comments-count">{`${post?.comments.length} comments`}</span>
+                  <span className="details__comments-count">
+                    {`${post?.comments.length} comments`}
+                  </span>
                 </div>
                 {post?.comments.map(comment => (
-                  <div className="details__comment">
-                    <div className="details__comment-user">{comment.commentator_username}</div>
+                  <div className="details__comment" key={comment.id}>
+                    <div className="details__comment-user">
+                      <div className="details__comment-username">
+                        {comment.commentator_username}
+                      </div>
+                      {profile && isAuthenticated
+                        && (comment.commentator_username === profile.username
+                          || post?.username === profile.username)
+                        && (<span
+                          className="details__delete"
+                          onClick={handleDeleteComment(comment.id)}
+                        />)
+                      }
+                    </div>
                     <div className="details__comment-body">{comment.text}</div>
                     <div className="details__comment-date">
                       {comment.created_date.slice(0, 10).split('-').reverse().join('.')}

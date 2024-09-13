@@ -15,7 +15,7 @@ export interface PostDetails {
   title: string;
   likes_count: number;
   content: string;
-  comments: [
+  comments:
     {
       id: number;
       text: string;
@@ -23,8 +23,7 @@ export interface PostDetails {
       commentator_username: string
       created_date: string;
       updated_date: string;
-    },
-  ];
+    }[];
   hashtags: {
     id: number;
     name: string;
