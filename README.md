@@ -271,11 +271,11 @@ $ python manage.py createsuperuser
   ├── .env.sample                 # Sample environment variables
   ├── .gitignore                  # Files and directories to be ignored by Git
   ├── docker-compose.yaml         # Docker Compose configuration for multi-container setup
-  ├── manage.py                   # Backend management script (might be linked to Django)
+  ├── manage.py                   # Backend management script
   ├── x_readme/
   │    └── *                      # Images for README file
-  ├── README.md                   # Project documentation (you're currently editing this file)
-  ├── requirements.txt            # Python package dependencies (likely for backend)
+  ├── README.md                   # Project documentation
+  ├── requirements.txt            # Python package dependencies
   │
   │-- *********************************************************************************
 ```
