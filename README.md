@@ -84,7 +84,7 @@ $ python manage.py migrate
 <br>
 
 ## 📑 Project general features 
-📍TokenAuthentication
+📍JWT Token Authentication
 
 📍Viewing posts and comments without authorization
 
@@ -94,7 +94,7 @@ $ python manage.py migrate
 
 📍Documentation is located at /api/doc/swagger/
 
-📍Creating posts, setting likes/dislikes, writing comments
+📍Creating posts, setting likes, writing comments
 
 📍Viewing and editing personal posts
 
@@ -106,7 +106,7 @@ $ python manage.py migrate
 
 📍Viewing posts from your subscriptions
 
-📍Viewing a list of liked/liked posts
+📍Viewing a list of liked posts
 
 📍Adding hashtags to posts
 
