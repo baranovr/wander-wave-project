@@ -10,6 +10,7 @@ import {
 import { fetchSubscriptions } from '../../features/myProfileSlice';
 import { fetchAuthorProfile } from '../../features/authorProfileSlice';
 import { Loader } from '../../components/Loader';
+import {getImageUrl} from "../../api/imageUtils";
 
 export const AuthorPage: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -67,7 +68,7 @@ export const AuthorPage: React.FC = () => {
                 <div className="user__right-side">
                   <img
                     className="user__photo"
-                    src={profile.avatar || 'default-avatar.png'}
+                    src={getImageUrl(profile.avatar) || 'default-avatar.png'}
                     alt={profile.username}
                   />
                   {followCurrentUser ? (
