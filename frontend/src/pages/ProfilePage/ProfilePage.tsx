@@ -110,7 +110,7 @@ export const ProfilePage = () => {
 
                     <div className="user__category user__category--row">
                       <span className="user__span">Date Joined:</span>
-                      <p className="user__p">{profile.date_joined}</p>
+                      <p className="user__p">{profile.date_joined.slice(0, 10).split('-').reverse().join('.')}</p>
                     </div>
                   </div>
                 </div>
