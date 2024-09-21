@@ -138,32 +138,45 @@ export const register = createAsyncThunk(
 );
 
 
-// export const checkAuthStatus = createAsyncThunk(
-//   'auth/checkStatus',
-//   async (_, { dispatch }) => {
-//     const accessToken = localStorage.getItem('access');
-//     if (accessToken) {
-//       try {
-//         const { exp } = jwtDecode<{ exp: number }>(accessToken);
-//         if (Date.now() >= exp * 1000) {
-//           // Token has expired, try to refresh
-//           return await dispatch(refreshToken()).unwrap();
-//         } else {
-//           // Token is still valid
-//           axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-//           await dispatch(fetchUserProfile());
-//           return { access: accessToken };
-//         }
-//       } catch (error) {
-//         // Token is invalid or refresh failed
-//         localStorage.removeItem('access');
-//         localStorage.removeItem('refresh');
-//         throw error;
-//       }
-//     }
-//     throw new Error('No access token found');
-//   }
-// );
+export const checkAuthStatus = createAsyncThunk(
+  'auth/checkStatus',
+  async (_, { dispatch }) => {
+    const accessToken = localStorage.getItem('access');
+    if (accessToken) {
+      try {
+        const { exp } = jwtDecode<{ exp: number }>(accessToken);
+
+        // Checking if the token has expired
+        if (Date.now() >= exp * 1000) {
+          // If the token has expired, we try to renew it
+          return await dispatch(refreshToken()).unwrap();
+        } else {
+          // If the token is still valid, add it to the headers
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+          // If the token is still valid, add it to the headers
+          const userProfile = await dispatch(fetchUserProfile()).unwrap();
+
+          // Check if the user exists
+          if (userProfile && userProfile.id) {
+            return { access: accessToken };
+          } else {
+            // If the profile is not found, we clear the token and throw an error
+            localStorage.removeItem('access');
+            localStorage.removeItem('refresh');
+            throw new Error('User not found. Please register.');
+          }
+        }
+      } catch (error) {
+        // If the token is invalid or an error occurred while updating
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        throw error;
+      }
+    }
+    throw new Error('Access token not found');
+  }
+);
 
 
 const authSlice = createSlice({
@@ -240,18 +253,18 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Registration failed';
         state.isAuthenticated = false;
+      })
+      .addCase(checkAuthStatus.fulfilled, (state, action) => {
+        state.accessToken = action.payload.access;
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addCase(checkAuthStatus.rejected, (state) => {
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.isAuthenticated = false;
+        state.loading = false;
       });
-      // .addCase(checkAuthStatus.fulfilled, (state, action) => {
-      //   state.accessToken = action.payload.access;
-      //   state.isAuthenticated = true;
-      //   state.loading = false;
-      // })
-      // .addCase(checkAuthStatus.rejected, (state) => {
-      //   state.accessToken = null;
-      //   state.refreshToken = null;
-      //   state.isAuthenticated = false;
-      //   state.loading = false;
-      // });
   },
 });
 export const { clearAuthState } = authSlice.actions;
