@@ -124,7 +124,7 @@ class UnsubscribeView(APIView):
             Subscription.objects.filter(subscriber=request.user)
             return Response(
                 {"message": "You are unsubscribed from this user"},
-                status=status.HTTP_200_OK
+                status=status.HTTP_204_NO_CONTENT
             )
         except Subscription.DoesNotExist:
             return Response(
