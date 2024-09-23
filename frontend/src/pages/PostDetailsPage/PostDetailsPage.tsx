@@ -7,6 +7,8 @@ import {
   addComment,
   addToFavorites,
   deleteComment,
+  deleteFromFavorites,
+  deleteLike,
   fetchPostDetails,
   setLike,
 } from '../../features/postDetailsSlice';
@@ -44,7 +46,13 @@ export const PostDetailsPage = () => {
       return () => clearTimeout(timer);
     }
 
-    if (post) {
+    if (likedPost && post) {
+      const like = liked.find(l => l.post.id === post.id);
+      if (like) {
+        dispatch(deleteLike(like.id));
+        setLikedPost(!likedPost);
+      }
+    } else if (!likedPost && post) {
       dispatch(setLike(post.id));
       setLikedPost(!likedPost);
     }
@@ -60,8 +68,14 @@ export const PostDetailsPage = () => {
       return () => clearTimeout(timer);
     }
 
-    if (post) {
-      dispatch(addToFavorites(post?.id));
+    if (favoritePost && post) {
+      const fav = favorites.find(f => f.post.id === post.id);
+      if (fav) {
+        dispatch(deleteFromFavorites(fav.id));
+        setFavoritePost(!favoritePost);
+      }
+    } else if (!favoritePost && post) {
+      dispatch(addToFavorites(post.id));
       setFavoritePost(!favoritePost);
     }
   };

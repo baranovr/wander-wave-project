@@ -76,6 +76,20 @@ export const setLike = createAsyncThunk(
   },
 );
 
+export const deleteLike = createAsyncThunk(
+  'posts/deleteLike',
+  async (likeId: number, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `http://127.0.0.1:8008//api/platform/likes/${likeId}/`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Failed to delete like');
+    }
+  }
+);
+
 export const addToFavorites = createAsyncThunk(
   'posts/addToFavorites',
   async (postId: number, { rejectWithValue }) => {
@@ -90,6 +104,21 @@ export const addToFavorites = createAsyncThunk(
     }
   }
 );
+
+export const deleteFromFavorites = createAsyncThunk(
+  'posts/deleteFromFavorites',
+  async (favoriteId: number, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `http://127.0.0.1:8008/api/user/my_profile/my_favorites/${favoriteId}/`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Failed to delete from favorites');
+    }
+  }
+);
+
 
 const postDetailsSlice = createSlice({
   name: 'comments',

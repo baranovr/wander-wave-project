@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Post } from '../../types/Post';
 import './PostCard.scss';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { addToFavorites, setLike } from '../../features/postDetailsSlice';
+import { addToFavorites, deleteFromFavorites, deleteLike, setLike } from '../../features/postDetailsSlice';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { getImageUrl } from "../../api/imageUtils";
@@ -23,9 +23,9 @@ export const PostCard: React.FC<Props> = ({ post }) => {
     : 'No hashtags available';
   const [likedPost, setLikedPost] = useState(liked
     .some(like => like.post.id === post.id));
-  const [favoritePost, setFavoritePost ]= useState(favorites
+  const [favoritePost, setFavoritePost] = useState(favorites
     .some(fav => fav.post.id === post.id));
-    const canDeletePost = isAuthenticated
+  const canDeletePost = isAuthenticated
     && post.username === profile?.username
     && location.pathname === '/my-profile';
 
@@ -39,8 +39,16 @@ export const PostCard: React.FC<Props> = ({ post }) => {
       return () => clearTimeout(timer);
     }
 
-    dispatch(setLike(post.id));
-    setLikedPost(!likedPost);
+    if (likedPost) {
+      const like = liked.find(l => l.post.id === post.id);
+      if (like) {
+        dispatch(deleteLike(like.id));
+        setLikedPost(!likedPost);
+      }
+    } else {
+      dispatch(setLike(post.id));
+      setLikedPost(!likedPost);
+    }
   };
 
   const handleAddToFavorites = () => {
@@ -53,8 +61,16 @@ export const PostCard: React.FC<Props> = ({ post }) => {
       return () => clearTimeout(timer);
     }
 
-    dispatch(addToFavorites(post.id));
-    setFavoritePost(!favoritePost);
+    if (favoritePost) {
+      const fav = favorites.find(f => f.post.id === post.id);
+      if (fav) {
+        dispatch(deleteFromFavorites(fav.id));
+        setFavoritePost(!favoritePost);
+      }
+    } else {
+      dispatch(addToFavorites(post.id));
+      setFavoritePost(!favoritePost);
+    }
   };
 
   const handleDeletePost = (postId: number) => (event: React.MouseEvent<HTMLSpanElement>) => {
@@ -67,21 +83,23 @@ export const PostCard: React.FC<Props> = ({ post }) => {
       <Link to={`../../posts/${post.id}`}>
         <div className="card__header">
           <img
-              className="card__img"
-              src={getImageUrl(post.photo)}
-              alt="nature"
+            className="card__img"
+            src={getImageUrl(post.photo)}
+            alt="nature"
           />
         </div>
       </Link>
       <div className="card__body">
-      {canDeletePost && <span className="card__delete" onClick={handleDeletePost(post.id)} />}
+        {canDeletePost && <span className="card__delete" onClick={handleDeletePost(post.id)} />}
         <div className="card__top">
           <Link
-              className="card__location-link"
-              target="blank"
-              to={`https://www.google.com/maps/place/${post.location.city},${post.location.country}/`}
+            className="card__location-link"
+            target="blank"
+            to={`https://www.google.com/maps/place/${post.location.city},${post.location.country}/`}
           >
-            <span className="card__location card__location--teal">{`${post.location.city}, ${post.location.country}`}</span>
+            <span className="card__location card__location--teal">
+              {`${post.location.city}, ${post.location.country}`}
+            </span>
           </Link>
 
           <small className="card__posted-date">
