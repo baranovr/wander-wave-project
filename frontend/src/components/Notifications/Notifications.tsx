@@ -23,23 +23,27 @@ export const Notifications = () => {
   }, [dispatch]);
 
   const handleMarkAllAsRead = () => {
-    dispatch(markAllNotificationsAsRead());
-    dispatch(fetchAllNotifications());
+    dispatch(markAllNotificationsAsRead()).then(() => {
+      dispatch(fetchAllNotifications());
+    });
   };
 
   const handleMarkAsRead = (id: number, text: string) => {
-    dispatch(markNotificationAsRead({ text, id }));
-    dispatch(fetchAllNotifications());
+    dispatch(markNotificationAsRead({ text, id })).then(() => {
+      dispatch(fetchAllNotifications());
+    });
   };
 
   const handleDelete = (id: number, text: string) => {
-    dispatch(deleteNotification({ id, text }));
-    dispatch(fetchAllNotifications());
+    dispatch(deleteNotification({ id, text })).then(() => {
+      dispatch(fetchAllNotifications());
+    });
   };
 
   const handleDeleteAll = () => {
-    dispatch(deleteAllNotifications());
-    dispatch(fetchAllNotifications());
+    dispatch(deleteAllNotifications()).then(() => {
+      dispatch(fetchAllNotifications());
+    });
     setVisibleNotifications(false);
   };
 
