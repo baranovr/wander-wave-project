@@ -22,8 +22,9 @@ RUN adduser  \
     wander-user
 
 RUN chown -R wander-user:wander-user /wander_wave/
-RUN chown -R wander-user:wander-user /files/
 RUN chmod -R 755 /wander_wave/
+
+RUN chown -R wander-user:wander-user /files/
 RUN chmod -R 755 /files/
 
 USER wander-user
