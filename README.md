@@ -4,7 +4,6 @@
 
 ## The project demonstrates a service to share travel experiences. Here you can scroll the posts feed, like, subscribe, comment, etc. The project is made **full stack**.
 
-<br>
 
 ### ⚠️If you want to run the entire project at once, then you should go straight to the ["How to run"](#how-to-run-) section.
 <hr style="height: 8px">
@@ -44,13 +43,13 @@ To get started with the backend part you need to do the following👇:
 
 > Clone the repository
 ```bash
-$ git clone https://github.com/baranovr/wander-wave-project.git
+git clone https://github.com/baranovr/wander-wave-project.git
 ```
 <br>
 
 > Switch to origin/backend branch
 ```bash
-$ git switch backend
+git switch backend
 ```
 
 <br />
@@ -58,27 +57,27 @@ $ git switch backend
 > Install modules via `VENV`  
 ### 👉 Set Up for `Unix`, `MacOS`
 ```bash
-$ virtualenv env
-$ source env/bin/activate
-$ pip3 install -r requirements.txt
+virtualenv env
+source env/bin/activate
+pip3 install -r requirements.txt
 ```
 
 ### 👉 Set Up for `Windows`
 ```bash
-$ virtualenv env
-$ souce venv\Scripts\activate
-$ pip install -r requirements.txt
+virtualenv env
+souce venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
 <br />
 
 > Set your environment variables
 ```bash
-$ set DB_HOST=<your DB hostname>
-$ set DB_NAME=<your DB name>
-$ set DB_USER=<your DB username>
-$ set DB_PASSWORD=<your DB user passoword>
-$ set SECRET_KEY=<your secret key>
+set DB_HOST=<your DB hostname>
+set DB_NAME=<your DB name>
+set DB_USER=<your DB username>
+set DB_PASSWORD=<your DB user passoword>
+set SECRET_KEY=<your secret key>
 ```
 
 <br>
@@ -188,13 +187,13 @@ docker-compose up --build
 # 1️⃣
 > Clone the repository
 ```bash
-$ git clone https://github.com/baranovr/wander-wave-project.git
+git clone https://github.com/baranovr/wander-wave-project.git
 ```
 
 # 2️⃣
 > Switch to origin/fullstack branch
 ```bash
-$ git switch fullstack
+git switch fullstack
 ```
 
 # 3️⃣
@@ -202,27 +201,27 @@ $ git switch fullstack
 > Install modules via `VENV`  
 ### 👉 Set Up for `Unix`, `MacOS`
 ```bash
-$ virtualenv env
-$ source env/bin/activate
-$ pip3 install -r requirements.txt
+virtualenv env
+source env/bin/activate
+pip3 install -r requirements.txt
 ```
 
 ### 👉 Set Up for `Windows`
 ```bash
-$ virtualenv env
-$ souce venv\Scripts\activate
-$ pip install -r requirements.txt
+virtualenv env
+souce venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
 # 4️⃣
 
 > Set your environment variables
 ```bash
-$ set DB_HOST=<your DB hostname>
-$ set DB_NAME=<your DB name>
-$ set DB_USER=<your DB username>
-$ set DB_PASSWORD=<your DB user passoword>
-$ set SECRET_KEY=<your secret key>
+set DB_HOST=<your DB hostname>
+set DB_NAME=<your DB name>
+set DB_USER=<your DB username>
+set DB_PASSWORD=<your DB user passoword>
+set SECRET_KEY=<your secret key>
 ```
 # 5️⃣
 
