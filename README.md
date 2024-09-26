@@ -2,8 +2,11 @@
 
 ![db_structure](x_readme/wander_wave.png)
 
-The project demonstrates a service to share travel experiences. Here you can scroll the posts feed, like, subscribe, comment, etc. The project is made **full stack**.
+## The project demonstrates a service to share travel experiences. Here you can scroll the posts feed, like, subscribe, comment, etc. The project is made **full stack**.
 
+<br>
+
+### ⚠️If you want to run the entire project at once, then you should go straight to the ["How to run"](#how-to-run-) section.
 <hr style="height: 8px">
 
 ![backend](x_readme/backend.png)<br>
@@ -37,11 +40,17 @@ But it is important to note that the User model has created using **build-in Dja
 <br>
 <h2>🗺 Wander Wave</h2>
 
-To get started with the project you need to do the following👇:
+To get started with the backend part you need to do the following👇:
 
 > Clone the repository
 ```bash
 $ git clone https://github.com/baranovr/wander-wave-project.git
+```
+<br>
+
+> Switch to origin/backend branch
+```bash
+$ git switch backend
 ```
 
 <br />
@@ -70,15 +79,6 @@ $ set DB_NAME=<your DB name>
 $ set DB_USER=<your DB username>
 $ set DB_PASSWORD=<your DB user passoword>
 $ set SECRET_KEY=<your secret key>
-```
-
-<br />
-
-> Set Up Database
-
-```bash
-$ python manage.py makemigrations
-$ python manage.py migrate
 ```
 
 <br>
@@ -119,26 +119,13 @@ For convenient development and transfer of the project to other users, Docker wa
 The image has been uploaded to Docker Hub:
 
 ### Link👇:
-> 
+> https://hub.docker.com/repository/docker/baranovr/wander-wave-project-backend/general
 
 How to use (Docker should be installed)👇:
 
 ```bash
 docker-compose up --build
 ```
-
-<hr>
-
-## 👮‍♂️ Create Super User
-
-### ⚠️ By default, an unauthorized user does not have the rights to post or comment on anything.
-To be able to interact with the platform, you need to log in.
-To be able to use the full functionality, you need to be an **admin** (or `superuser`).
-To create a superuser you need to run this command and follow the further instructions👇:
-```bash
-$ python manage.py createsuperuser
-```
-
 <br />
 <hr>
 
@@ -194,8 +181,59 @@ $ python manage.py createsuperuser
 
 <hr style="height: 8px">
 
-![frontend](x_readme/frontend.png)
+![fullstack](x_readme/fullstak-500.png)
 
+# How to run 🚀
+
+# 1️⃣
+> Clone the repository
+```bash
+$ git clone https://github.com/baranovr/wander-wave-project.git
+```
+
+# 2️⃣
+> Switch to origin/fullstack branch
+```bash
+$ git switch fullstack
+```
+
+# 3️⃣
+
+> Install modules via `VENV`  
+### 👉 Set Up for `Unix`, `MacOS`
+```bash
+$ virtualenv env
+$ source env/bin/activate
+$ pip3 install -r requirements.txt
+```
+
+### 👉 Set Up for `Windows`
+```bash
+$ virtualenv env
+$ souce venv\Scripts\activate
+$ pip install -r requirements.txt
+```
+
+# 4️⃣
+
+> Set your environment variables
+```bash
+$ set DB_HOST=<your DB hostname>
+$ set DB_NAME=<your DB name>
+$ set DB_USER=<your DB username>
+$ set DB_PASSWORD=<your DB user passoword>
+$ set SECRET_KEY=<your secret key>
+```
+# 5️⃣
+
+Run this command (you should install [Docker Desktop](https://www.docker.com/products/docker-desktop/))👇:
+
+```bash
+docker-compose up --build
+```
+<br>
+
+### After that, when will the containers be built and ran, go to http://localhost:3000
 
 <hr style="height: 8px">
 
