@@ -232,7 +232,7 @@ docker-compose up --build
 ```
 <br>
 
-### After that, when will the containers be built and ran, go to http://localhost:3000
+### After that, when the containers will be built and ran, go to http://localhost:3000
 
 <hr style="height: 8px">
 
