@@ -16,7 +16,7 @@ from backend.user.serializers import (
     AuthorProfileSerializer
 )
 
-from backend.wander_wave.models import Subscription, SubscriptionNotification
+from backend.wander_wave.models import Subscription, SubscriptionNotification, Post
 from backend.wander_wave.notification_utils.base_notification_viewset import (
     BaseUserNotificationViewSet
 )
@@ -59,16 +59,17 @@ class SubscriptionNotificationViewSet(BaseUserNotificationViewSet):
 class SubscriptionView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, user_id):
+    def post(self, request, pk):
         try:
-            subscribed_user = get_user_model().objects.get(id=user_id)
+            author_post = Post.objects.get(pk=pk)
+            # subscribed_user = get_user_model().objects.get(id=user_id)
         except get_user_model().DoesNotExist:
             return Response(
                 {"error": "User not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if subscribed_user == request.user:
+        if author_post.user == request.user:
             return Response(
                 {"error": "You cannot subscribe to yourself"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -77,11 +78,11 @@ class SubscriptionView(APIView):
         try:
             subscription, created = Subscription.objects.get_or_create(
                 subscriber=request.user,
-                subscribed=subscribed_user
+                subscribed=author_post.user
             )
             if created:
                 notification = create_subscription_notification(
-                    request.user, subscribed_user
+                    request.user, author_post.user
                 )
                 return Response(
                     {"message": "Successfully subscribed"},

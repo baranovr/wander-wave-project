@@ -73,7 +73,7 @@ urlpatterns = [
         name="add-to-favorites",
     ),
     path(
-        "posts/<int:user_id>/author-profile/subscribe/",
+        "posts/<int:pk>/author-profile/subscribe/",
         SubscriptionView.as_view(),
         name="subscribe"
     ),
