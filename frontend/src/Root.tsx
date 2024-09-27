@@ -13,6 +13,8 @@ import { LoginPage } from './pages/LoginPage/LoginPage';
 import { AuthorPage } from './pages/AuthorPage/AuthorPage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { ProfilePage } from './pages/ProfilePage';
+import {SubscribersList} from "./pages/SubscribersList";
+import {SubscriptionsList} from "./pages/SubscriptionsList";
 
 export const Root = () => (
   <Router>
@@ -30,6 +32,8 @@ export const Root = () => (
         <Route path="login" element={<LoginPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="my-profile" element={<ProfilePage />} />
+        <Route path="my-profile/subscribers" element={<SubscribersList />} />
+        <Route path="my-profile/subscriptions" element={<SubscriptionsList />} />
         {/*<Route path="*" element={<NotFoundPage />} /> */}
       </Route>
     </Routes>

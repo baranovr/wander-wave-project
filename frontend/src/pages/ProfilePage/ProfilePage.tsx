@@ -75,7 +75,9 @@ export const ProfilePage = () => {
                   <div className="user__followers">
                     <div className="user__category user__category--subscr">
                       <span className="user__span user__span--centr">
-                        Subscribers:{' '}
+                        <Link to="/my-profile/subscribers" className="user__span">
+                          Subscribers:{' '}
+                        </Link>
                       </span>
                       <p className="user__p user__p--center">
                         {profile.subscribers}
@@ -83,7 +85,9 @@ export const ProfilePage = () => {
                     </div>
                     <div className="user__category user__category--subscr">
                       <span className="user__span user__span--centr">
-                        Subscriptions:{' '}
+                        <Link to="/my-profile/subscriptions" className="user__span">
+                          Subscriptions:{' '}
+                        </Link>
                       </span>
                       <p className="user__p user__p--center">
                         {profile.subscriptions}
