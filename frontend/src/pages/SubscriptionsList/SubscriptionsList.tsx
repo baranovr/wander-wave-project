@@ -70,6 +70,10 @@ export const SubscriptionsList: React.FC = () => {
                 <div className="subscription-basic-info">
                   <h3 className="subscription-username">{subscription.username}</h3>
                   <p className="subscription-status">{subscription.status}</p>
+                  <h5 className="point">
+                    .
+                  </h5>
+                  <p className="subscription-about-me"><strong>About me:</strong>{subscription.about_me.slice(0, 50)}...</p>
                 </div>
                 <div className="subscription-actions">
                   <button onClick={() => toggleCardExpansion(subscription.id)} className="view-more-button">
@@ -84,7 +88,7 @@ export const SubscriptionsList: React.FC = () => {
                 <div className="subscription-details">
                   <p><strong>Email:</strong> {subscription.email}</p>
                   <p><strong>Full Name:</strong> {subscription.full_name}</p>
-                  <p><strong>About Me:</strong> {subscription.about_me}</p>
+                  <p className="about-me"><strong>About user:</strong> {subscription.about_me}</p>
                   <p><strong>Date Joined:</strong> {subscription.date_joined.slice(0, 10).split('-').reverse().join('.')}</p>
                   <p><strong>Subscribers:</strong> {subscription.subscribers}</p>
                   <p><strong>Subscriptions:</strong> {subscription.subscriptions}</p>

@@ -99,7 +99,7 @@ export const ProfilePage = () => {
                 <div className="user__info">
                   <h2 className="user__name">
                     {profile.username}
-                    <p className="user__p user__pp">{profile.about_me}</p>
+                    <p className="user__p user__pp about-me">{profile.about_me}</p>
                   </h2>
 
                   <div className="user__categories">

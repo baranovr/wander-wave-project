@@ -91,7 +91,7 @@ class SubscriptionView(APIView):
             else:
                 return Response(
                     {"message": "You are already subscribed to this user"},
-                    status=status.HTTP_200_OK
+                    status=status.HTTP_400_BAD_REQUEST
                 )
         except IntegrityError:
             return Response(

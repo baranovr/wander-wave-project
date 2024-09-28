@@ -58,7 +58,7 @@ export const SubscribersList: React.FC = () => {
 
     return (
     <div className="subscriptions-list">
-      <h1 className="subscriptions-title">My Subscriptions</h1>
+      <h1 className="subscriptions-title">My Subscribers</h1>
       {subscribers.length === 0 ? (
         <h4 className="no-subscriptions">You don't have any subscriptions yet.</h4>
       ) : (
@@ -70,6 +70,10 @@ export const SubscribersList: React.FC = () => {
                 <div className="subscription-basic-info">
                   <h3 className="subscription-username">{subscriber.username}</h3>
                   <p className="subscription-status">{subscriber.status}</p>
+                  <h5 className="point">
+                    .
+                  </h5>
+                  <p className="subscription-about-me"><strong>About me:</strong>{subscriber.about_me.slice(0, 50)}...</p>
                 </div>
                 <div className="subscription-actions">
                   <button onClick={() => toggleCardExpansion(subscriber.id)} className="view-more-button">
@@ -81,14 +85,14 @@ export const SubscribersList: React.FC = () => {
                 </div>
               </div>
               {expandedCards.includes(subscriber.id) && (
-                <div className="subscription-details">
-                  <p><strong>Email:</strong> {subscriber.email}</p>
-                  <p><strong>Full Name:</strong> {subscriber.full_name}</p>
-                  <p><strong>About Me:</strong> {subscriber.about_me}</p>
-                  <p><strong>Date Joined:</strong> {subscriber.date_joined.slice(0, 10).split('-').reverse().join('.')}</p>
-                  <p><strong>Subscribers:</strong> {subscriber.subscribers}</p>
-                  <p><strong>Subscriptions:</strong> {subscriber.subscriptions}</p>
-                </div>
+                  <div className="subscription-details">
+                    <p><strong>Email:</strong> {subscriber.email}</p>
+                    <p><strong>Full Name:</strong> {subscriber.full_name}</p>
+                    <p className="about-me"><strong>About user:</strong> {subscriber.about_me}</p>
+                    <p><strong>Date Joined:</strong> {subscriber.date_joined.slice(0, 10).split('-').reverse().join('.')}</p>
+                    <p><strong>Subscribers:</strong> {subscriber.subscribers}</p>
+                    <p><strong>Subscriptions:</strong> {subscriber.subscriptions}</p>
+                  </div>
               )}
             </div>
           ))}

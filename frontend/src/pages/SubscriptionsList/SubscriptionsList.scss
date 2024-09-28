@@ -14,7 +14,7 @@
 
 .subscriptions-list {
   padding: 20px;
-  width: 400px;
+  width: 800px;
   margin: 0 auto;
 }
 
@@ -29,7 +29,9 @@
   font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
   color: rgb(73, 147, 92);
 }
-
+.subscription-about-me {
+  color: rgb(81, 81, 81);
+}
 .subscriptions-table {
   display: flex;
   flex-direction: column;
@@ -37,8 +39,7 @@
 }
 
 .subscription-card {
-  width: auto;
-  min-width: 400px;
+  width: 800px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background-color: #4dba84;
@@ -116,6 +117,18 @@
   padding: 15px;
   background-color: rgba(255, 255, 255, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.about-me {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 110ch;
+  line-height: 1.5;
+}
+
+.point {
+  color: #4dba84;
 }
 
 .subscription-details p {
