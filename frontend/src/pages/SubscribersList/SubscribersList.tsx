@@ -1,6 +1,5 @@
 import '../SubscriptionsList/SubscriptionsList.scss';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import axiosInstance from '../../api/axiosInstance';
 import {getMyMediaImageUrl} from "../../api/imageUtils";
@@ -8,20 +7,23 @@ import {getMyMediaImageUrl} from "../../api/imageUtils";
 interface Subscriber {
   id: number;
   avatar: string;
-  username: string;
   status: string;
+  username: string;
   email: string;
   full_name: string;
-  view_more: string;
-  remove_subscriber: string;
+  about_me: string;
+  date_joined: string;
+  subscribers: number;
+  subscriptions: number;
 }
 
 export const SubscribersList: React.FC = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedCards, setExpandedCards] = useState<number[]>([]);
 
-  useEffect(() => {
+    useEffect(() => {
     const fetchSubscribers = async () => {
       try {
         const response = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/subscribers/');
@@ -45,31 +47,49 @@ export const SubscribersList: React.FC = () => {
     }
   };
 
+    const toggleCardExpansion = (id: number) => {
+    setExpandedCards(prev =>
+      prev.includes(id) ? prev.filter(cardId => cardId !== id) : [...prev, id]
+    );
+  };
+
   if (loading) return <Loader />;
   if (error) return <p className="error-message">{error}</p>;
 
-  return (
+    return (
     <div className="subscriptions-list">
-      <h1 className="subscriptions-title">My Subscribers</h1>
+      <h1 className="subscriptions-title">My Subscriptions</h1>
       {subscribers.length === 0 ? (
-        <h4 className="no-subscriptions">You don't have any subscribers yet.</h4>
+        <h4 className="no-subscriptions">You don't have any subscriptions yet.</h4>
       ) : (
         <div className="subscriptions-table">
           {subscribers.map(subscriber => (
-            <div key={subscriber.id} className="subscription-row">
-              <img src={getMyMediaImageUrl(subscriber.avatar)} alt={subscriber.username} className="subscription-avatar" />
-              <div className="subscription-info">
-                <h3 className="subscription-username">{subscriber.username}</h3>
-                <p className="subscription-status">{subscriber.status}</p>
-                <p className="subscription-email">{subscriber.email}</p>
-                <p className="subscription-fullname">{subscriber.full_name}</p>
+            <div key={subscriber.id} className={`subscription-card ${expandedCards.includes(subscriber.id) ? 'expanded' : ''}`}>
+              <div className="subscription-header">
+                <img src={getMyMediaImageUrl(subscriber.avatar)} alt={subscriber.username} className="subscription-avatar" />
+                <div className="subscription-basic-info">
+                  <h3 className="subscription-username">{subscriber.username}</h3>
+                  <p className="subscription-status">{subscriber.status}</p>
+                </div>
+                <div className="subscription-actions">
+                  <button onClick={() => toggleCardExpansion(subscriber.id)} className="view-more-button">
+                    {expandedCards.includes(subscriber.id) ? 'View Less' : 'View More'}
+                  </button>
+                  <button onClick={() => handleRemoveSubscriber(subscriber.id)} className="unsubscribe-button">
+                    Remove subscriber
+                  </button>
+                </div>
               </div>
-              <div className="subscription-actions">
-                <Link to={subscriber.view_more} className="view-more-link">View More</Link>
-                <button onClick={() => handleRemoveSubscriber(subscriber.id)} className="unsubscribe-button">
-                  Unsubscribe
-                </button>
-              </div>
+              {expandedCards.includes(subscriber.id) && (
+                <div className="subscription-details">
+                  <p><strong>Email:</strong> {subscriber.email}</p>
+                  <p><strong>Full Name:</strong> {subscriber.full_name}</p>
+                  <p><strong>About Me:</strong> {subscriber.about_me}</p>
+                  <p><strong>Date Joined:</strong> {subscriber.date_joined.slice(0, 10).split('-').reverse().join('.')}</p>
+                  <p><strong>Subscribers:</strong> {subscriber.subscribers}</p>
+                  <p><strong>Subscriptions:</strong> {subscriber.subscriptions}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -77,3 +97,4 @@ export const SubscribersList: React.FC = () => {
     </div>
   );
 };
+

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { getMyMediaImageUrl } from "../../api/imageUtils";
 import axiosInstance from '../../api/axiosInstance';
@@ -8,18 +7,21 @@ import './SubscriptionsList.scss';
 interface Subscription {
   id: number;
   avatar: string;
-  username: string;
   status: string;
+  username: string;
   email: string;
   full_name: string;
-  view_more: string;
-  unsubscribe: string;
+  about_me: string;
+  date_joined: string;
+  subscribers: number;
+  subscriptions: number;
 }
 
 export const SubscriptionsList: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedCards, setExpandedCards] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
@@ -45,6 +47,12 @@ export const SubscriptionsList: React.FC = () => {
     }
   };
 
+  const toggleCardExpansion = (id: number) => {
+    setExpandedCards(prev =>
+      prev.includes(id) ? prev.filter(cardId => cardId !== id) : [...prev, id]
+    );
+  };
+
   if (loading) return <Loader />;
   if (error) return <p className="error-message">{error}</p>;
 
@@ -56,20 +64,32 @@ export const SubscriptionsList: React.FC = () => {
       ) : (
         <div className="subscriptions-table">
           {subscriptions.map(subscription => (
-            <div key={subscription.id} className="subscription-row">
-              <img src={getMyMediaImageUrl(subscription.avatar)} alt={subscription.username} className="subscription-avatar" />
-              <div className="subscription-info">
-                <h3 className="subscription-username">{subscription.username}</h3>
-                <p className="subscription-status">{subscription.status}</p>
-                <p className="subscription-email">{subscription.email}</p>
-                <p className="subscription-fullname">{subscription.full_name}</p>
+            <div key={subscription.id} className={`subscription-card ${expandedCards.includes(subscription.id) ? 'expanded' : ''}`}>
+              <div className="subscription-header">
+                <img src={getMyMediaImageUrl(subscription.avatar)} alt={subscription.username} className="subscription-avatar" />
+                <div className="subscription-basic-info">
+                  <h3 className="subscription-username">{subscription.username}</h3>
+                  <p className="subscription-status">{subscription.status}</p>
+                </div>
+                <div className="subscription-actions">
+                  <button onClick={() => toggleCardExpansion(subscription.id)} className="view-more-button">
+                    {expandedCards.includes(subscription.id) ? 'View Less' : 'View More'}
+                  </button>
+                  <button onClick={() => handleUnsubscribe(subscription.id)} className="unsubscribe-button">
+                    Unsubscribe
+                  </button>
+                </div>
               </div>
-              <div className="subscription-actions">
-                <Link to={subscription.view_more} className="view-more-link">View More</Link>
-                <button onClick={() => handleUnsubscribe(subscription.id)} className="unsubscribe-button">
-                  Unsubscribe
-                </button>
-              </div>
+              {expandedCards.includes(subscription.id) && (
+                <div className="subscription-details">
+                  <p><strong>Email:</strong> {subscription.email}</p>
+                  <p><strong>Full Name:</strong> {subscription.full_name}</p>
+                  <p><strong>About Me:</strong> {subscription.about_me}</p>
+                  <p><strong>Date Joined:</strong> {subscription.date_joined.slice(0, 10).split('-').reverse().join('.')}</p>
+                  <p><strong>Subscribers:</strong> {subscription.subscribers}</p>
+                  <p><strong>Subscriptions:</strong> {subscription.subscriptions}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -77,4 +97,3 @@ export const SubscriptionsList: React.FC = () => {
     </div>
   );
 };
-

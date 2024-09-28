@@ -427,8 +427,19 @@ class SubscriptionsListSerializer(SubscriptionSerializer):
     full_name = serializers.CharField(
         source="subscribed.full_name", read_only=True
     )
+    about_me = serializers.CharField(source="subscriber.about_me", read_only=True)
+    date_joined = serializers.CharField(source="subscriber.date_joined", read_only=True)
     view_more = serializers.SerializerMethodField()
+    subscribers = serializers.SerializerMethodField()
+    subscriptions = serializers.SerializerMethodField()
+
     unsubscribe = serializers.SerializerMethodField()
+
+    def get_subscribers(self, obj):
+        return Subscription.objects.filter(subscribed=obj.subscribed).count()
+
+    def get_subscriptions(self, obj):
+        return Subscription.objects.filter(subscriber=obj.subscribed).count()
 
     def get_view_more(self, obj):
         request = self.context.get("request")
@@ -457,6 +468,10 @@ class SubscriptionsListSerializer(SubscriptionSerializer):
             "status",
             "email",
             "full_name",
+            "about_me",
+            "date_joined",
+            "subscribers",
+            "subscriptions",
             "view_more",
             "unsubscribe"
         )
@@ -472,8 +487,18 @@ class SubscribersListSerializer(SubscriptionSerializer):
     full_name = serializers.CharField(
         source="subscriber.full_name", read_only=True
     )
+    about_me = serializers.CharField(source="subscriber.about_me", read_only=True)
+    date_joined = serializers.CharField(source="subscriber.date_joined", read_only=True)
     view_more = serializers.SerializerMethodField()
     remove_subscriber = serializers.SerializerMethodField()
+    subscribers = serializers.SerializerMethodField()
+    subscriptions = serializers.SerializerMethodField()
+
+    def get_subscribers(self, obj):
+        return Subscription.objects.filter(subscribed=obj.subscriber).count()
+
+    def get_subscriptions(self, obj):
+        return Subscription.objects.filter(subscriber=obj.subscriber).count()
 
     def get_view_more(self, obj):
         request = self.context.get("request")
@@ -493,6 +518,7 @@ class SubscribersListSerializer(SubscriptionSerializer):
             f"{SUBSCRIBERS_URL}{obj.pk}/remove_subscriber/"
         )
 
+
     class Meta:
         model = Subscription
         fields = (
@@ -502,6 +528,10 @@ class SubscribersListSerializer(SubscriptionSerializer):
             "status",
             "email",
             "full_name",
+            "about_me",
+            "date_joined",
+            "subscribers",
+            "subscriptions",
             "view_more",
             "remove_subscriber"
         )
