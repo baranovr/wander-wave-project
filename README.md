@@ -225,10 +225,13 @@ set SECRET_KEY=<your secret key>
 ```
 # 5️⃣
 
-Run this command (you should install [Docker Desktop](https://www.docker.com/products/docker-desktop/))👇:
+Run all this commands in the following order (you should install [Docker Desktop](https://www.docker.com/products/docker-desktop/))👇:
 
 ```bash
-docker-compose up --build
+docker-compose build
+```
+```bash
+docker-compose up
 ```
 <br>
 
