@@ -33,7 +33,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
-    "wader-wave-backend.onrender.com"
+    "wander-wave-backend.onrender.com"
 ]
 
 INTERNAL_IPS = [
