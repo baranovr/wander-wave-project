@@ -8,7 +8,7 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault(
         "DJANGO_SETTINGS_MODULE",
-        "backend.wander_wave_project.settings"
+        "wander_wave_project.settings"
     )
     try:
         from django.core.management import execute_from_command_line
