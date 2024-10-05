@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import './NewPostPage.scss';
-import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { createPost } from '../../features/postsSlice';
 import { useNavigate } from 'react-router-dom';
@@ -8,8 +8,8 @@ import axiosInstance from '../../api/axiosInstance';
 
 interface Location {
   id?: number;
-  city?: string;
-  country?: string;
+  country: string;
+  city: string;
   name: string;
 }
 
@@ -18,7 +18,7 @@ interface Hashtag {
   name: string;
 }
 
-export const NewPostPage = () => {
+export const NewPostPage: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [visibleLocation, setVisibleLocation] = useState(false);
@@ -28,6 +28,9 @@ export const NewPostPage = () => {
   const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
   const [selectedHashtags, setSelectedHashtags] = useState<number[]>([]);
   const [photo, setPhoto] = useState<File | null>(null);
+  const [newLocationCountry, setNewLocationCountry] = useState<string>('');
+  const [newLocationCity, setNewLocationCity] = useState<string>('');
+  const [newHashtagName, setNewHashtagName] = useState<string>('');
   const dispatch = useAppDispatch();
   const { createError, createLoading } = useAppSelector(state => state.posts);
   const navigate = useNavigate();
@@ -51,7 +54,6 @@ export const NewPostPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-
   const fetchLocationSuggestions = async () => {
     try {
       const response = await axiosInstance.get('http://127.0.0.1:8008/api/platform/locations/');
@@ -72,23 +74,19 @@ export const NewPostPage = () => {
 
   useEffect(() => {
     fetchLocationSuggestions();
-  }, []);
-
-  useEffect(() => {
     fetchHashtagSuggestions();
   }, []);
 
   const handleLocationSelect = (location: Location) => {
     setSelectedLocation(location.id ?? null);
-
-    setErrors((current => ({ ...current, selectedLocation: false })));
+    setErrors(current => ({ ...current, selectedLocation: false }));
     setVisibleLocation(false);
   };
 
   const handleHashtagSelect = (hashtag: Hashtag) => {
     if (hashtag.id && !selectedHashtags.includes(hashtag.id)) {
       setSelectedHashtags([...selectedHashtags, hashtag.id]);
-      setErrors((current => ({ ...current, selectedHashtags: false })));
+      setErrors(current => ({ ...current, selectedHashtags: false }));
     }
     setVisibleHashtags(false);
   };
@@ -98,18 +96,42 @@ export const NewPostPage = () => {
   };
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // if (event.target.files) {
-    //   setPhotos([...photos, ...Array.from(event.target.files)]);
-    //   setErrors(current => ({ ...current, photos: false }))
-    // }
-
     const file = event.target.files?.[0] || null;
-      setPhoto(file);
-      setErrors(current => ({
-        ...current,
-        photo: false,
-      }));
-    };
+    setPhoto(file);
+    setErrors(current => ({ ...current, photo: false }));
+  };
+
+  const handleCreateLocation = async () => {
+    if (newLocationCountry && newLocationCity) {
+      try {
+        const response = await axiosInstance.post('http://127.0.0.1:8008/api/platform/locations/', {
+          country: newLocationCountry,
+          city: newLocationCity,
+        });
+        setLocationSuggestions([...locationSuggestions, response.data]);
+        setSelectedLocation(response.data.id);
+        setNewLocationCountry('');
+        setNewLocationCity('');
+      } catch (error) {
+        console.error('Error creating location:', error);
+      }
+    }
+  };
+
+  const handleCreateHashtag = async () => {
+    if (newHashtagName) {
+      try {
+        const response = await axiosInstance.post('http://127.0.0.1:8008/api/platform/hashtags/', {
+          name: newHashtagName,
+        });
+        setHashtagSuggestions([...hashtagSuggestions, response.data]);
+        setSelectedHashtags([...selectedHashtags, response.data.id]);
+        setNewHashtagName('');
+      } catch (error) {
+        console.error('Error creating hashtag:', error);
+      }
+    }
+  };
 
   const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -121,7 +143,6 @@ export const NewPostPage = () => {
       content: !content.trim(),
       photo: !photo,
     });
-
 
     if (
       !title.trim() ||
@@ -154,7 +175,6 @@ export const NewPostPage = () => {
     photo: false,
   });
 
-
   const clearForm = () => {
     setTitle('');
     setContent('');
@@ -172,13 +192,13 @@ export const NewPostPage = () => {
 
   const handleTitleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(ev.target.value);
-    setErrors((current => ({ ...current, title: false })))
-  }
+    setErrors(current => ({ ...current, title: false }));
+  };
 
   const handleContentChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(ev.target.value);
-    setErrors((current => ({ ...current, content: false })))
-  }
+    setErrors(current => ({ ...current, content: false }));
+  };
 
   return (
     <div className="newpost">
@@ -226,44 +246,61 @@ export const NewPostPage = () => {
               </label>
               <div className="newpost__control">
                 <button
-                  type="button"
-                  id="post-location"
-                  className="newpost__select"
-                  onClick={() => setVisibleLocation(true)}
+                    type="button"
+                    id="post-location"
+                    className="newpost__select"
+                    onClick={() => setVisibleLocation(true)}
                 >
                   {selectedLocation
-                    ? locationSuggestions.find(loc => loc.id === selectedLocation)?.name
-                    : 'Choose location'}
+                      ? locationSuggestions.find(loc => loc.id === selectedLocation)?.name
+                      : 'Choose location'}
                   <span className={classNames('newpost__icon newpost__icon--arrow',
-                    { 'newpost__icon--arrow--active': visibleLocation }
-                  )} />
+                      {'newpost__icon--arrow--active': visibleLocation}
+                  )}/>
                 </button>
                 {visibleLocation && (
-                  <ul>
-                    {locationSuggestions.map((location) => (
-                      <li
-                        key={location.id}
-                        onClick={() => handleLocationSelect(location)}
-                        className="newpost__suggestions"
-                      >
-                        {location.name}
-                      </li>
-                    ))}
-                  </ul>
+                    <ul>
+                      {locationSuggestions.map((location) => (
+                          <li
+                              key={location.id}
+                              onClick={() => handleLocationSelect(location)}
+                              className="newpost__suggestions"
+                          >
+                            {location.name}
+                          </li>
+                      ))}
+                    </ul>
                 )}
               </div>
               {errors.selectedLocation && (
-                <p
-                  className="newpost__help newpost__is-danger"
-                  data-cy="ErrorMessage"
-                >
-                  <span
-                    className="newpost__icon newpost__icon--error"
-                    data-cy="ErrorIcon"
-                  />
-                  <span>Location is required</span>
-                </p>
+                  <p className="newpost__help newpost__is-danger" data-cy="ErrorMessage">
+                    <span className="newpost__icon newpost__icon--error" data-cy="ErrorIcon"/>
+                    <span>Location is required</span>
+                  </p>
               )}
+              <br>
+              </br>
+              <div className="newpost__create-new">
+                <input
+                    type="text"
+                    placeholder="Country"
+                    value={newLocationCountry}
+                    onChange={(e) => setNewLocationCountry(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="City"
+                    value={newLocationCity}
+                    onChange={(e) => setNewLocationCity(e.target.value)}
+                />
+                <br>
+                </br>
+                <br>
+                </br>
+                <button type="button" onClick={handleCreateLocation}>
+                  Create New Location
+                </button>
+              </div>
             </div>
 
             <div className="newpost__field">
@@ -272,61 +309,66 @@ export const NewPostPage = () => {
               </label>
               <div className="newpost__control">
                 <button
-                  type="button"
-                  id="post-hashtags"
-                  className="newpost__select"
-                  onClick={() => setVisibleHashtags(true)}
+                    type="button"
+                    id="post-hashtags"
+                    className="newpost__select"
+                    onClick={() => setVisibleHashtags(true)}
                 >
                   Choose hashtag
                   <span className={classNames('newpost__icon newpost__icon--arrow',
-                    { 'newpost__icon--arrow--active': visibleHashtags }
-                  )} />
+                      {'newpost__icon--arrow--active': visibleHashtags}
+                  )}/>
                 </button>
                 {visibleHashtags && (
-                  <ul>
-                    {hashtagSuggestions.map((hashtag) => (
-                      <li
-                        key={hashtag.id}
-                        onClick={() => handleHashtagSelect(hashtag)}
-                        className="newpost__suggestions"
-                      >
-                        {hashtag.name}
-                      </li>
-                    ))}
-                  </ul>
+                    <ul>
+                      {hashtagSuggestions.map((hashtag) => (
+                          <li
+                              key={hashtag.id}
+                              onClick={() => handleHashtagSelect(hashtag)}
+                              className="newpost__suggestions"
+                          >
+                            {hashtag.name}
+                          </li>
+                      ))}
+                    </ul>
                 )}
                 <div className="newpost__tags">
                   {selectedHashtags.map((tagId) => {
                     const tag = hashtagSuggestions.find(h => h.id === tagId);
                     return (
-                      <span
-                        key={tagId}
-                        className="newpost__tag"
-                      >
+                        <span key={tagId} className="newpost__tag">
                         #{tag ? tag.name : tagId}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveHashtag(tagId)}
-                          className="newpost__remove-button"
-                        />
+                          <button
+                              type="button"
+                              onClick={() => handleRemoveHashtag(tagId)}
+                              className="newpost__remove-button"
+                          />
                       </span>
                     );
                   })}
                 </div>
               </div>
               {errors.selectedHashtags && (
-                <p
-                  className="newpost__help newpost__is-danger"
-                  data-cy="ErrorMessage"
-                >
-                  <span
-                    className="newpost__icon newpost__icon--error"
-                    data-cy="ErrorIcon"
-                  />
-                  <span>Hashtags is required</span>
-                </p>
+                  <p className="newpost__help newpost__is-danger" data-cy="ErrorMessage">
+                    <span className="newpost__icon newpost__icon--error" data-cy="ErrorIcon"/>
+                    <span>Hashtags is required</span>
+                  </p>
               )}
+              <br>
+              </br>
+              <div className="newpost__create-new">
+                <input
+                    type="text"
+                    placeholder="New Hashtag"
+                    value={newHashtagName}
+                    onChange={(e) => setNewHashtagName(e.target.value)}
+                />
+                <button type="button" onClick={handleCreateHashtag}>
+                  Create New Hashtag
+                </button>
+              </div>
             </div>
+
 
             <div className="newpost__field" data-cy="BodyField">
               <label className="newpost__label" htmlFor="post-body">
@@ -334,27 +376,27 @@ export const NewPostPage = () => {
               </label>
               <div className="newpost__control">
                 <textarea
-                  name="content"
-                  id="post-body"
-                  placeholder="Type your post here"
-                  className={classNames('newpost__textarea', {
-                    'is-danger': errors.content,
-                  })}
-                  value={content}
-                  onChange={handleContentChange}
+                    name="content"
+                    id="post-body"
+                    placeholder="Type your post here"
+                    className={classNames('newpost__textarea', {
+                      'is-danger': errors.content,
+                    })}
+                    value={content}
+                    onChange={handleContentChange}
                 />
               </div>
               {errors.content && (
-                <p
-                  className="newpost__help newpost__is-danger"
-                  data-cy="ErrorMessage"
-                >
+                  <p
+                      className="newpost__help newpost__is-danger"
+                      data-cy="ErrorMessage"
+                  >
                   <span
-                    className="newpost__icon newpost__icon--error"
-                    data-cy="ErrorIcon"
+                      className="newpost__icon newpost__icon--error"
+                      data-cy="ErrorIcon"
                   />
-                  <span>Text is required</span>
-                </p>
+                    <span>Text is required</span>
+                  </p>
               )}
             </div>
 
@@ -364,49 +406,41 @@ export const NewPostPage = () => {
               </label>
               <div className="newpost__control">
                 <input
-                  type="file"
-                  //multiple
-                  id="post-photos"
-                  onChange={handlePhotoUpload}
-                  accept="image/*"
-                  placeholder="Photo"
-                  className={classNames('newpost__input', {
-                    'is-danger': errors.photo,
-                  })}
+                    type="file"
+                    //multiple
+                    id="post-photos"
+                    onChange={handlePhotoUpload}
+                    accept="image/*"
+                    placeholder="Photo"
+                    className={classNames('newpost__input', {
+                      'is-danger': errors.photo,
+                    })}
                 />
               </div>
               {errors.photo && (
-                <p
-                  className="newpost__help newpost__is-danger"
-                  data-cy="ErrorMessage"
-                >
+                  <p
+                      className="newpost__help newpost__is-danger"
+                      data-cy="ErrorMessage"
+                  >
                   <span
-                    className="newpost__icon newpost__icon--error"
-                    data-cy="ErrorIcon"
+                      className="newpost__icon newpost__icon--error"
+                      data-cy="ErrorIcon"
                   />
-                  <span>Photos is required</span>
-                </p>
+                    <span>Photos is required</span>
+                  </p>
               )}
             </div>
 
-            {showError && <p className="newpost__error">
-              Failed to create post
-            </p>}
+            {showError && <p className="newpost__error">Failed to create post</p>}
 
             <div className="newpost__form-actions">
-              <button
-                type="submit"
-                className="newpost__button"
-              >
+              <button type="submit" className="newpost__button">
                 {createLoading ? 'Creating...' : 'Create'}
               </button>
-
-              {/* eslint-disable-next-line react/button-has-type */}
               <button type="reset" className="newpost__button is-link is-light">
                 Clear
               </button>
             </div>
-
           </form>
         </div>
       </div>

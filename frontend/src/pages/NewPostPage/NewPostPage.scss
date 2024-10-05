@@ -222,3 +222,37 @@
     cursor: pointer;
   }
 }
+
+.newpost__create-new {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid rgba(63, 219, 52, 0.3);
+  border-radius: 8px;
+  background-color: rgba(58, 219, 52, 0.1);
+
+  input {
+    width: calc(50% - 10px);
+    margin-right: 10px;
+    border: 1px solid rgba(52, 219, 60, 0.6);
+    border-radius: 4px;
+    padding: 8px;
+
+    &:focus {
+      border-color: rgb(63, 219, 52);
+      box-shadow: 0 0 5px rgba(52, 219, 66, 0.5);
+    }
+  }
+
+  button {
+    background-color: rgba(69, 219, 52, 0.8);
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    color: white;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgb(52, 219, 66);
+    }
+  }
+}
