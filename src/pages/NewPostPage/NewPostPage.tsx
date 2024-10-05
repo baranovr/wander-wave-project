@@ -56,7 +56,7 @@ export const NewPostPage: React.FC = () => {
 
   const fetchLocationSuggestions = async () => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8008/api/platform/locations/');
+      const response = await axiosInstance.get('https://wander-wave-backend.onrender.com/api/platform/locations/');
       setLocationSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching location suggestions:', error);
@@ -65,7 +65,7 @@ export const NewPostPage: React.FC = () => {
 
   const fetchHashtagSuggestions = async () => {
     try {
-      const response = await axiosInstance.get('http://127.0.0.1:8008/api/platform/hashtags/');
+      const response = await axiosInstance.get('https://wander-wave-backend.onrender.com/api/platform/hashtags/');
       setHashtagSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching hashtag suggestions:', error);
@@ -104,7 +104,7 @@ export const NewPostPage: React.FC = () => {
   const handleCreateLocation = async () => {
     if (newLocationCountry && newLocationCity) {
       try {
-        const response = await axiosInstance.post('http://127.0.0.1:8008/api/platform/locations/', {
+        const response = await axiosInstance.post('https://wander-wave-backend.onrender.com/api/platform/locations/', {
           country: newLocationCountry,
           city: newLocationCity,
         });
@@ -121,7 +121,7 @@ export const NewPostPage: React.FC = () => {
   const handleCreateHashtag = async () => {
     if (newHashtagName) {
       try {
-        const response = await axiosInstance.post('http://127.0.0.1:8008/api/platform/hashtags/', {
+        const response = await axiosInstance.post('https://wander-wave-backend.onrender.com/api/platform/hashtags/', {
           name: newHashtagName,
         });
         setHashtagSuggestions([...hashtagSuggestions, response.data]);

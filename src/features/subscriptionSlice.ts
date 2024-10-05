@@ -18,7 +18,7 @@ export const subscribeToAuthor = createAsyncThunk(
   async ({ postId }: { postId: number }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `http://127.0.0.1:8008/api/platform/posts/${postId}/author-profile/subscribe/`,
+        `https://wander-wave-backend.onrender.com/api/platform/posts/${postId}/author-profile/subscribe/`,
       );
       return response.data;
     } catch (error) {
@@ -32,7 +32,7 @@ export const unsubscribeFromAuthor = createAsyncThunk(
   async ({ postId }: { postId: number }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(
-        `http://127.0.0.1:8008/api/platform/posts/${postId}/author-profile/unsubscribe/`,
+        `https://wander-wave-backend.onrender.com/api/platform/posts/${postId}/author-profile/unsubscribe/`,
       );
       return response.data;
     } catch (error) {

@@ -22,7 +22,7 @@ const initialState: PostsState = {
 
 export const init = createAsyncThunk('posts/fetchPosts', async () => {
   const response = await axiosInstance.get(
-    'http://127.0.0.1:8008/api/platform/posts/',
+    'https://wander-wave-backend.onrender.com/api/platform/posts/',
   );
   return response.data;
 });
@@ -46,7 +46,7 @@ export const createPost = createAsyncThunk(
     }
 
     const postResponse = await axiosInstance.post(
-      'http://127.0.0.1:8008/api/platform/posts/',
+      'https://wander-wave-backend.onrender.com/api/platform/posts/',
       formData,
       {
         headers: {
@@ -65,7 +65,7 @@ export const deletePost = createAsyncThunk(
   async (postId: number, { rejectWithValue }) => {
     try {
       await axiosInstance.delete(
-        `http://127.0.0.1:8008/api/platform/posts/${postId}/`
+        `https://wander-wave-backend.onrender.com/api/platform/posts/${postId}/`
       );
       return postId;
       ;

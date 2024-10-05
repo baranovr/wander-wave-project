@@ -40,7 +40,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { dispatch }) => {
     try {
-      const response = await axiosInstance.post('http://127.0.0.1:8008/api/user/token/', credentials);
+      const response = await axiosInstance.post('https://wander-wave-backend.onrender.com/api/user/token/', credentials);
       const { access, refresh } = response.data;
       localStorage.setItem('access', access);
       localStorage.setItem('refresh', refresh);
@@ -64,7 +64,7 @@ export const refreshToken = createAsyncThunk(
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
-      const response = await axiosInstance.post('http://127.0.0.1:8008/api/user/token/refresh/', { refresh: refreshToken });
+      const response = await axiosInstance.post('https://wander-wave-backend.onrender.com/api/user/token/refresh/', { refresh: refreshToken });
       const { access } = response.data;
       localStorage.setItem('access', access);
 

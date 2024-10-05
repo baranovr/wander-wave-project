@@ -22,7 +22,7 @@ const initialState: DetailsState = {
 export const fetchPostDetails = createAsyncThunk(
   'posts/fetchPostDetails',
   async (postId: string) => {
-    const response = await axiosInstance.get(`http://127.0.0.1:8008/api/platform/posts/${postId}/`);
+    const response = await axiosInstance.get(`https://wander-wave-backend.onrender.com/api/platform/posts/${postId}/`);
     return response.data;
   },
 );
@@ -38,7 +38,7 @@ export const addComment = createAsyncThunk(
     userId: number;
     postId: number;
   }) => {
-    const response = await axiosInstance.post('http://127.0.0.1:8008/api/platform/comments/', {
+    const response = await axiosInstance.post('https://wander-wave-backend.onrender.com/api/platform/comments/', {
       text,
       user: userId,
       post: postId,
@@ -52,7 +52,7 @@ export const deleteComment = createAsyncThunk(
   async (commentId: number, { rejectWithValue }) => {
     try {
       await axiosInstance.delete(
-        `http://127.0.0.1:8008/api/platform/comments/${commentId}/`
+        `https://wander-wave-backend.onrender.com/api/platform/comments/${commentId}/`
       );
       return commentId;
     } catch (error) {
@@ -66,7 +66,7 @@ export const setLike = createAsyncThunk(
   async (postId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `http://127.0.0.1:8008/api/platform/posts/${postId}/set-like/`,
+        `https://wander-wave-backend.onrender.com/api/platform/posts/${postId}/set-like/`,
         null
       );
       return response.data;
@@ -81,7 +81,7 @@ export const deleteLike = createAsyncThunk(
   async (likeId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(
-        `http://127.0.0.1:8008//api/platform/likes/${likeId}/`
+        `https://wander-wave-backend.onrender.com/api/platform/likes/${likeId}/`
       );
       return response.data;
     } catch (error) {
@@ -95,7 +95,7 @@ export const addToFavorites = createAsyncThunk(
   async (postId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `http://127.0.0.1:8008/api/platform/posts/${postId}/add-to-favorites/`,
+        `https://wander-wave-backend.onrender.com/api/platform/posts/${postId}/add-to-favorites/`,
         null
       );
       return response.data;
@@ -110,7 +110,7 @@ export const deleteFromFavorites = createAsyncThunk(
   async (favoriteId: number, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(
-        `http://127.0.0.1:8008/api/user/my_profile/my_favorites/${favoriteId}/`
+        `https://wander-wave-backend.onrender.com/api/user/my_profile/my_favorites/${favoriteId}/`
       );
       return response.data;
     } catch (error) {

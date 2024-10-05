@@ -26,7 +26,7 @@ export const SubscribersList: React.FC = () => {
     useEffect(() => {
     const fetchSubscribers = async () => {
       try {
-        const response = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/subscribers/');
+        const response = await axiosInstance.get('https://wander-wave-backend.onrender.com/api/user/my_profile/subscribers/');
         setSubscribers(response.data);
         setLoading(false);
       } catch (err) {
@@ -40,7 +40,7 @@ export const SubscribersList: React.FC = () => {
 
   const handleRemoveSubscriber = async (id: number) => {
     try {
-      await axiosInstance.delete(`http://127.0.0.1:8008/api/user/my_profile/subscribers/${id}/remove_subscriber/`);
+      await axiosInstance.delete(`https://wander-wave-backend.onrender.com/api/user/my_profile/subscribers/${id}/remove_subscriber/`);
       setSubscribers(prevSubscribers => prevSubscribers.filter(sub => sub.id !== id));
     } catch (err) {
       setError('Failed to remove subscriber');
