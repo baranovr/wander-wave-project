@@ -1,11 +1,11 @@
-import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom';
+import {Link, NavLink, useLocation, useSearchParams} from 'react-router-dom';
 import './Header.scss';
-import { Logo } from '../Logo';
+import {Logo} from '../Logo';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
-import { debounce } from '../../helpers/debounce';
-import { getSearchWith } from '../../helpers/getSearchWith';
-import { Notifications } from '../Notifications';
+import {useCallback, useState} from 'react';
+import {debounce} from '../../helpers/debounce';
+import {getSearchWith} from '../../helpers/getSearchWith';
+import {Notifications} from '../Notifications';
 
 export const Header = () => {
   const location = useLocation();

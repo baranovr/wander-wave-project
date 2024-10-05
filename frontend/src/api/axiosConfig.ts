@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
-import { store } from '../app/store';
-import { refreshToken } from '../features/authSlice';
+import {store} from '../app/store';
+import {refreshToken} from '../features/authSlice';
 
 export function setupAxiosInterceptors() {
   axiosInstance.interceptors.request.use(

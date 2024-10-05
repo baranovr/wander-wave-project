@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import cn from 'classnames';
-import { Link, useSearchParams } from 'react-router-dom';
+import {Link, useSearchParams} from 'react-router-dom';
 import './Dropdown.scss';
-import { getSearchWith } from '../../helpers/getSearchWith';
-import { Option } from '../../types/Options';
+import {getSearchWith} from '../../helpers/getSearchWith';
+import {Option} from '../../types/Options';
 
 type Props = {
   currentOption: { label: string };

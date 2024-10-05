@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from backend.wander_wave.views import (
+from wander_wave.views import (
     PostViewSet,
     LocationViewSet,
     HashtagViewSet,
@@ -14,7 +14,7 @@ from backend.wander_wave.views import (
 
 )
 
-from backend.user.views import (
+from user.views import (
     SubscriptionView,
     UnsubscribeView,
     SubscriptionNotificationViewSet

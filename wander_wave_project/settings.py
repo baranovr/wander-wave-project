@@ -67,7 +67,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "backend.wander_wave_project.urls"
+ROOT_URLCONF = "wander_wave_project.urls"
 
 TEMPLATES = [
     {

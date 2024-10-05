@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
 import axiosPublicInstance from '../api/axiosPublicInstance';
-import { fetchUserProfile } from './myProfileSlice';
-import { jwtDecode } from 'jwt-decode';
+import {fetchUserProfile} from './myProfileSlice';
+import {jwtDecode} from 'jwt-decode';
 import axios from "axios";
 
 

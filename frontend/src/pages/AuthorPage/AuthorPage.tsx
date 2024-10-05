@@ -1,15 +1,12 @@
 import './AuthorPage.scss';
-import React, { useState, useEffect } from 'react';
-import { PostCard } from '../../components/PostCard';
-import { useParams } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import {
-  subscribeToAuthor,
-  unsubscribeFromAuthor,
-} from '../../features/subscriptionSlice';
-import { fetchSubscriptions } from '../../features/myProfileSlice';
-import { fetchAuthorProfile } from '../../features/authorProfileSlice';
-import { Loader } from '../../components/Loader';
+import React, {useEffect, useState} from 'react';
+import {PostCard} from '../../components/PostCard';
+import {useParams} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {subscribeToAuthor, unsubscribeFromAuthor,} from '../../features/subscriptionSlice';
+import {fetchSubscriptions} from '../../features/myProfileSlice';
+import {fetchAuthorProfile} from '../../features/authorProfileSlice';
+import {Loader} from '../../components/Loader';
 import {getImageUrl} from "../../api/imageUtils";
 
 export const AuthorPage: React.FC = () => {

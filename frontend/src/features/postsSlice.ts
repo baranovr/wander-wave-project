@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Post } from '../types/Post';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {Post} from '../types/Post';
 import axiosInstance from '../api/axiosInstance';
-import { PostData } from '../types/PostDetails';
+import {PostData} from '../types/PostDetails';
 
 type PostsState = {
   posts: Post[];

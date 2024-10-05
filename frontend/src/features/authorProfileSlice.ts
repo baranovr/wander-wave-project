@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
-import { User } from '../types/User';
+import {User} from '../types/User';
 
 interface AuthorState {
   profile: User | null;

@@ -5,15 +5,15 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from backend.user.custom_token.token_view import CustomTokenObtainPairView
-from backend.user.views import (
+from user.custom_token.token_view import CustomTokenObtainPairView
+from user.views import (
     CreateUserViewSet,
     MyProfileView,
     SubscriptionsViewSet,
     SubscribersViewSet,
 )
 
-from backend.wander_wave.views import (
+from wander_wave.views import (
     FavoriteListView,
     FavoriteDetailView,
     LikeListView,

@@ -1,18 +1,13 @@
-import {
-  Navigate,
-  Route,
-  HashRouter as Router,
-  Routes,
-} from 'react-router-dom';
-import { App } from './App';
-import { HomePage } from './pages/HomePage';
-import { PostsPage } from './pages/PostsPage';
-import { PostDetailsPage } from './pages/PostDetailsPage';
-import { NewPostPage } from './pages/NewPostPage';
-import { LoginPage } from './pages/LoginPage/LoginPage';
-import { AuthorPage } from './pages/AuthorPage/AuthorPage';
-import { FavoritesPage } from './pages/FavoritesPage';
-import { ProfilePage } from './pages/ProfilePage';
+import {HashRouter as Router, Navigate, Route, Routes,} from 'react-router-dom';
+import {App} from './App';
+import {HomePage} from './pages/HomePage';
+import {PostsPage} from './pages/PostsPage';
+import {PostDetailsPage} from './pages/PostDetailsPage';
+import {NewPostPage} from './pages/NewPostPage';
+import {LoginPage} from './pages/LoginPage/LoginPage';
+import {AuthorPage} from './pages/AuthorPage/AuthorPage';
+import {FavoritesPage} from './pages/FavoritesPage';
+import {ProfilePage} from './pages/ProfilePage';
 import {SubscribersList} from "./pages/SubscribersList";
 import {SubscriptionsList} from "./pages/SubscriptionsList";
 

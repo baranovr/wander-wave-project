@@ -1,12 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Post } from '../../types/Post';
+import {Link, useLocation} from 'react-router-dom';
+import {Post} from '../../types/Post';
 import './PostCard.scss';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { addToFavorites, deleteFromFavorites, deleteLike, setLike } from '../../features/postDetailsSlice';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {addToFavorites, deleteFromFavorites, deleteLike, setLike} from '../../features/postDetailsSlice';
 import classNames from 'classnames';
-import { useState } from 'react';
-import { getImageUrl } from "../../api/imageUtils";
-import { deletePost } from '../../features/postsSlice';
+import {useState} from 'react';
+import {getImageUrl} from "../../api/imageUtils";
+import {deletePost} from '../../features/postsSlice';
 
 type Props = {
   post: Post;

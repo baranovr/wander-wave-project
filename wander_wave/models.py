@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.text import slugify
 
-from backend.wander_wave_project import settings
+from wander_wave_project import settings
 
 
 class PostNotification(models.Model):

@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import './NewPostPage.scss';
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { createPost } from '../../features/postsSlice';
-import { useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {createPost} from '../../features/postsSlice';
+import {useNavigate} from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 
 interface Location {

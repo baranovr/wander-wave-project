@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React from 'react';
 import './Pagination.scss';
-import { Link, useSearchParams } from 'react-router-dom';
-import { getSearchWith } from '../../helpers/getSearchWith';
+import {Link, useSearchParams} from 'react-router-dom';
+import {getSearchWith} from '../../helpers/getSearchWith';
 
 function getNumbers(from: number, to: number): number[] {
   const numbers = [];

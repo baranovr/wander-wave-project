@@ -1,6 +1,6 @@
-import { Link, useLocation } from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import './Footer.scss';
-import { Logo } from '../Logo';
+import {Logo} from '../Logo';
 
 export const Footer = () => {
   const location = useLocation();

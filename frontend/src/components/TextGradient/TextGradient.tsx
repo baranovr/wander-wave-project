@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useRef, useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './TextGradient.scss';
 
 interface TextGradientCounterProps {

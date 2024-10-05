@@ -1,8 +1,8 @@
 import classNames from 'classnames';
-import { Option } from '../../types/Options';
+import {Option} from '../../types/Options';
 import './Sorting.scss';
-import { getSearchWith } from '../../helpers/getSearchWith';
-import { useSearchParams } from 'react-router-dom';
+import {getSearchWith} from '../../helpers/getSearchWith';
+import {useSearchParams} from 'react-router-dom';
 
 type Props = {
   options: Option[];

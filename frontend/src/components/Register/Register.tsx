@@ -1,7 +1,7 @@
 import '../Login/Login.scss';
-import React, { useState } from 'react';
-import { register, registerData } from '../../features/authSlice';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import React, {useState} from 'react';
+import {register, registerData} from '../../features/authSlice';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
 
 type Props = {
   handleShowLogin: () => void;

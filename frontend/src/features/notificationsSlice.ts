@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
-import { Notification } from '../types/Notification';
+import {Notification} from '../types/Notification';
 
 type NotificationState = {
   notifications: Notification[];

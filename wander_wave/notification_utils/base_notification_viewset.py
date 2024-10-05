@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 
-from backend.wander_wave.notification_utils.base_notification_actions import (
+from wander_wave.notification_utils.base_notification_actions import (
     BaseNotificationActionsViewSet
 )
 

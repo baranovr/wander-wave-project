@@ -1,4 +1,4 @@
-from backend.wander_wave.models import (
+from wander_wave.models import (
     PostNotification,
     Subscription,
     LikeNotification,

@@ -125,6 +125,7 @@ How to use (Docker should be installed)👇:
 ```bash
 docker-compose up --build
 ```
+### After that, when the containers will be built and ran, go to http://localhost:8008
 <br />
 <hr>
 
@@ -236,6 +237,16 @@ docker-compose up
 <br>
 
 ### After that, when the containers will be built and ran, go to http://localhost:3000
+⚠️If something wrong - try to run it again:
+```bash
+docker-compose down
+```
+```bash
+docker-compose build
+```
+```bash
+docker-compose up
+```
 
 <hr style="height: 8px">
 

@@ -1,15 +1,15 @@
 import '../PostsPage/PostsPage.scss';
-import { PostCard } from '../../components/PostCard';
-import { Loader } from '../../components/Loader';
-import { Sorting } from '../../components/Sorting';
-import { itemsPerPageOptions, sortOptions } from '../../types/Options';
-import { useSearchParams } from 'react-router-dom';
-import { useEffect, useMemo } from 'react';
-import { Pagination } from '../../components/Pagination';
-import { Dropdown } from '../../components/Dropdown';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { init } from '../../features/postsSlice';
-import { fetchMyFavorites, fetchMyLiked } from '../../features/myProfileSlice';
+import {PostCard} from '../../components/PostCard';
+import {Loader} from '../../components/Loader';
+import {Sorting} from '../../components/Sorting';
+import {itemsPerPageOptions, sortOptions} from '../../types/Options';
+import {useSearchParams} from 'react-router-dom';
+import {useEffect, useMemo} from 'react';
+import {Pagination} from '../../components/Pagination';
+import {Dropdown} from '../../components/Dropdown';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {init} from '../../features/postsSlice';
+import {fetchMyFavorites, fetchMyLiked} from '../../features/myProfileSlice';
 
 export const FavoritesPage = () => {
   const [searchParams] = useSearchParams();

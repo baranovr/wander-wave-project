@@ -1,6 +1,6 @@
 // src/features/posts/subscriptionSlice.ts
 
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
 
 interface SubscriptionState {

@@ -1,9 +1,9 @@
 import './Login.scss';
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../app/store';
-import { login, refreshToken } from '../../features/authSlice';
-import { useAppSelector } from '../../app/hooks';
+import React, {useCallback, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../app/store';
+import {login, refreshToken} from '../../features/authSlice';
+import {useAppSelector} from '../../app/hooks';
 
 type Props = {
   handleShowRegister: () => void;

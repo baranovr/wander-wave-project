@@ -1,6 +1,6 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { PostDetails } from '../types/PostDetails';
-import { Comment, CommentData } from '../types/Comments';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {PostDetails} from '../types/PostDetails';
+import {Comment, CommentData} from '../types/Comments';
 import axiosInstance from '../api/axiosInstance';
 
 type DetailsState = {

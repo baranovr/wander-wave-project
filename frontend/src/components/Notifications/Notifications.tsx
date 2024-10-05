@@ -1,12 +1,12 @@
 import './Notifications.scss';
-import { useEffect, useMemo, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {useEffect, useMemo, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
-  deleteAllNotifications,
-  deleteNotification,
-  fetchAllNotifications,
-  markAllNotificationsAsRead,
-  markNotificationAsRead,
+    deleteAllNotifications,
+    deleteNotification,
+    fetchAllNotifications,
+    markAllNotificationsAsRead,
+    markNotificationAsRead,
 } from '../../features/notificationsSlice';
 import classNames from 'classnames';
 

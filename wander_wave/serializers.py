@@ -1,10 +1,8 @@
-from django.core.files.base import ContentFile
-from django.contrib.auth import get_user_model
 from django.utils.text import Truncator
 
 from rest_framework import serializers
 
-from backend.wander_wave.models import (
+from wander_wave.models import (
     Post,
     Hashtag,
     Comment,

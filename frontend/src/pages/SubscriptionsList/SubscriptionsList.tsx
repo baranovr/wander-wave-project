@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Loader } from '../../components/Loader';
-import { getMyMediaImageUrl } from "../../api/imageUtils";
+import React, {useEffect, useState} from 'react';
+import {Loader} from '../../components/Loader';
+import {getMyMediaImageUrl} from "../../api/imageUtils";
 import axiosInstance from '../../api/axiosInstance';
 import './SubscriptionsList.scss';
 

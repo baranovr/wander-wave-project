@@ -1,5 +1,5 @@
-import { client } from '../helpers/fetchClient';
-import { Post } from '../types/Post';
+import {client} from '../helpers/fetchClient';
+import {Post} from '../types/Post';
 
 // export const getPosts = (postId: number, data: Comment) => {
 //   return client.patch(`/postsDetails?id=${postId}`, data);

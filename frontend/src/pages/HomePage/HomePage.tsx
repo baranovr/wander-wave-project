@@ -1,6 +1,6 @@
-import { Categories } from '../../components/Categories';
-import { TextGradient } from '../../components/TextGradient';
-import { Waves } from '../../components/Waves';
+import {Categories} from '../../components/Categories';
+import {TextGradient} from '../../components/TextGradient';
+import {Waves} from '../../components/Waves';
 
 import './HomePage.scss';
 

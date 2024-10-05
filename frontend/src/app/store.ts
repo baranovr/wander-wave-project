@@ -1,4 +1,4 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
+import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
 
 import postsSlice from '../features/postsSlice';
 import postDetailsSlice from '../features/postDetailsSlice';

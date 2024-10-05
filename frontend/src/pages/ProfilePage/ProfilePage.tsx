@@ -1,14 +1,11 @@
 import '../AuthorPage/AuthorPage.scss';
-import React, { useState, useEffect } from 'react';
-import { PostCard } from '../../components/PostCard';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import {
-  clearProfileState,
-  fetchUserProfile,
-} from '../../features/myProfileSlice';
-import { logout } from '../../features/authSlice';
-import { Loader } from '../../components/Loader';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {PostCard} from '../../components/PostCard';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {clearProfileState, fetchUserProfile,} from '../../features/myProfileSlice';
+import {logout} from '../../features/authSlice';
+import {Loader} from '../../components/Loader';
+import {Link} from 'react-router-dom';
 
 export const ProfilePage = () => {
   const dispatch = useAppDispatch();

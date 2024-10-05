@@ -1,5 +1,5 @@
-import { store } from '../app/store';
-import { refreshToken, logout } from '../features/authSlice';
+import {store} from '../app/store';
+import {logout, refreshToken} from '../features/authSlice';
 
 function getAccessToken() {
   const state = store.getState();

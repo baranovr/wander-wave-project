@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
-import { User } from '../types/User';
-import { Post } from '../types/Post';
+import {User} from '../types/User';
+import {Post} from '../types/Post';
 import {refreshToken} from "./authSlice";
 
 export type Subscription = {

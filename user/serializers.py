@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 
-from backend.wander_wave.models import Subscription, Post
+from wander_wave.models import Subscription, Post
 
 from rest_framework import serializers
 
-from backend.wander_wave.serializers import PostListSerializer
+from wander_wave.serializers import PostListSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):

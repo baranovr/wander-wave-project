@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Login } from '../../components/Login';
-import { Register } from '../../components/Register/Register';
+import {useState} from 'react';
+import {Login} from '../../components/Login';
+import {Register} from '../../components/Register/Register';
+
 export const LoginPage = () => {
   const [visibleRegistration, setVisibleRegistration] = useState(false);
   const [visibleLogin, setVisibleLogin] = useState(true);

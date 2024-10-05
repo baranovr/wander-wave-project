@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import './PostDetailsPage.scss';
-import { Link, useParams } from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import classNames from 'classnames';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
-  addComment,
-  addToFavorites,
-  deleteComment,
-  deleteFromFavorites,
-  deleteLike,
-  fetchPostDetails,
-  setLike,
+    addComment,
+    addToFavorites,
+    deleteComment,
+    deleteFromFavorites,
+    deleteLike,
+    fetchPostDetails,
+    setLike,
 } from '../../features/postDetailsSlice';
-import { Loader } from '../../components/Loader';
+import {Loader} from '../../components/Loader';
 
 export const PostDetailsPage = () => {
   const dispatch = useAppDispatch();

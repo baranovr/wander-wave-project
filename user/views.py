@@ -8,22 +8,21 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import GenericViewSet
-from rest_framework_simplejwt.tokens import RefreshToken
 
-from backend.user.serializers import (
+from user.serializers import (
     UserSerializer,
     MyProfileSerializer,
     AuthorProfileSerializer
 )
 
-from backend.wander_wave.models import Subscription, SubscriptionNotification, Post
-from backend.wander_wave.notification_utils.base_notification_viewset import (
+from wander_wave.models import Subscription, SubscriptionNotification, Post
+from wander_wave.notification_utils.base_notification_viewset import (
     BaseUserNotificationViewSet
 )
-from backend.wander_wave.notification_utils.notification_functions import (
+from wander_wave.notification_utils.notification_functions import (
     create_subscription_notification
 )
-from backend.wander_wave.serializers import (
+from wander_wave.serializers import (
     SubscriptionsListSerializer,
     SubscribersListSerializer,
     SubscriptionSerializer,

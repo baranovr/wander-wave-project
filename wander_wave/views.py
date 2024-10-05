@@ -18,8 +18,8 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from backend.user.serializers import AuthorProfileSerializer
-from backend.wander_wave.models import (
+from user.serializers import AuthorProfileSerializer
+from wander_wave.models import (
     Post,
     Location,
     Like,
@@ -31,15 +31,15 @@ from backend.wander_wave.models import (
     LikeNotification,
     CommentNotification,
 )
-from backend.wander_wave.notification_utils.base_notification_viewset import (
+from wander_wave.notification_utils.base_notification_viewset import (
     BaseUserNotificationViewSet
 )
-from backend.wander_wave.notification_utils.notification_functions import (
+from wander_wave.notification_utils.notification_functions import (
     create_post_notification,
     create_like_notification,
     create_comment_notification
 )
-from backend.wander_wave.serializers import (
+from wander_wave.serializers import (
     PostSerializer,
     PostDetailSerializer,
     PostListSerializer,
