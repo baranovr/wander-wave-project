@@ -1,7 +1,7 @@
 export const getImageUrl = (photoUrl: string | null | undefined): string => {
   if (!photoUrl) return '/path/to/default/image.jpg';
 
-  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+  if (photoUrl.startsWith('https://')) {
     return photoUrl;
   }
 
@@ -11,7 +11,7 @@ export const getImageUrl = (photoUrl: string | null | undefined): string => {
 export const getMyMediaImageUrl = (photoUrl: string | null | undefined): string => {
   if (!photoUrl) return '/path/to/default/image.jpg';
 
-  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+  if (photoUrl.startsWith('https://')) {
     return photoUrl;
   }
 
