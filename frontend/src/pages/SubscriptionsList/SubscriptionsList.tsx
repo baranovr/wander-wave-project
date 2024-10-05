@@ -26,7 +26,7 @@ export const SubscriptionsList: React.FC = () => {
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
-        const response = await axiosInstance.get('http://127.0.0.1:8008/api/user/my_profile/subscriptions/');
+        const response = await axiosInstance.get('http://127.0.0.1:8000/api/user/my_profile/subscriptions/');
         setSubscriptions(response.data);
         setLoading(false);
       } catch (err) {
@@ -40,7 +40,7 @@ export const SubscriptionsList: React.FC = () => {
 
   const handleUnsubscribe = async (id: number) => {
     try {
-      await axiosInstance.delete(`http://127.0.0.1:8008/api/user/my_profile/subscriptions/${id}/unsubscribe/`);
+      await axiosInstance.delete(`http://127.0.0.1:8000/api/user/my_profile/subscriptions/${id}/unsubscribe/`);
       setSubscriptions(prevSubscriptions => prevSubscriptions.filter(sub => sub.id !== id));
     } catch (err) {
       setError('Failed to unsubscribe');
