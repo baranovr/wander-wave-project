@@ -125,6 +125,27 @@ export const fetchMyFavorites = createAsyncThunk(
   },
 );
 
+export const updateUserProfile = createAsyncThunk(
+  'profile/updateUserProfile',
+  async (userData: Partial<User>, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await retryWithBackoff(() => axiosInstance.patch('http://127.0.0.1:8008/api/user/my_profile/', userData));
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        try {
+          await dispatch(refreshToken()).unwrap();
+          const retryResponse = await axiosInstance.patch('http://127.0.0.1:8008/api/user/my_profile/', userData);
+          return retryResponse.data;
+        } catch (refreshError) {
+          return rejectWithValue('Session expired. Please log in again.');
+        }
+      }
+      return rejectWithValue('Failed to update user profile');
+    }
+  }
+);
+
 const myProfileSlice = createSlice({
   name: 'profile',
   initialState,
@@ -187,7 +208,19 @@ const myProfileSlice = createSlice({
           state.favorites = action.payload;
           state.favLoading = false;
         },
-      );
+      )
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action: PayloadAction<User>) => {
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

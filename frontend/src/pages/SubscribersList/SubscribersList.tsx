@@ -60,7 +60,7 @@ export const SubscribersList: React.FC = () => {
     <div className="subscriptions-list">
       <h1 className="subscriptions-title">My Subscribers</h1>
       {subscribers.length === 0 ? (
-        <h4 className="no-subscriptions">You don't have any subscriptions yet.</h4>
+        <h4 className="no-subscriptions">You don't have any subscribers yet.</h4>
       ) : (
         <div className="subscriptions-table">
           {subscribers.map(subscriber => (

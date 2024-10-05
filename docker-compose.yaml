@@ -17,18 +17,18 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    command: >
-      sh -c "npm install && npm start"
-    depends_on:
-      - backend
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./frontend:/app
+#    command: >
+#      sh -c "npm install && npm start"
+#    depends_on:
+#      - backend
 
   db:
     image: postgres:16.2-alpine3.19
