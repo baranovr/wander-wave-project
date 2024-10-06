@@ -15,5 +15,6 @@ export const getMyMediaImageUrl = (photoUrl: string | null | undefined): string 
     return photoUrl;
   }
 
-  return `https://wander-wave-backend.onrender.com/media/${photoUrl}`;
+  const s3BucketUrl = 'https://wanderwavebucket.s3.amazonaws.com';
+  return `${s3BucketUrl}/${photoUrl}`;
 };
