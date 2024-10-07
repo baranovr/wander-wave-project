@@ -7,12 +7,17 @@ import { checkAuthStatus} from "./features/authSlice";
 import { AppDispatch} from "./app/store";
 import { useDispatch } from 'react-redux';
 import React, { useEffect} from "react";
+import { init } from './features/postsSlice';
 
 export const App = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         dispatch(checkAuthStatus());
+    }, [dispatch]);
+
+    useEffect(() => {
+      dispatch(init());
     }, [dispatch]);
 
   return (

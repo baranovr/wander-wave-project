@@ -1,10 +1,33 @@
+import { useEffect, useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Categories } from '../../components/Categories';
 import { TextGradient } from '../../components/TextGradient';
 import { Waves } from '../../components/Waves';
 
 import './HomePage.scss';
+import { init } from '../../features/postsSlice';
 
 export const HomePage = () => {
+  const dispatch = useAppDispatch();
+  const { posts } = useAppSelector(state => state.posts);
+
+
+  // useEffect(() => {
+  //   dispatch(init());
+  // }, [dispatch]);
+
+  const users = useMemo(() => {
+    let allUsers: string[] = [];
+
+    posts.forEach(
+      post =>
+        !allUsers.some(user => user === post.username) &&
+        allUsers.push(post.username),
+    );
+
+    return allUsers.length;
+  }, [posts]);
+
   return (
     <div className="home">
       <div className="home__content">
@@ -40,8 +63,8 @@ export const HomePage = () => {
         <section className="home__counter">
           <span className="home__counter-text">Explore our community with</span>
           <span className="home__counter-text">
-            over <TextGradient countTo={276} /> users and
-            <TextGradient countTo={149} /> posts to date.
+            over <TextGradient countTo={users} /> users and
+            <TextGradient countTo={posts.length} /> posts to date.
           </span>
         </section>
         <section className="home__categories">

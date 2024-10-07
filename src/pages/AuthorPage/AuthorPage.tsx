@@ -19,8 +19,7 @@ export const AuthorPage: React.FC = () => {
   const { profile, loading, error } = useAppSelector(state => state.author)
   const { isAuthenticated } = useAppSelector(state => state.auth);
   const [showError, setShowError] = useState(false);
-
-  const followCurrentUser = subscriptions.some(subs => subs.id === profile?.id);
+  const [followCurrentUser, setFollowCurrentUser] = useState(subscriptions.some(subs => subs.username === profile?.username));
 
   useEffect(() => {
     if (postId) {
@@ -35,6 +34,8 @@ export const AuthorPage: React.FC = () => {
   const handleUnsubscribe = () => {
     if (postId) {
       dispatch(unsubscribeFromAuthor({ postId: +postId }));
+      dispatch(fetchAuthorProfile(+postId));
+      setFollowCurrentUser(!followCurrentUser);
     }
   };
 
@@ -50,6 +51,8 @@ export const AuthorPage: React.FC = () => {
 
     if (postId) {
       dispatch(subscribeToAuthor({ postId: +postId }));
+      dispatch(fetchAuthorProfile(+postId));
+      setFollowCurrentUser(!followCurrentUser);
     }
   };
 
