@@ -20,7 +20,6 @@ export const PostDetailsPage = () => {
   const { postId } = useParams<{ postId: string }>();
   const [visibleComments, setVisibleComments] = useState(false);
   const [visibleForm, setVisibleForm] = useState(false);
-  const [currentImage, setCurrentImage] = useState<string>();
   const hashtags = post?.hashtags.map(hash =>
     hash.name.slice(0, 1) === '#' ? hash.name + ' ' : '#' + hash.name + ' ',
   );
@@ -97,8 +96,6 @@ export const PostDetailsPage = () => {
     if (postId) {
       dispatch(fetchPostDetails(postId));
     }
-
-    setCurrentImage(post?.photo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, postId]);
 
@@ -175,7 +172,7 @@ export const PostDetailsPage = () => {
                 <div className="details__current-image-container">
                   <img
                     alt="product"
-                    src={currentImage || post?.photo}
+                    src={post?.photo}
                     className="details__current-image"
                   />
                 </div>
