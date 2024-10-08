@@ -216,7 +216,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3001",
     "http://127.0.0.1:3001",
     "https://wander-wave-service.onrender.com",
-    "https://wander-wave-backend.onrender.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
