@@ -1,0 +1,200 @@
+@import '../../styles/index';
+
+.card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  width: 300px;
+
+  &:hover {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  &__img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  &__body {
+    font-family: "Raleway", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 8px 16px 24px;
+    min-height: 250px;
+  }
+
+  &__delete {
+    background-image: url(../../images/close.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #fff;
+    border-radius: 50%;
+    display: block;
+    height: 16px;
+    width: 16px;
+    position: relative;
+    bottom: 8px;
+    left: 256px;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__location-link {
+    text-decoration: none;
+    margin: 0 0 12px;
+  }
+
+  &__location {
+    background: #cccccc;
+    border-radius: 50px;
+    font-size: 12px;
+    color: #fff;
+    padding: 2px 10px;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+      background-color: #169a79;
+    }
+
+    &--teal {
+      background-color: #29b18ff3;
+    }
+
+    &--purple {
+      background-color: #5e76bf;
+    }
+
+    &--pink {
+      background-color: #cd5b9f;
+    }
+  }
+
+  &__span {
+    font-size: 13px;
+    font-weight: 500;
+    padding-right: 8px;
+  }
+
+  &__user-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  &__posted-date {
+    color: #1e6a5d;
+    font-family: "Lato", sans-serif;
+  }
+
+  &__hashtags {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  &__reactions {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    font-size: 14px;
+    color: rgb(15, 96, 15);
+  }
+
+  &__reaction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__icon {
+    height: 24px;
+    width: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #fff;
+    border: none;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+
+    &--comments {
+      background-image: url(../../images/comments.svg);
+    }
+
+    &--likes {
+      background-image: url(../../images/heart2.svg);
+      cursor: pointer;
+    }
+
+    &--likes-active {
+      background-image: url(../../images/heart-active.svg);
+    }
+
+    &--save {
+      cursor: pointer;
+      background-image: url(../../images/save.svg);
+    }
+
+    &--save-active {
+      background-image: url(../../images/save-active.svg);
+    }
+  }
+
+  &__count {
+    font-family: "Lato", sans-serif;
+    color: #1e6a5d;
+    font-size: 12px;
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__error {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    height: 48px;
+    width: 300px;
+    font-size: 16px;
+    background-color: rgb(214, 157, 157);
+    color: rgb(168, 14, 14);
+  }
+}
